@@ -40,16 +40,15 @@ export default class ChangePasswordContainer extends Component {
 
 	save = () => {
 		const { valid, oldPassword, newPassword, confirmPassword } = this.state;
+		const { attemptUpdatePassword } = this.props;
 		if (valid && newPassword === confirmPassword && oldPassword) {
-			this.props.attemptUpdatePassword({ oldPassword, newPassword })
-				.then(() => this.setState({
-					oldPassword: '',
-					newPassword: '',
-					confirmPassword: '',
-					message: '',
-					valid: false,
-				}))
-				.catch(identity);
+			attemptUpdatePassword({ oldPassword, newPassword }).then(() => this.setState({
+				oldPassword: '',
+				newPassword: '',
+				confirmPassword: '',
+				message: '',
+				valid: false,
+			})).catch(identity);
 		}
 	}
 

@@ -36,7 +36,8 @@ export default function Login(props) {
 			<p className="control is-clearfix">
 				<button type="button" className="button is-success is-pulled-right" onClick={login}>Login</button>
 				<input type="checkbox" onChange={rememberMe} checked={remember} />
-				{'&nbsp; Remember me'}
+				{' '}
+				{'Remember me'}
 			</p>
 		</Box>
 	);

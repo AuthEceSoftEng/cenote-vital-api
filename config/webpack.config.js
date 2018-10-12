@@ -48,6 +48,7 @@ module.exports = {
 		historyApiFallback: true,
 		inline: true,
 	},
+	watchOptions: { poll: true },
 	entry: [
 		'./client/styles/index.scss',
 		'./client/assets/index.js',
@@ -122,5 +123,4 @@ module.exports = {
 		FaviconsWebpackPluginConfig,
 		CleanWebpackPluginConfig,
 	],
-	performance: { hints: false },
 };

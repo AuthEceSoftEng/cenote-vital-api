@@ -20,16 +20,18 @@ export default class NavigationContainer extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (!equals(nextProps.user, this.props.user)) {
+		const { user } = this.props;
+		if (!equals(nextProps.user, user)) {
 			this.setState({ auth: !isEmpty(nextProps.user) });
 		}
 	}
 
 	toggleDropdown = () => this.setState(prevState => ({ dropdownOpen: !prevState.dropdownOpen, opening: true }))
 
-	closeDropdown = () => (this.state.opening
-		? this.setState({ opening: false })
-		: this.setState({ dropdownOpen: false }))
+	closeDropdown = () => {
+		const { opening } = this.state;
+		return opening ? this.setState({ opening: false }) : this.setState({ dropdownOpen: false });
+	}
 
 	render() {
 		const { auth, dropdownOpen } = this.state;

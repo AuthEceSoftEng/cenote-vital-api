@@ -8,17 +8,16 @@ const mongoose = require('mongoose');
 const routes = require('./routes');
 const configPassport = require('./config/passport');
 
-mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/bdms-db', { useNewUrlParser: true })
-	.then(() => console.log('Connected to database.'))
-	.catch(err => console.error('Error connecting to database:', err.message));
-mongoose.Promise = global.Promise;
+const mongooseOptions = { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false };
+mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/bdms-db', mongooseOptions).catch(err => console.error(err.message));
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, '../dist/')));
 app.use(bodyParser.json());
-configPassport(app, express);
+configPassport(app);
 app.use('/', routes);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(chalk.bold.rgb(10, 100, 200)(`>>> Server started at http://localhost:${port}`)));
+const host = process.env.HOST || 'localhost';
+app.listen(port, host, () => console.log(chalk.bold.rgb(0, 255, 255)(`>>> Server started at http://${host}:${port}`)));

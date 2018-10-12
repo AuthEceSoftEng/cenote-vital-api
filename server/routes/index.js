@@ -13,6 +13,10 @@ router.use('/api/user', user);
 router.use('/api/users', users);
 router.use('/api/todos', todos);
 
+router.get('/works', (req, res) => {
+	res.send('<h1 align="center">It does!</h1>');
+});
+
 router.get('/*', (req, res) => {
 	res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
 });
