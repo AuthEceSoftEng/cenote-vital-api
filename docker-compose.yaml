@@ -1,0 +1,15 @@
+web:
+  build: .
+  links:
+   - db
+  ports:
+   - "3000:8000"
+  volumes:
+   - .:/usr/src/app/
+  environment:
+   NODE_ENV: production
+   MONGO_URL: mongodb://db:27017/bdms-db
+db:
+  image: mongo:latest
+  ports:
+   - "27017:27017"

@@ -28,6 +28,13 @@ $ yarn dev
 $ yarn prod
 ```
 
+### Docker
+
+```bash
+$ docker-compose build
+$ docker-compose up
+```
+
 #### Other Commands
 
 ```bash
