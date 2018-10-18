@@ -8,9 +8,14 @@ const mongoose = require('mongoose');
 const routes = require('./routes');
 const configPassport = require('./config/passport');
 
-const mongooseOptions = { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false };
+const mongooseOptions = {
+	useNewUrlParser: true,
+	useCreateIndex: true,
+	useFindAndModify: false,
+	reconnectTries: 30,
+	reconnectInterval: 500,
+};
 mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/bdms-db', mongooseOptions).catch(err => console.error(err.message));
-
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, '../dist/')));

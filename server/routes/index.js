@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-
 const auth = require('./auth');
 const user = require('./user');
 const users = require('./users');
@@ -17,8 +16,10 @@ router.get('/works', (req, res) => {
 	res.send('<h1 align="center">It does!</h1>');
 });
 
+const root = path.join(__dirname, '../../client/dist');
+router.use(express.static(root));
 router.get('/*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
+	res.sendFile('index.html', { root });
 });
 
 module.exports = router;

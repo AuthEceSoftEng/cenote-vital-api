@@ -1,15 +1,32 @@
-web:
-  build: .
-  links:
-   - db
-  ports:
-   - "3000:8000"
-  volumes:
-   - .:/usr/src/app/
-  environment:
-   NODE_ENV: production
-   MONGO_URL: mongodb://db:27017/bdms-db
-db:
-  image: mongo:latest
-  ports:
-   - "27017:27017"
+version: '3.5'
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    hostname: web
+    depends_on:
+      - db
+    ports:
+      - "3000:8000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: mongodb://db:27017/dbms-db
+    networks:
+      backnet:
+        aliases:
+          - nic_web
+  db:
+    image: mongo:latest
+    hostname: db
+    volumes:
+      - dbdata:/data/db
+    networks:
+      backnet:
+        aliases:
+          - nic_db
+volumes:
+    dbdata:
+networks:
+  backnet:
+    driver: bridge

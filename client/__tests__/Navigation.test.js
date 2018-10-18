@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import Navigation from '../components/Navigation/NavigationContainer';
+import Navigation from '../src/components/Navigation/NavigationContainer';
 
 const wrapper = shallow(<Navigation user={{}} pathname="/" />);
 

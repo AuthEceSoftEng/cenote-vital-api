@@ -1,6 +1,6 @@
-import express from 'express';
-import request from 'supertest';
-import routes from '../routes';
+const express = require('express');
+const request = require('supertest');
+const routes = require('../routes');
 
 describe('The Server', () => {
 	const app = express();
@@ -10,5 +10,5 @@ describe('The Server', () => {
 		.expect(200).expect(response => expect(response.text).toContain('It does!')));
 
 	test('returns HTML on an unknown endpoint', () => request(app).get('/*')
-		.expect(response => expect(response.header['content-type']).toBe('text/html; charset=utf-8')));
+		.expect(response => expect(response.header['content-type']).toBe('text/plain; charset=utf-8')));
 });
