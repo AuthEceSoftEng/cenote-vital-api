@@ -1,17 +1,21 @@
 version: '3.5'
 services:
   web:
+    image: napweb
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mongodb://db:27017/dbms-db
     build:
       context: ./
       dockerfile: Dockerfile
     hostname: web
+    container_name: web
     depends_on:
       - db
     ports:
       - "3000:8000"
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: mongodb://db:27017/dbms-db
+    command: /usr/local/bin/yarn start
+    #command: ping db 
     networks:
       backnet:
         aliases:
@@ -19,8 +23,11 @@ services:
   db:
     image: mongo:latest
     hostname: db
+    container_name: db
     volumes:
       - dbdata:/data/db
+    expose:
+      - 27017
     networks:
       backnet:
         aliases:
