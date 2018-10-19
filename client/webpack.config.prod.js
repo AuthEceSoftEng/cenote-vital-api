@@ -98,7 +98,7 @@ export default {
 				],
 			},
 			{
-				test: /\.(jpe?g|png|gif|ico)$/i,
+				test: /\.(jpe?g|png|gif|ico)$/,
 				use: [
 					{
 						loader: 'file-loader',

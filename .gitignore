@@ -63,3 +63,4 @@ typings/
 # Build output
 build
 dist
+client/dist

@@ -1,39 +1,20 @@
-version: '3.5'
+version: "3.6"
 services:
   web:
-    image: napweb
+    container_name: web
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    links:
+      - mongo
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=mongodb://db:27017/dbms-db
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    hostname: web
-    container_name: web
-    depends_on:
-      - db
+      - DATABASE_URL=mongodb://mongo:27017/bdms-db
+      - HOST=0.0.0.0
+    command: yarn start
+  mongo:
+    container_name: mongo
+    image: mongo
     ports:
-      - "3000:8000"
-    command: /usr/local/bin/yarn start
-    #command: ping db 
-    networks:
-      backnet:
-        aliases:
-          - nic_web
-  db:
-    image: mongo:latest
-    hostname: db
-    container_name: db
-    volumes:
-      - dbdata:/data/db
-    expose:
-      - 27017
-    networks:
-      backnet:
-        aliases:
-          - nic_db
-volumes:
-    dbdata:
-networks:
-  backnet:
-    driver: bridge
+      - "27017:27017"

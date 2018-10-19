@@ -1,3 +1,4 @@
+require('dotenv').load();
 const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongodb-session')(session);
@@ -12,6 +13,7 @@ module.exports = (app) => {
 		store: new MongoStore({
 			mongooseConnection: mongoose.connection,
 			collection: 'sessions',
+			uri: process.env.DATABASE_URL,
 		}),
 		genid: () => uuid.v4(),
 		cookie: { secure: false },
