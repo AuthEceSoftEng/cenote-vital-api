@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { pick, identity } from 'ramda';
+import { identity } from 'ramda';
 import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
 
-import { attemptLogin } from '../../actions/user';
+import { attemptLogin } from '../../../actions/user';
 
-import Box from '../Box';
-import FormInput from '../FormInput';
+import Box from '../../Box';
+import FormInput from '../../FormInput';
 
 class LoginPage extends React.Component {
 	static propTypes = { attemptLogin: PropTypes.func.isRequired };
@@ -88,7 +88,7 @@ class LoginPage extends React.Component {
 				</p>
 				<hr className="separator" />
 				<p className="control is-clearfix">
-					<button type="button" className="button is-success is-pulled-right" onClick={this.login}>Login</button>
+					<button type="button" className="button is-primary is-pulled-right" onClick={this.login}>Login</button>
 					<input type="checkbox" onChange={this.rememberMe} checked={remember} />
 					{' '}
 					{'Remember me'}
@@ -98,7 +98,6 @@ class LoginPage extends React.Component {
 	}
 }
 
-const mapStateToProps = pick([]);
 const mapDispatchToProps = dispatch => ({ attemptLogin: user => dispatch(attemptLogin(user)) });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default connect(undefined, mapDispatchToProps)(LoginPage);

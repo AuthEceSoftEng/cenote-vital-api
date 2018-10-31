@@ -54,12 +54,12 @@ export default function Navigation(props) {
 					<div className="navbar-brand-right">
 						{!auth && (
 							<Link to="/login" className="navbar-item is-hidden-desktop">
-								<h6 className="title is-6">Login</h6>
+								<Button label="Login" type="primary" />
 							</Link>
 						)}
 						{!auth && (
 							<Link to="/register" className="navbar-item is-hidden-desktop">
-								<Button label="Sign Up" type="success" />
+								<Button label="Sign Up" type="secondary" />
 							</Link>
 						)}
 						{auth && (
@@ -70,7 +70,7 @@ export default function Navigation(props) {
 								onKeyPress={toggleUserDropdown}
 							>
 								<figure className="image navbar-image is-32x32">
-									<img className="profile-img" src={user.profilePic || '/assets/images/default-profile.png'} alt="" />
+									<img className="profile-img" src={user.profilePic || require('../../assets/images/default-profile.png')} alt="" />
 								</figure>
 								<span className="dropdown-caret" />
 							</button>
@@ -99,7 +99,7 @@ export default function Navigation(props) {
 								type="button"
 							>
 								<figure className="image navbar-image is-32x32">
-									<img className="profile-img" src={user.profilePic || '/assets/images/default-profile.png'} alt="" />
+									<img className="profile-img" src={user.profilePic || require('../../assets/images/default-profile.png')} alt="" />
 								</figure>
 								<span className="dropdown-caret" />
 							</button>
@@ -109,10 +109,10 @@ export default function Navigation(props) {
 					<div className="navbar-menu">
 						<div className="navbar-end">
 							<Link to="/login" className="navbar-item">
-								<h6 className="title is-6">Login</h6>
+								<Button label="Login" type="primary" />
 							</Link>
 							<Link to="/register" className="navbar-item">
-								<Button label="Sign Up" type="success" />
+								<Button label="Sign Up" type="secondary" />
 							</Link>
 						</div>
 					</div>

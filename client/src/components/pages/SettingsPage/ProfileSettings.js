@@ -5,10 +5,10 @@ import { pick, identity, isEmpty } from 'ramda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSync } from '@fortawesome/free-solid-svg-icons';
 
-import { attemptGetUser, attemptUpdateUser } from '../../actions/user';
-import { validateName } from '../../utils/validation';
+import { attemptGetUser, attemptUpdateUser } from '../../../actions/user';
+import { validateName } from '../../../utils/validation';
 
-import Box from '../Box';
+import Box from '../../Box';
 
 class ProfileSettings extends React.Component {
 	static propTypes = {
@@ -117,7 +117,7 @@ class ProfileSettings extends React.Component {
 							<figure className="image">
 								<img
 									className="profile-img"
-									src={profilePic || '/assets/images/default-profile.png'}
+									src={profilePic || require('../../../assets/images/default-profile.png')}
 									alt="Profile"
 								/>
 							</figure>

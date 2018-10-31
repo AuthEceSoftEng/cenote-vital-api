@@ -15,15 +15,16 @@
     "url": "https://iamnapo.me"
   },
   "scripts": {
-    "build": "cd client && yarn build",
-    "clean": "concurrently \"rm -rf node_modules && rm yarn.lock & yarn\" \"cd client && yarn clean\"",
-    "dev": "concurrently \"yarn dev:server\" \"yarn dev:client\"",
-    "dev:client": "cd client && yarn open:src",
+    "build": "cd client && npm run build",
+    "clean": "concurrently \"rm -rf node_modules && npm i\" \"npm run clean --prefix=\"./client\"\"",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "npm run open:src --prefix=\"./client\"",
     "dev:server": "nodemon server",
-    "lint:client": "cd client && yarn lint",
+    "postinstall": "npm i --prefix=\"./client\"",
+    "lint:client": "npm run lint --prefix=\"./client\"",
     "lint:server": "eslint .",
-    "test:server": "jest server",
-    "start": "node server"
+    "start": "node server",
+    "test:server": "jest server"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -47,7 +48,7 @@
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
-    "mongoose": "^5.3.4",
+    "mongoose": "^5.3.7",
     "mongoose-auto-increment-reworked": "^1.2.1",
     "mongoose-immutable": "^0.0.2",
     "passport": "^0.4.0",
@@ -57,13 +58,13 @@
   },
   "devDependencies": {
     "concurrently": "^4.0.1",
-    "eslint": "^5.7.0",
+    "eslint": "^5.8.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
     "jest": "^23.6.0",
-    "nodemon": "^1.18.4",
+    "nodemon": "^1.18.5",
     "supertest": "^3.3.0"
   },
   "engines": {

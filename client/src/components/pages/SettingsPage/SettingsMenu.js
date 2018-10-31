@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { pick, identity } from 'ramda';
+import { identity } from 'ramda';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
-import { attemptLogout } from '../../actions/user';
+import { attemptLogout } from '../../../actions/user';
 
 const SettingsMenuContainer = (props) => {
 	const { pathname } = props;
@@ -37,7 +37,6 @@ const SettingsMenuContainer = (props) => {
 
 SettingsMenuContainer.propTypes = { pathname: PropTypes.string.isRequired };
 
-const mapStateToProps = pick([]);
 const mapDispatchToProps = dispatch => ({ attemptLogout: () => dispatch(attemptLogout()) });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SettingsMenuContainer);
+export default connect(undefined, mapDispatchToProps)(SettingsMenuContainer);

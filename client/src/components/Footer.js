@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { pick } from 'ramda';
 
-export const Footer = () => {
+const Footer = () => {
 	const year = new Date().getFullYear();
 
 	return (
@@ -17,6 +16,5 @@ export const Footer = () => {
 		</footer>
 	);
 };
-const mapStateToProps = pick([]);
 
-export default connect(mapStateToProps)(Footer);
+export default connect()(Footer);

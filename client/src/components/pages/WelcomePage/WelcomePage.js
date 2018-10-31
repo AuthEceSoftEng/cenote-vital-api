@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { isEmpty, pick } from 'ramda';
+import Welcome from 'react-welcome-page';
 
 class WelcomePage extends Component {
 	static propTypes = {
@@ -19,12 +20,21 @@ class WelcomePage extends Component {
 
 	render() {
 		return (
-			<div className="welcome-page page">
-				<div className="section">
-					<div className="container">
-						<h1 className="title is-1">Welcome Page!</h1>
-					</div>
-				</div>
+			<div className="welcome-page section">
+				<Welcome
+					loopDuration={3000}
+					data={
+						[
+							{
+								backgroundColor: 'rgb(229, 243, 251)',
+								textColor: '#0A6C8D',
+								text: 'BDMS',
+								image: require('../../../assets/images/logo.png'),
+							},
+						]
+					}
+				/>
+				<h1 className="title is-1">Welcome to BDMS Dashboard!</h1>
 			</div>
 		);
 	}

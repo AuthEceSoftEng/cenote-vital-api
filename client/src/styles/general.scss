@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:400,700');
+
+* {
+	font-family: 'Merriweather', sans-serif;
+}
+
 html {
   background-color: $whitesmoke;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 a {
@@ -31,10 +37,6 @@ a {
   &.fa.is-danger {
     color: $danger;
   }
-}
-
-.field.has-help {
-  height: 67px;
 }
 
 .card-footer-item {

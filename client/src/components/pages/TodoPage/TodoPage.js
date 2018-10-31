@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { isEmpty, pick } from 'ramda';
 
-import { attemptGetTodos } from '../actions/todos';
+import { attemptGetTodos } from '../../../actions/todos';
 
-import AddTodo from './AddTodo';
-import TodoList from './TodoList';
+import AddTodo from '../../AddTodo';
+import TodoList from '../../TodoList';
 
 class TodoPageContainer extends React.Component {
 	static propTypes = {

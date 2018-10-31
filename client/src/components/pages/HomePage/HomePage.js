@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { pick, isEmpty } from 'ramda';
 
+import Clock from '../../Clock';
+
 class HomePageContainer extends React.Component {
 	static propTypes = {
 		user: PropTypes.shape({}).isRequired,
@@ -18,11 +20,11 @@ class HomePageContainer extends React.Component {
 	}
 
 	render() {
+		const { user } = this.props;
 		return (
 			<div className="home-page section">
-				<div className="container">
-					<h1 className="title is-1">Home Page</h1>
-				</div>
+				<Clock />
+				<h1 className="title is-1">{`Welcome, ${user.username}!`}</h1>
 			</div>
 		);
 	}

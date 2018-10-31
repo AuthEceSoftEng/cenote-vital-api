@@ -6,18 +6,9 @@ import { hot } from 'react-hot-loader';
 import Notifications from 'react-notification-system-redux';
 import { pick } from 'ramda';
 
-import WelcomePage from './WelcomePage';
-import LoginPage from './LoginPage';
-import RegisterPage from './RegisterPage';
-import SettingsPage from './SettingsPage';
-import RecoveryPage from './RecoveryPage';
-import TodoPage from './TodoPage';
-import NotFoundPage from './NotFoundPage';
-
+import { WelcomePage, RegisterPage, LoginPage, HomePage, NotFoundPage, TodoPage, RecoveryPage, SettingsPage } from './pages';
 import Navigation from './Navigation';
-import HomePage from './HomePage';
-
-import Bottom from './Footer';
+import Footer from './Footer';
 
 // eslint-disable-next-line
 class App extends React.Component {
@@ -45,7 +36,7 @@ class App extends React.Component {
 						<Route path="*" component={NotFoundPage} />
 					</Switch>
 				</div>
-				<Bottom />
+				<Footer />
 			</div>
 		);
 	}

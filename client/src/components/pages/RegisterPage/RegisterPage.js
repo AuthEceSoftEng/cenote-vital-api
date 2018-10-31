@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { pick, identity } from 'ramda';
+import { identity } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptRegister } from '../../actions/user';
-import { postCheckUsername } from '../../api/users';
-import { validatePassword, validateUsername } from '../../utils/validation';
+import { attemptRegister } from '../../../actions/user';
+import { postCheckUsername } from '../../../api/users';
+import { validatePassword, validateUsername } from '../../../utils/validation';
 
-import Box from '../Box';
-import Button from '../Button';
+import Box from '../../Box';
+import Button from '../../Button';
 
 class RegisterPage extends React.Component {
 	static propTypes = { attemptRegister: PropTypes.func.isRequired };
@@ -171,7 +171,7 @@ class RegisterPage extends React.Component {
 
 				<div className="has-text-right">
 					<Button
-						type="success"
+						type="secondary"
 						disabled={!passwordValid || !usernameAvailable}
 						onClick={this.register}
 						label="Create Account"
@@ -182,7 +182,6 @@ class RegisterPage extends React.Component {
 	}
 }
 
-const mapStateToProps = pick([]);
 const mapDispatchToProps = dispatch => ({ attemptRegister: newUser => dispatch(attemptRegister(newUser)) });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);
+export default connect(undefined, mapDispatchToProps)(RegisterPage);
