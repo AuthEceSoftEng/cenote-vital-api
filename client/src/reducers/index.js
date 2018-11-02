@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
 import { reducer as alerts } from 'react-notification-system-redux';
 import user from './user';
-import todos from './todos';
+import projects from './projects';
 
 const rootReducer = combineReducers({
 	alerts,
 	user,
-	todos,
+	projects,
 });
 
 export default rootReducer;

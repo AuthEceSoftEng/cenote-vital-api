@@ -1,3 +1,4 @@
+@import './normalize.css';
 @import 'bulma-config';
 @import '../../node_modules/antd/dist/antd.css';
 @import '../../node_modules/bulma/bulma.sass';
@@ -16,5 +17,6 @@
 @import 'register';
 
 @import 'home';
-@import 'todo';
+@import 'project';
 @import 'settings';
+@import 'projects';

@@ -1,5 +1,5 @@
 const User = require('./User');
-const Todo = require('./Todo');
+const Project = require('./Project');
 const Session = require('./Session');
 
-module.exports = { User, Todo, Session };
+module.exports = { User, Project, Session };

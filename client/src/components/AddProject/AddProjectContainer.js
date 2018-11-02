@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import AddTodo from './AddTodo';
+import AddProject from './AddProject';
 
-export default class AddTodoContainer extends React.Component {
-	static propTypes = { addTodo: PropTypes.func.isRequired };
+export default class AddProjectContainer extends React.Component {
+	static propTypes = { addProject: PropTypes.func.isRequired };
 
 	constructor(props) {
 		super(props);
@@ -23,21 +23,21 @@ export default class AddTodoContainer extends React.Component {
 
 	keypress = (e) => {
 		if (e.key === 'Enter') {
-			this.addTodo();
+			this.addProject();
 		}
 	}
 
-	addTodo = () => {
+	addProject = () => {
 		const { text } = this.state;
-		const { addTodo } = this.props;
+		const { addProject } = this.props;
 		if (text) {
-			addTodo(text);
+			addProject(text);
 			this.setState({ text: '' });
 		}
 	}
 
 	render() {
 		const { text } = this.state;
-		return (<AddTodo text={text} updateText={this.updateText} addTodo={this.addTodo} />);
+		return (<AddProject text={text} updateText={this.updateText} addProject={this.addProject} />);
 	}
 }

@@ -1,0 +1,93 @@
+$grey400: #bdbdbd;
+$grey700: #616161;
+$grey800: #424242;
+$grey: #303030;
+$white: #ffffff;
+$cyan500: #00bcd4;
+$pinkA200: #ff4081;
+$red500: #f44336;
+$amber500: #ffc107;
+$green500: #4caf50;
+$orange500: #ff9800;
+$lime500: #cddc39;
+
+.dashboard {
+	align-items: center;
+  background-color: $grey;
+  color: $white;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  min-height: 90vh;
+  padding: 1em;
+}
+
+.widget {
+	width: 20em;
+	height: 20em;
+  align-items: center;
+  background-color: $grey800;
+  border: 1px solid $grey700;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 1em;
+  padding: 1em;
+}
+
+.time-item {
+	font-size: 4em;
+	text-align: center;
+	color: black;
+}
+
+.date-item {
+	font-size: 1.5em;
+	text-align: center;
+	color: black;
+}
+
+.counter {
+	font-size: 4em;
+  color: $pinkA200;
+}
+
+.text {
+	fill: $white;
+  font-size: 4em;
+  text-anchor: middle;
+}
+
+.svg {
+	fill: transparent;
+	margin: auto;
+	width: 14em;
+	height: 14em;
+}
+
+.circle {
+	stroke-linecap: round;
+  stroke-width: 10;
+  transform: translate(100px, 100px) rotate(-89.9deg);
+  transition: stroke-dashoffset 0.3s linear;
+
+	&.background {
+    stroke: black;
+  }
+
+  &.progress {
+    stroke: $cyan500;
+  }
+}
+
+table {
+	border-spacing: 0.75em;
+
+	> th {
+		text-align: right;
+	}
+
+	> td {
+		text-align: left;
+	}
+}

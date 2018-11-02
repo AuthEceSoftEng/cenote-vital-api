@@ -2,18 +2,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { distanceInWordsToNow } from 'date-fns';
 
-import Todo from './Todo';
+import Project from './Project';
 
-export default class TodoContainer extends Component {
+export default class ProjectContainer extends Component {
 	static propTypes = {
+		projectId: PropTypes.string.isRequired,
 		id: PropTypes.string.isRequired,
 		text: PropTypes.string.isRequired,
 		completed: PropTypes.bool.isRequired,
 		createdAt: PropTypes.string.isRequired,
 		updatedAt: PropTypes.string,
-		toggleCompleteTodo: PropTypes.func.isRequired,
-		updateTodo: PropTypes.func.isRequired,
-		deleteTodo: PropTypes.func.isRequired,
+		openProjectInfo: PropTypes.func.isRequired,
+		updateProject: PropTypes.func.isRequired,
+		deleteProject: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = { updatedAt: undefined };
@@ -49,43 +50,42 @@ export default class TodoContainer extends Component {
 
 	fromNow = date => distanceInWordsToNow(date, { addSuffix: true })
 
-	toggleCompleteTodo = () => {
-		const { id, toggleCompleteTodo } = this.props;
-		toggleCompleteTodo(id);
+	openProjectInfo = () => {
+		const { projectId, openProjectInfo } = this.props;
+		openProjectInfo(projectId);
 	}
 
 	updateText = e => this.setState({ text: e.target.value })
 
-	editTodo = () => this.setState({ edit: true })
+	editProject = () => this.setState({ edit: true })
 
 	cancelEdit = () => {
 		const { text } = this.props;
 		this.setState({ text, edit: false });
 	}
 
-	deleteTodo = () => {
-		const { id, deleteTodo } = this.props;
-		deleteTodo(id);
+	deleteProject = () => {
+		const { id, deleteProject } = this.props;
+		deleteProject(id);
 	}
 
 	openModal = () => this.setState({ confirm: true })
 
 	closeModal = () => this.setState({ confirm: false })
 
-	updateTodo = () => {
+	updateProject = () => {
 		const { text } = this.state;
-		const { updateTodo, id } = this.props;
+		const { updateProject, id } = this.props;
 		if (text) {
-			updateTodo({ id, text }).then(() => this.setState({ edit: false }));
+			updateProject({ id, text }).then(() => this.setState({ edit: false }));
 		}
 	}
 
 	render() {
 		const { updatedAt, completed, text } = this.props;
 		const { edit, confirm, createdMessage, updatedMessage, text: currentText } = this.state;
-
 		return (
-			<Todo
+			<Project
 				completed={completed}
 				confirm={confirm}
 				edit={edit}
@@ -94,12 +94,12 @@ export default class TodoContainer extends Component {
 				text={text}
 				createdMessage={createdMessage}
 				updatedMessage={updatedMessage}
-				toggleCompleteTodo={this.toggleCompleteTodo}
+				openProjectInfo={this.openProjectInfo}
 				updateText={this.updateText}
-				updateTodo={this.updateTodo}
-				editTodo={this.editTodo}
+				updateProject={this.updateProject}
+				editProject={this.editProject}
 				cancelEdit={this.cancelEdit}
-				deleteTodo={this.deleteTodo}
+				deleteProject={this.deleteProject}
 				openModal={this.openModal}
 				closeModal={this.closeModal}
 			/>

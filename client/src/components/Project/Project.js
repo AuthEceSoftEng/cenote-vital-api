@@ -1,26 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { faSquare, faCheckSquare } from '@fortawesome/free-regular-svg-icons';
+import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faBan, faPencilAlt, faSave } from '@fortawesome/free-solid-svg-icons';
 
 import ConfirmModal from '../ConfirmModal';
 
-export default function Todo(props) {
+export default function Project(props) {
 	const {
 		completed, edit, confirm, text, currentText, updated, createdMessage, updatedMessage,
-		toggleCompleteTodo, updateText, updateTodo, editTodo, cancelEdit, deleteTodo,
+		openProjectInfo, updateText, updateProject, editProject, cancelEdit, deleteProject,
 		openModal, closeModal,
 	} = props;
 
 	return (
-		<li className="todo box">
+		<li className="project box">
 			<article className="media">
 				<figure className="media-left">
-					<span className="icon" role="button" tabIndex={0} onClick={toggleCompleteTodo} onKeyPress={toggleCompleteTodo}>
+					<span className="icon" role="button" tabIndex={0} onClick={openProjectInfo} onKeyPress={openProjectInfo}>
 						{completed
-							? <FontAwesomeIcon icon={faCheckSquare} size="lg" />
-							: <FontAwesomeIcon icon={faSquare} size="lg" />
+							? <FontAwesomeIcon icon={faFolderOpen} size="lg" />
+							: <FontAwesomeIcon icon={faFolderOpen} size="lg" />
 						}
 					</span>
 				</figure>
@@ -54,11 +54,11 @@ export default function Todo(props) {
 						</div>
 						<div className="level-right">
 							{edit ? (
-								<span className="icon space-right" role="button" tabIndex={0} onClick={updateTodo} onKeyPress={updateTodo}>
+								<span className="icon space-right" role="button" tabIndex={0} onClick={updateProject} onKeyPress={updateProject}>
 									<FontAwesomeIcon icon={faSave} size="lg" />
 								</span>
 							) : (
-								<span className="icon space-right" role="button" tabIndex={0} onClick={editTodo} onKeyPress={editTodo}>
+								<span className="icon space-right" role="button" tabIndex={0} onClick={editProject} onKeyPress={editProject}>
 									<FontAwesomeIcon icon={faPencilAlt} size="lg" />
 								</span>
 							)}
@@ -78,13 +78,13 @@ export default function Todo(props) {
 			<ConfirmModal
 				confirm={confirm}
 				closeModal={closeModal}
-				deleteTodo={deleteTodo}
+				deleteProject={deleteProject}
 			/>
 		</li>
 	);
 }
 
-Todo.propTypes = {
+Project.propTypes = {
 	completed: PropTypes.bool.isRequired,
 	confirm: PropTypes.bool.isRequired,
 	edit: PropTypes.bool.isRequired,
@@ -95,12 +95,12 @@ Todo.propTypes = {
 	createdMessage: PropTypes.string.isRequired,
 	updatedMessage: PropTypes.string.isRequired,
 
-	toggleCompleteTodo: PropTypes.func.isRequired,
+	openProjectInfo: PropTypes.func.isRequired,
 	updateText: PropTypes.func.isRequired,
-	updateTodo: PropTypes.func.isRequired,
-	editTodo: PropTypes.func.isRequired,
+	updateProject: PropTypes.func.isRequired,
+	editProject: PropTypes.func.isRequired,
 	cancelEdit: PropTypes.func.isRequired,
-	deleteTodo: PropTypes.func.isRequired,
+	deleteProject: PropTypes.func.isRequired,
 	openModal: PropTypes.func.isRequired,
 	closeModal: PropTypes.func.isRequired,
 };

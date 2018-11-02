@@ -52,7 +52,7 @@ class UserDropdown extends Component {
 					</li>
 					<hr className="dropdown-separator" />
 					<li className="dropdown-item">
-						<Link to="/todo" onClick={closeDropdown}>Todo List</Link>
+						<Link to="/project" onClick={closeDropdown}>Project List</Link>
 					</li>
 					<li className="dropdown-item">
 						<Link to="/settings" onClick={closeDropdown}>Settings</Link>

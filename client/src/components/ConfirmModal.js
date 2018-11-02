@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import ConfirmDeleteTodo from './ConfirmDeleteTodo';
+import ConfirmDeleteProject from './ConfirmDeleteProject';
 
 export default function ConfirmModal(props) {
-	const { confirm, closeModal, deleteTodo } = props;
+	const { confirm, closeModal, deleteProject } = props;
 	const modalClasses = classNames({
 		modal: true,
 		'confirm-modal': true,
@@ -16,7 +16,7 @@ export default function ConfirmModal(props) {
 		<div className={modalClasses}>
 			<div className="modal-background" />
 			<div className="modal-content">
-				<ConfirmDeleteTodo closeModal={closeModal} deleteTodo={deleteTodo} />
+				<ConfirmDeleteProject closeModal={closeModal} deleteProject={deleteProject} />
 			</div>
 			<button
 				type="button"
@@ -31,5 +31,5 @@ export default function ConfirmModal(props) {
 ConfirmModal.propTypes = {
 	confirm: PropTypes.bool.isRequired,
 	closeModal: PropTypes.func.isRequired,
-	deleteTodo: PropTypes.func.isRequired,
+	deleteProject: PropTypes.func.isRequired,
 };

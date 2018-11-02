@@ -10,17 +10,9 @@ import UserDropdown from '../UserDropdown';
 export default function Navigation(props) {
 	const { user, auth, pathname, toggleUserDropdown, closeUserDropdown, userDropdownOpen } = props;
 
-	const isHome = (pathname.length === 5)
-		? pathname === '/home'
-		: slice(0, 6, pathname) === '/home/';
-
-	const isTodo = (pathname.length === 5)
-		? pathname === '/todo'
-		: slice(0, 6, pathname) === '/todo/';
-
-	const isSettings = (pathname.length === 9)
-		? pathname === '/settings'
-		: slice(0, 10, pathname) === '/settings/';
+	const isHome = (pathname.length === 5) ? pathname === '/home' : slice(0, 6, pathname) === '/home/';
+	const isSettings = (pathname.length === 9) ? pathname === '/settings' : slice(0, 10, pathname) === '/settings/';
+	const isProjects = (pathname.length === 9) ? pathname === '/projects' : slice(0, 10, pathname) === '/projects/';
 
 	const homeItemClasses = classNames({
 		'navbar-item': true,
@@ -29,11 +21,11 @@ export default function Navigation(props) {
 		'is-active': isHome,
 	});
 
-	const todoItemClasses = classNames({
+	const projectsItemClasses = classNames({
 		'navbar-item': true,
 		'is-tab': true,
 		'is-hidden-mobile': true,
-		'is-active': isTodo,
+		'is-active': isProjects,
 	});
 
 	const settingsItemClasses = classNames({
@@ -46,7 +38,6 @@ export default function Navigation(props) {
 	return (
 		<nav className="navbar is-fixed-top has-shadow" role="navigation">
 			<div className="container">
-
 				<div className="navbar-brand">
 					<Link to={auth ? '/home' : '/'} className="navbar-item" aria-label="main navigation">
 						<h3 className="title is-3 logo">BDMS Dashboard</h3>
@@ -84,8 +75,8 @@ export default function Navigation(props) {
 							<Link to="/home" className={homeItemClasses}>
 								<h6 className="title is-6">Home</h6>
 							</Link>
-							<Link to="/todo" className={todoItemClasses}>
-								<h6 className="title is-6">Todo</h6>
+							<Link to="/projects" className={projectsItemClasses}>
+								<h6 className="title is-6">Projects</h6>
 							</Link>
 							<Link to="/settings" className={settingsItemClasses}>
 								<h6 className="title is-6">Settings</h6>
