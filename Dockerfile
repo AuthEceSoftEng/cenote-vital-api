@@ -4,5 +4,5 @@ WORKDIR /app
 
 COPY . .
 RUN yarn
-RUN cd client && yarn
-RUN yarn build
+RUN cd client && npm i
+RUN npm run build

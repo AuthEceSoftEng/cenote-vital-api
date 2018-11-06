@@ -5,10 +5,8 @@ import { Link } from 'react-router-dom';
 import { identity } from 'ramda';
 import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
 
-import { attemptLogin } from '../../../actions/user';
-
-import Box from '../../Box';
-import FormInput from '../../FormInput';
+import { attemptLogin } from '../../actions/user';
+import { Box, FormInput } from '../../components';
 
 class LoginPage extends React.Component {
 	static propTypes = { attemptLogin: PropTypes.func.isRequired };

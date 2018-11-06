@@ -7,7 +7,7 @@
 * Install dependencies:
 
 ```bash
- $ yarn
+ $ npm i
  ```
 
 * Start mongo deamon:
@@ -19,13 +19,13 @@
 ### Development
 
 ```bash
-$ yarn dev
+$ npm run dev
 ```
 
 ### Production
 
 ```bash
-$ yarn prod
+$ npm run build && npm start
 ```
 
 ### Docker
@@ -38,9 +38,9 @@ $ docker-compose up
 #### Other Commands
 
 ```bash
-yarn build
-yarn test
-yarn test:verbose
-yarn lint
-yarn lint:fix
+npm run clean
+npm run test
+npm run test:verbose
+npm run lint
+npm run lint:fix
 ```

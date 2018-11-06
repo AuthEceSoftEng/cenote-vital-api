@@ -29,7 +29,7 @@ class WelcomePage extends Component {
 								backgroundColor: 'rgb(229, 243, 251)',
 								textColor: '#0A6C8D',
 								text: 'BDMS',
-								image: require('../../../assets/images/logo.png'),
+								image: require('../../assets/images/logo.png'),
 							},
 						]
 					}

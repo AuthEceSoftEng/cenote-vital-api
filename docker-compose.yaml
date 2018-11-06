@@ -12,7 +12,7 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=mongodb://mongo:27017/bdms-db
       - HOST=0.0.0.0
-    command: yarn start
+    command: npm start
   mongo:
     container_name: mongo
     image: mongo

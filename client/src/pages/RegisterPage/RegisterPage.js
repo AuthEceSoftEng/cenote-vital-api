@@ -5,12 +5,10 @@ import { Link } from 'react-router-dom';
 import { identity } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptRegister } from '../../../actions/user';
-import { postCheckUsername } from '../../../api/users';
-import { validatePassword, validateUsername } from '../../../utils/validation';
-
-import Box from '../../Box';
-import Button from '../../Button';
+import { attemptRegister } from '../../actions/user';
+import { postCheckUsername } from '../../api/users';
+import { validatePassword, validateUsername } from '../../utils/validation';
+import { Box, Button } from '../../components';
 
 class RegisterPage extends React.Component {
 	static propTypes = { attemptRegister: PropTypes.func.isRequired };

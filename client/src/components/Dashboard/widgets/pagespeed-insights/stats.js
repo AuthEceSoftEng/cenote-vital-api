@@ -14,7 +14,19 @@ export default class PageSpeedInsightsStats extends React.Component {
 		title: 'PageSpeed Stats',
 	}
 
-	state = { stats: {} }
+	state = {
+		stats: {
+			cssCount: '-',
+			cssSize: '-',
+			htmlSize: '-',
+			imageSize: '-',
+			javascriptCount: '-',
+			javascriptSize: '-',
+			requestCount: '-',
+			requestSize: '-',
+			otherSize: '-',
+		},
+	}
 
 	componentDidMount() {
 		this.fetchInformation();

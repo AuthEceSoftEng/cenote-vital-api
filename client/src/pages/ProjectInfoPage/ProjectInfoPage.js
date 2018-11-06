@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { pick, isEmpty } from 'ramda';
 
-import Clock from '../../Clock';
+import { Dashboard } from '../../components';
 
-class HomePageContainer extends React.Component {
+class ProjectInfoPage extends React.Component {
 	static propTypes = {
 		user: PropTypes.shape({}).isRequired,
+		projects: PropTypes.array.isRequired,
 		pushToLogin: PropTypes.func.isRequired,
 	}
 
@@ -20,17 +21,18 @@ class HomePageContainer extends React.Component {
 	}
 
 	render() {
-		const { user } = this.props;
+		const { projects } = this.props;
+		const [project] = projects;
 		return (
 			<div className="home-page section">
-				<Clock />
-				<h1 className="title is-1">{`Welcome, ${user.username}!`}</h1>
+				<h1 className="title is-1">{project.text}</h1>
+				<Dashboard />
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['user', 'projects']);
 const mapDispatchToProps = dispatch => ({ pushToLogin: () => dispatch(push('/login')) });
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomePageContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectInfoPage);

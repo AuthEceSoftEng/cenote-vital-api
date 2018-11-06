@@ -4,10 +4,8 @@ import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { isEmpty, pick } from 'ramda';
 
-import { attemptGetProjects } from '../../../actions/projects';
-
-import AddProject from '../../AddProject';
-import ProjectList from '../../ProjectList';
+import { attemptGetProjects } from '../../actions/projects';
+import { AddProject, ProjectList } from '../../components';
 
 class ProjectPageContainer extends React.Component {
 	static propTypes = {
