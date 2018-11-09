@@ -8,11 +8,11 @@ import { Link } from 'react-router-dom';
 import { attemptLogout } from '../../actions/user';
 
 const SettingsMenuContainer = (props) => {
-	const { pathname } = props;
+	const { pathname, attemptLogout: attemptlogout } = props;
 
 	const profileClasses = classNames({ 'is-active': pathname.includes('profile') || pathname === '/settings' || pathname === '/settings/' });
 	const accountClasses = classNames({ 'is-active': pathname.includes('account') });
-	const logout = () => attemptLogout().catch(identity);
+	const logout = () => attemptlogout().catch(identity);
 
 	return (
 		<aside className="settings-menu menu box">
@@ -35,7 +35,7 @@ const SettingsMenuContainer = (props) => {
 	);
 };
 
-SettingsMenuContainer.propTypes = { pathname: PropTypes.string.isRequired };
+SettingsMenuContainer.propTypes = { pathname: PropTypes.string.isRequired, attemptLogout: PropTypes.func.isRequired };
 
 const mapDispatchToProps = dispatch => ({ attemptLogout: () => dispatch(attemptLogout()) });
 

@@ -6,8 +6,8 @@ import { identity } from 'ramda';
 import classNames from 'classnames';
 
 import { attemptRegister } from '../../actions/user';
-import { postCheckUsername } from '../../api/users';
-import { validatePassword, validateUsername } from '../../utils/validation';
+import { postCheckUsername, postCheckEmail } from '../../api/users';
+import { validatePassword, validateUsername, validateEmail } from '../../utils/validation';
 import { Box, Button } from '../../components';
 
 class RegisterPage extends React.Component {
@@ -18,8 +18,11 @@ class RegisterPage extends React.Component {
 		this.state = {
 			username: '',
 			usernameMessage: '',
+			email: '',
+			emailMessage: '',
 			password: '',
 			passwordMessage: '',
+			emailAvailable: false,
 			usernameAvailable: false,
 			passwordValid: false,
 		};
@@ -43,11 +46,18 @@ class RegisterPage extends React.Component {
 		this.validatePassword(username, password);
 	}
 
+	updateEmail = email => this.setState({ email });
+
 	updatePassword = password => this.setState({ password })
 
 	handleUsernameChange = (e) => {
 		this.updateUsername(e.target.value);
 		this.validateUsername(e.target.value);
+	}
+
+	handleEmailChange = (e) => {
+		this.updateEmail(e.target.value);
+		this.validateEmail(e.target.value);
 	}
 
 	handlePasswordChange = (e) => {
@@ -72,6 +82,22 @@ class RegisterPage extends React.Component {
 		}
 	}
 
+	validateEmail = (email) => {
+		const { valid, message } = validateEmail(email);
+
+		if (valid) {
+			this.setState({ emailMessage: 'Checking email...', emailAvailable: false },
+				() => postCheckEmail(email)
+					.then(res => this.setState({
+						emailAvailable: res.available,
+						emailMessage: res.message,
+					}))
+					.catch(identity));
+		} else {
+			this.setState({ emailAvailable: valid, emailMessage: message });
+		}
+	}
+
 	validatePassword = (username, password) => {
 		const { valid, message } = validatePassword(username, password);
 
@@ -79,16 +105,26 @@ class RegisterPage extends React.Component {
 	}
 
 	register = () => {
-		const { usernameAvailable, username, password, passwordValid } = this.state;
+		const { usernameAvailable, username, emailAvailable, email, password, passwordValid } = this.state;
 		const { attemptRegister: attemptregister } = this.props;
-		if (usernameAvailable && passwordValid) {
-			const newUser = { username, password };
+		if (usernameAvailable && emailAvailable && passwordValid) {
+			const newUser = { username, email, password };
 			attemptregister(newUser).catch(identity);
 		}
 	}
 
 	render() {
-		const { username, usernameMessage, usernameAvailable, password, passwordMessage, passwordValid } = this.state;
+		const {
+			username,
+			usernameMessage,
+			usernameAvailable,
+			email,
+			emailMessage,
+			emailAvailable,
+			password,
+			passwordMessage,
+			passwordValid,
+		} = this.state;
 		const usernameIconClasses = classNames({
 			fa: true,
 			'fa-check': usernameAvailable,
@@ -98,6 +134,16 @@ class RegisterPage extends React.Component {
 		});
 		const usernameInputClasses = classNames({ input: true, 'is-success': usernameAvailable, 'is-danger': username && !usernameAvailable });
 		const usernameHelpClasses = classNames({ help: true, 'is-success': usernameAvailable, 'is-danger': username && !usernameAvailable });
+
+		const emailIconClasses = classNames({
+			fa: true,
+			'fa-check': emailAvailable,
+			'fa-warning': email && !emailAvailable,
+			'is-success': emailAvailable,
+			'is-danger': email && !emailAvailable,
+		});
+		const emailInputClasses = classNames({ input: true, 'is-success': emailAvailable, 'is-danger': email && !emailAvailable });
+		const emailHelpClasses = classNames({ help: true, 'is-success': emailAvailable, 'is-danger': email && !emailAvailable });
 
 		const passwordIconClasses = classNames({
 			fa: true,
@@ -117,6 +163,29 @@ class RegisterPage extends React.Component {
 					{'Already a member? '}
 					<Link to="/login">Login</Link>
 				</p>
+				<div className="field">
+					<p className="control has-icons-right">
+						<label htmlFor="email" className="label">
+							{'Email'}
+							<input
+								id="email"
+								className={emailInputClasses}
+								placeholder="Email"
+								type="email"
+								value={email}
+								onChange={this.handleEmailChange}
+							/>
+						</label>
+						<span className="icon is-small is-right">
+							<i className={emailIconClasses} />
+						</span>
+					</p>
+					{email && (
+						<p className={emailHelpClasses}>
+							{emailMessage}
+						</p>
+					)}
+				</div>
 				<div className="field">
 					<p className="control has-icons-right">
 						<label htmlFor="username" className="label">
@@ -140,7 +209,6 @@ class RegisterPage extends React.Component {
 						</p>
 					)}
 				</div>
-
 				<div className="field">
 					<p className="control has-icons-right">
 						<label htmlFor="password" className="label">
@@ -170,7 +238,7 @@ class RegisterPage extends React.Component {
 				<div className="has-text-right">
 					<Button
 						type="secondary"
-						disabled={!passwordValid || !usernameAvailable}
+						disabled={!passwordValid || !usernameAvailable || !emailAvailable}
 						onClick={this.register}
 						label="Create Account"
 					/>

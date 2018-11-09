@@ -7,3 +7,5 @@ export { default as ProjectList } from './ProjectList';
 export { default as Button } from './Button';
 export { default as ChangeUsername } from './ChangeUsername';
 export { default as ChangePassword } from './ChangePassword';
+export { default as ChangeEmail } from './ChangeEmail';
+export { default as ResetPassword } from './ResetPassword';

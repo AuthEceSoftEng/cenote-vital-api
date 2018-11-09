@@ -10,12 +10,15 @@ const userSchema = new mongoose.Schema({
 	},
 	username_case: { type: String, required: true },
 	password: { type: String, required: true },
+	email: { type: String, required: true },
 	profile_pic: { type: String },
 	first_name: { type: String, maxlength: 20 },
 	last_name: { type: String, maxlength: 20 },
 	bio: { type: String, maxlength: 240 },
 	created_at: { type: Date, default: Date.now, immutable: true },
 	updated_at: { type: Date },
+	resetPasswordToken: String,
+	resetPasswordExpires: Date,
 });
 
 MongooseAutoIncrementID.initialise('counters');
@@ -42,6 +45,11 @@ userSchema.virtual('initials').get(() => (this.first_name && this.last_name && `
 userSchema.methods.validPassword = function validPassword(password) {
 	return bcrypt.compareSync(password, this.password);
 };
+
+userSchema.methods.validEmail = function validEmail(email) {
+	return email === this.email;
+};
+
 userSchema.methods.hashPassword = function hashPassword() {
 	return new Promise((resolve, reject) => {
 		bcrypt.genSalt(10, (err1, salt) => {

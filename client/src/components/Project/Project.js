@@ -32,11 +32,13 @@ export default function Project(props) {
 							</small>
 						</p>
 						{edit ? (
-							<textarea
-								className="textarea"
-								value={currentText}
-								onChange={updateText}
-							/>
+							<form onSubmit={(evt) => {
+								updateProject();
+								evt.preventDefault();
+							}}
+							>
+								<input className="input" type="text" value={currentText} onChange={updateText} />
+							</form>
 						) : (
 							<p>
 								{text}
