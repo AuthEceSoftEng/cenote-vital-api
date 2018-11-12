@@ -3,16 +3,16 @@ import { findIndex, propEq } from 'ramda';
 
 import { SET_PROJECTS, ADD_PROJECT, OPEN_PROJECT_INFO, UPDATE_PROJECT, REMOVE_PROJECT, LOGOUT_USER } from '../constants/actionTypes';
 
-export function project(state = { completed: false }, action) {
+export function project(state = { }, action) {
 	switch (action.type) {
 	case (ADD_PROJECT):
 		return update(state, {
-			id: { $set: action.id },
+			projectId: { $set: action.projectId },
 			text: { $set: action.text },
 			createdAt: { $set: action.createdAt },
 		});
 	case (OPEN_PROJECT_INFO):
-		return update(state, { completed: { $apply: x => !x } });
+		return state;
 	case (UPDATE_PROJECT):
 		return update(state, {
 			text: { $set: action.text },

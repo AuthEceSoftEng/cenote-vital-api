@@ -31,30 +31,23 @@ router.post('/', requireAuth, (req, res) => {
 	});
 });
 
-router.put('/complete', requireAuth, (req, res) => {
-	Project.findOne({ project_id: req.body.project_id }, { __v: 0, user: 0 }, (err, project) => {
+router.post('/project', requireAuth, (req, res) => {
+	Project.findOne({ projectId: req.body.projectId }, { __v: 0, user: 0 }, (err, project) => {
 		if (err) {
 			res.status(400).send({ message: 'Toggle project failed', err });
 		} else {
-			project.completed = !project.completed;
-			project.save((err2, savedProject) => {
-				if (err2) {
-					res.status(400).send({ message: 'Toggle project failed', err });
-				} else {
-					res.send({ message: 'Toggled complete project successfully', project: savedProject.hide() });
-				}
-			});
+			res.send({ message: 'Toggled complete project successfully', project: project.hide() });
 		}
 	});
 });
 
 router.put('/', requireAuth, (req, res) => {
-	Project.findById(req.body.id, { __v: 0, user: 0 }, (err, project) => {
+	Project.findOne({ projectId: req.body.projectId }, { __v: 0, user: 0 }, (err, project) => {
 		if (err) {
 			res.status(400).send({ message: 'Update project failed', err });
 		} else {
 			project.text = req.body.text;
-			project.updated_at = Date.now();
+			project.updatedAt = Date.now();
 			project.save((err2, savedProject) => {
 				if (err2) {
 					res.status(400).send({ message: 'Update project failed', err });
@@ -67,11 +60,12 @@ router.put('/', requireAuth, (req, res) => {
 });
 
 router.delete('/', requireAuth, (req, res) => {
-	Project.findByIdAndRemove(req.body.id, (err) => {
+	const { projectId } = req.body;
+	Project.findOneAndRemove({ projectId }, (err) => {
 		if (err) {
 			res.status(400).send({ message: 'Delete project failed', err });
 		} else {
-			res.send({ message: 'Project successfully delete' });
+			res.send({ message: 'Project successfully deleted' });
 		}
 	});
 });

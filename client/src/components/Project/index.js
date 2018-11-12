@@ -6,7 +6,7 @@ import ProjectContainer from './ProjectContainer';
 const mapDispatchToProps = dispatch => ({
 	openProjectInfo: projectId => dispatch(attemptOpenProjectInfo(projectId)),
 	updateProject: (text, id) => dispatch(attemptUpdateProject(text, id)),
-	deleteProject: id => dispatch(attemptDeleteProject(id)),
+	deleteProject: projectId => dispatch(attemptDeleteProject(projectId)),
 });
 
 export default connect(undefined, mapDispatchToProps)(ProjectContainer);

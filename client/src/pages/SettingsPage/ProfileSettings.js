@@ -75,9 +75,9 @@ class ProfileSettings extends React.Component {
 		const { firstNameEdited, lastNameEdited, profilePicEdited, bioEdited, firstName, lastName, profilePic, bio } = this.state;
 		const updatedUser = {};
 
-		if (firstNameEdited) { updatedUser.first_name = firstName; }
-		if (lastNameEdited) { updatedUser.last_name = lastName; }
-		if (profilePicEdited) { updatedUser.profile_pic = profilePic; }
+		if (firstNameEdited) { updatedUser.firstName = firstName; }
+		if (lastNameEdited) { updatedUser.lastName = lastName; }
+		if (profilePicEdited) { updatedUser.profilePic = profilePic; }
 		if (bioEdited) { updatedUser.bio = bio; }
 
 		if (!isEmpty(updatedUser)) {

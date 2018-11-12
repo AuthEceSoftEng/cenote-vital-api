@@ -8,15 +8,15 @@ const userSchema = new mongoose.Schema({
 	username: {
 		type: String, lowercase: true, required: true, unique: true, immutable: true,
 	},
-	username_case: { type: String, required: true },
+	usernameCase: { type: String, required: true },
 	password: { type: String, required: true },
 	email: { type: String, required: true },
-	profile_pic: { type: String },
-	first_name: { type: String, maxlength: 20 },
-	last_name: { type: String, maxlength: 20 },
+	profilePic: { type: String },
+	firstName: { type: String, maxlength: 20 },
+	lastName: { type: String, maxlength: 20 },
 	bio: { type: String, maxlength: 240 },
-	created_at: { type: Date, default: Date.now, immutable: true },
-	updated_at: { type: Date },
+	createdAt: { type: Date, default: Date.now, immutable: true },
+	updatedAt: { type: Date },
 	resetPasswordToken: String,
 	resetPasswordExpires: Date,
 });
@@ -34,13 +34,13 @@ userSchema.plugin(MongooseAutoIncrementID.plugin, {
 });
 userSchema.plugin(immutablePlugin);
 
-userSchema.virtual('full_name').get(() => {
-	if (this.first_name && this.last_name) return `${this.first_name} ${this.last_name}`;
-	if (this.first_name && !this.last_name) return this.first_name;
-	if (!this.first_name && this.last_name) return this.last_name;
+userSchema.virtual('fullName').get(() => {
+	if (this.firstName && this.lastName) return `${this.firstName} ${this.lastName}`;
+	if (this.firstName && !this.lastName) return this.firstName;
+	if (!this.firstName && this.lastName) return this.lastName;
 	return undefined;
 });
-userSchema.virtual('initials').get(() => (this.first_name && this.last_name && `${this.first_name[0].concat(this.last_name[0]).toUpperCase()}`));
+userSchema.virtual('initials').get(() => (this.firstName && this.lastName && `${this.firstName[0].concat(this.lastName[0]).toUpperCase()}`));
 
 userSchema.methods.validPassword = function validPassword(password) {
 	return bcrypt.compareSync(password, this.password);

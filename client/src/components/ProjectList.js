@@ -8,7 +8,7 @@ import Project from './Project';
 function ProjectList({ projects }) {
 	return (
 		<ul className="project-list">
-			{reverse(projects).map(project => <Project key={project.id} {...project} />)}
+			{reverse(projects).map(project => <Project key={project.projectId} {...project} />)}
 		</ul>
 	);
 }

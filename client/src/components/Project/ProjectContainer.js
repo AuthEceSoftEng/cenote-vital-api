@@ -6,18 +6,16 @@ import Project from './Project';
 
 export default class ProjectContainer extends Component {
 	static propTypes = {
-		projectId: PropTypes.string.isRequired,
-		id: PropTypes.string.isRequired,
+		projectId: PropTypes.string,
 		text: PropTypes.string.isRequired,
-		completed: PropTypes.bool.isRequired,
-		createdAt: PropTypes.string.isRequired,
+		createdAt: PropTypes.string,
 		updatedAt: PropTypes.string,
 		openProjectInfo: PropTypes.func.isRequired,
 		updateProject: PropTypes.func.isRequired,
 		deleteProject: PropTypes.func.isRequired,
 	};
 
-	static defaultProps = { updatedAt: undefined };
+	static defaultProps = { updatedAt: undefined, projectId: '', createdAt: '' };
 
 	constructor(props) {
 		super(props);
@@ -65,8 +63,8 @@ export default class ProjectContainer extends Component {
 	}
 
 	deleteProject = () => {
-		const { id, deleteProject } = this.props;
-		deleteProject(id);
+		const { projectId, deleteProject } = this.props;
+		deleteProject(projectId);
 	}
 
 	openModal = () => this.setState({ confirm: true })
@@ -75,18 +73,17 @@ export default class ProjectContainer extends Component {
 
 	updateProject = () => {
 		const { text } = this.state;
-		const { updateProject, id } = this.props;
+		const { updateProject, projectId } = this.props;
 		if (text) {
-			updateProject({ id, text }).then(() => this.setState({ edit: false }));
+			updateProject({ projectId, text }).then(() => this.setState({ edit: false }));
 		}
 	}
 
 	render() {
-		const { updatedAt, completed, text } = this.props;
+		const { updatedAt, text } = this.props;
 		const { edit, confirm, createdMessage, updatedMessage, text: currentText } = this.state;
 		return (
 			<Project
-				completed={completed}
 				confirm={confirm}
 				edit={edit}
 				updated={!!updatedAt}

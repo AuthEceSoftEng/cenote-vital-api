@@ -25,8 +25,7 @@ class ProjectInfoPage extends React.Component {
 		const [project] = projects;
 		return (
 			<div className="home-page section">
-				<h1 className="title is-1">{project.text}</h1>
-				<Dashboard />
+				<Dashboard project={project} />
 			</div>
 		);
 	}

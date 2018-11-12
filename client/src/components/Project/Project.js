@@ -8,9 +8,8 @@ import ConfirmModal from '../ConfirmModal';
 
 export default function Project(props) {
 	const {
-		completed, edit, confirm, text, currentText, updated, createdMessage, updatedMessage,
-		openProjectInfo, updateText, updateProject, editProject, cancelEdit, deleteProject,
-		openModal, closeModal,
+		edit, confirm, text, currentText, updated, createdMessage, updatedMessage, openProjectInfo, updateText, updateProject,
+		editProject, cancelEdit, deleteProject, openModal, closeModal,
 	} = props;
 
 	return (
@@ -18,10 +17,7 @@ export default function Project(props) {
 			<article className="media">
 				<figure className="media-left">
 					<span className="icon" role="button" tabIndex={0} onClick={openProjectInfo} onKeyPress={openProjectInfo}>
-						{completed
-							? <FontAwesomeIcon icon={faFolderOpen} size="lg" />
-							: <FontAwesomeIcon icon={faFolderOpen} size="lg" />
-						}
+						<FontAwesomeIcon icon={faFolderOpen} size="lg" />
 					</span>
 				</figure>
 				<div className="media-content">
@@ -87,7 +83,6 @@ export default function Project(props) {
 }
 
 Project.propTypes = {
-	completed: PropTypes.bool.isRequired,
 	confirm: PropTypes.bool.isRequired,
 	edit: PropTypes.bool.isRequired,
 	updated: PropTypes.bool.isRequired,

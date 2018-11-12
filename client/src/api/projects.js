@@ -5,7 +5,7 @@ export const postProject = info => request.post('/api/projects').send(info).then
 
 export const getProjects = () => request.get('/api/projects').then(handleSuccess).catch(handleError);
 
-export const putToggleCompleteProject = info => request.put('/api/projects/complete').send(info).then(handleSuccess).catch(handleError);
+export const getProject = info => request.post('/api/projects/project').send(info).then(handleSuccess).catch(handleError);
 
 export const putProject = info => request.put('/api/projects').send(info).then(handleSuccess).catch(handleError);
 

@@ -90,7 +90,7 @@ router.put('/email', requireAuth, (req, res) => {
 });
 
 router.put('/', requireAuth, (req, res) => {
-	req.body.updated_at = Date.now();
+	req.body.updatedAt = Date.now();
 
 	User.findByIdAndUpdate({ _id: req.user._id }, req.body, { new: true }, (err, user) => {
 		if (err) {

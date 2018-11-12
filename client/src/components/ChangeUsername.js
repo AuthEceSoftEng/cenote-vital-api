@@ -34,7 +34,7 @@ class ChangeUsernameContainer extends React.Component {
 		const { usernameCase } = this.state;
 		const { user, attemptUpdateUser: attemptupdateUser } = this.props;
 		if (usernameCase.toLowerCase() === user.username) {
-			const updatedUser = { username_case: usernameCase };
+			const updatedUser = { usernameCase };
 			attemptupdateUser(updatedUser).catch(() => this.setState({ usernameCase: user.usernameCase }));
 		}
 	}

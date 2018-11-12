@@ -1,41 +1,37 @@
 import { push } from 'connected-react-router';
-import { snakeToCamelCase } from 'json-style-converter/es5';
-import { assoc, omit, map } from 'ramda';
 
-import { getProjects, postProject, putToggleCompleteProject, putProject, deleteProject } from '../api/projects';
+import { getProjects, postProject, getProject, putProject, deleteProject } from '../api/projects';
 import { handleError } from './helpers';
 import * as types from '../constants/actionTypes';
 
 export const setProjects = projects => ({ type: types.SET_PROJECTS, projects });
-export const addProject = ({ id, text, createdAt }) => ({ type: types.ADD_PROJECT, createdAt, id, text });
+export const addProject = ({ projectId, text, createdAt }) => ({ type: types.ADD_PROJECT, createdAt, projectId, text });
 export const openProjectInfo = project => ({ type: types.OPEN_PROJECT_INFO, project });
 export const updateProject = ({ id, text, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, id, text });
-export const removeProject = id => ({ type: types.REMOVE_PROJECT, id });
+export const removeProject = projectId => ({ type: types.REMOVE_PROJECT, projectId });
 
 export const attemptGetProjects = () => dispatch => getProjects().then((data) => {
-	const projects = map(project => omit(['Id'], assoc('id', project._id, snakeToCamelCase(project))), data.projects);
-	dispatch(setProjects(projects));
+	dispatch(setProjects(data.projects));
 	return data.projects;
 }).catch(handleError(dispatch));
 
 export const attemptAddProject = text => dispatch => postProject({ text }).then((data) => {
-	const project = omit(['Id'], assoc('id', data.project._id, snakeToCamelCase(data.project)));
-	dispatch(addProject(project));
-	return data.user;
+	dispatch(addProject(data.project));
+	return data;
 }).catch(handleError(dispatch));
 
-export const attemptOpenProjectInfo = projectId => dispatch => putToggleCompleteProject({ project_id: projectId }).then((data) => {
+export const attemptOpenProjectInfo = projectId => dispatch => getProject({ projectId }).then((data) => {
 	dispatch(openProjectInfo(data.project));
-	dispatch(push(`/projects/${data.project.project_id}`));
+	dispatch(push(`/projects/${data.project.projectId}`));
 	return data.project;
 }).catch(handleError(dispatch));
 
 export const attemptUpdateProject = ({ id, text }) => dispatch => putProject({ id, text }).then((data) => {
-	dispatch(updateProject({ id, text, updatedAt: data.project.updated_at }));
+	dispatch(updateProject({ id, text, updatedAt: data.project.updatedAt }));
 	return data;
 }).catch(handleError(dispatch));
 
-export const attemptDeleteProject = id => dispatch => deleteProject({ id }).then((data) => {
-	dispatch(removeProject(id));
+export const attemptDeleteProject = projectId => dispatch => deleteProject({ projectId }).then((data) => {
+	dispatch(removeProject(projectId));
 	return data;
 }).catch(handleError(dispatch));

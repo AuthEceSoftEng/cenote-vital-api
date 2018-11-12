@@ -5,7 +5,7 @@ export default function ConfirmDeleteProject({ closeModal, deleteProject }) {
 	return (
 		<div className="card">
 			<div className="card-content">
-				<div className="content has-text-centered">Are you sure you wanted to delete this item?</div>
+				<div className="content has-text-centered">Are you sure you wanted to delete this project?</div>
 			</div>
 			<footer className="card-footer">
 				<div className="card-footer-item" role="button" tabIndex={0} onClick={closeModal} onKeyPress={closeModal}>Cancel</div>
