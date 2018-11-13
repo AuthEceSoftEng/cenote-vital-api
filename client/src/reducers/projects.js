@@ -24,7 +24,7 @@ export function project(state = { }, action) {
 }
 
 export default function projects(state = [], action) {
-	const index = findIndex(propEq('id', action.id), state);
+	const index = findIndex(propEq('projectId', action.projectId), state);
 	const updatedAtIndex = { $splice: [[index, 1, project(state[index], action)]] };
 
 	switch (action.type) {

@@ -33,7 +33,7 @@ export default function Project(props) {
 								evt.preventDefault();
 							}}
 							>
-								<input className="input" type="text" value={currentText} onChange={updateText} />
+								<input className="input" type="text" value={currentText} onChange={updateText} ref={inpt => inpt && inpt.focus()} />
 							</form>
 						) : (
 							<p>

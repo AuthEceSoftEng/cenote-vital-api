@@ -61,7 +61,7 @@ router.put('/', requireAuth, (req, res) => {
 
 router.delete('/', requireAuth, (req, res) => {
 	const { projectId } = req.body;
-	Project.findOneAndRemove({ projectId }, (err) => {
+	Project.deleteOne({ projectId }, (err) => {
 		if (err) {
 			res.status(400).send({ message: 'Delete project failed', err });
 		} else {

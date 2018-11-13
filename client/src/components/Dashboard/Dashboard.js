@@ -5,14 +5,15 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import 'react-tabs/style/react-tabs.css';
 
-import EventCollection from './components/EventCollection';
+import EventCollection from './dashboardComponents/EventCollection';
+import { Button } from '..';
 
 const Dashboard = (props) => {
 	const { project } = props;
 	return (
 		<div>
 			<h1 className="title is-1">{project.text}</h1>
-			<Tabs forceRenderTabPanel defaultIndex={1}>
+			<Tabs forceRenderTabPanel defaultIndex={1} defaultFocus>
 				<TabList>
 					<Tab>Event Collections</Tab>
 					<Tab>Project Information</Tab>
@@ -22,13 +23,15 @@ const Dashboard = (props) => {
 						<TabList>
 							<Tab>Event Collection 1</Tab>
 							<Tab>Event Collection 2</Tab>
+							<Tab>Event Collection 3</Tab>
+							<Tab>Event Collection 4</Tab>
+							<Tab>Event Collection 5</Tab>
 						</TabList>
-						<TabPanel>
-							<EventCollection />
-						</TabPanel>
-						<TabPanel>
-							<EventCollection />
-						</TabPanel>
+						<TabPanel><EventCollection /></TabPanel>
+						<TabPanel><EventCollection /></TabPanel>
+						<TabPanel><EventCollection /></TabPanel>
+						<TabPanel><EventCollection /></TabPanel>
+						<TabPanel><EventCollection /></TabPanel>
 					</Tabs>
 				</TabPanel>
 				<TabPanel>
@@ -60,7 +63,7 @@ const Dashboard = (props) => {
 								<table className="table has-text-centered" align="center">
 									<thead>
 										<tr>
-											<th className="has-text-centered">Key</th>
+											<th className="has-text-centered is-vcentered">Key</th>
 											<th className="has-text-centered">Value</th>
 											<th className="has-text-centered">Options</th>
 										</tr>
@@ -69,17 +72,17 @@ const Dashboard = (props) => {
 										<tr>
 											<th className="has-text-centered has-text-primary">Read key</th>
 											<td className="has-text-centered has-text-grey">{project.readKey}</td>
-											<td className="has-text-centered has-text-grey">EDIT</td>
+											<td><Button label="Edit" type="info" onClick={() => alert('Not yet')} /></td>
 										</tr>
 										<tr>
 											<th className="has-text-centered has-text-link">Write key</th>
 											<td className="has-text-centered has-text-grey">{project.writeKey}</td>
-											<td className="has-text-centered has-text-grey">EDIT</td>
+											<td><Button label="Edit" type="info" onClick={() => alert('Not yet')} /></td>
 										</tr>
 										<tr>
 											<th className="has-text-centered has-text-danger">Master key</th>
 											<td className="has-text-centered has-text-grey">{project.masterKey}</td>
-											<td className="has-text-centered has-text-grey">EDIT</td>
+											<td><Button label="Edit" type="info" onClick={() => alert('Not yet')} /></td>
 										</tr>
 									</tbody>
 								</table>
