@@ -64,3 +64,6 @@ typings/
 build
 dist
 client/dist
+
+# Macs
+.DS_Store
