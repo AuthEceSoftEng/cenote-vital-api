@@ -45,21 +45,24 @@ class UserDropdown extends Component {
 		const { user, closeDropdown, open } = this.props;
 
 		return open && (
-			<div className="dropdown box" ref={(el) => { this.dropdown = el; }}>
+			<div className="dropdown box sm" ref={(el) => { this.dropdown = el; }}>
 				<ul className="dropdown-list">
 					<li className="dropdown-header">
 						{user.usernameCase}
 					</li>
 					<hr className="dropdown-separator" />
-					<li className="dropdown-item">
+					<li className="dropdown-item has-text-centered">
+						<Link to="/home" onClick={closeDropdown}>Home</Link>
+					</li>
+					<li className="dropdown-item has-text-centered">
 						<Link to="/projects" onClick={closeDropdown}>Project List</Link>
 					</li>
-					<li className="dropdown-item">
+					<li className="dropdown-item has-text-centered">
 						<Link to="/settings" onClick={closeDropdown}>Settings</Link>
 					</li>
 					<hr className="dropdown-separator" />
 					<li className="dropdown-item">
-						<button onClick={this.logout} type="button" onKeyPress={this.logout}>Logout</button>
+						<button className="button is-danger" onClick={this.logout} type="button" onKeyPress={this.logout}>Logout</button>
 					</li>
 				</ul>
 			</div>

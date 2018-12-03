@@ -28,7 +28,7 @@ const SettingsMenuContainer = (props) => {
 					<Link to="/settings/account" className={accountClasses}>Account</Link>
 				</li>
 				<li>
-					<button onClick={logout} type="button" onKeyPress={logout}>Logout</button>
+					<button className="button is-danger" onClick={logout} type="button" onKeyPress={logout}>Logout</button>
 				</li>
 			</ul>
 		</aside>

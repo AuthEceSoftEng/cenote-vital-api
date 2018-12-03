@@ -20,7 +20,7 @@ export default function ConfirmModal(props) {
 			</div>
 			<button
 				type="button"
-				className="modal-close is-large"
+				className="modal-close is-large button"
 				aria-label="close"
 				onClick={closeModal}
 			/>

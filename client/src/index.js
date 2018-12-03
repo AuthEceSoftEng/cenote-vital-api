@@ -7,11 +7,11 @@ import './styles/styles.scss';
 
 require('./favicon.ico');
 
-const store = configureStore();
+const { store, persistor } = configureStore();
 
 render(
 	<AppContainer>
-		<Root store={store} history={history} />
+		<Root store={store} history={history} persistor={persistor} />
 	</AppContainer>,
 	document.getElementById('app'),
 );

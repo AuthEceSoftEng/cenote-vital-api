@@ -55,7 +55,7 @@ export default function Navigation(props) {
 						)}
 						{auth && (
 							<button
-								className="navbar-item is-hoverable is-hidden-desktop"
+								className="navbar-item is-hoverable is-hidden-desktop button"
 								type="button"
 								onClick={toggleUserDropdown}
 								onKeyPress={toggleUserDropdown}
@@ -84,7 +84,7 @@ export default function Navigation(props) {
 						</div>
 						<div className="navbar-end">
 							<button
-								className="navbar-item is-hoverable"
+								className="navbar-item is-hoverable button"
 								onClick={toggleUserDropdown}
 								onKeyPress={toggleUserDropdown}
 								type="button"
