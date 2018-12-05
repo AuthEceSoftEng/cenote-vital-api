@@ -7,37 +7,14 @@ import { getUser, putUser, putUserPassword, putNewUserPassword, putUserEmail, re
 import { handleError, handleLoginError } from './helpers';
 import * as types from '../constants/actionTypes';
 
-// Syncronous Actions
-
-export function login(user) {
-	return {
-		type: types.LOGIN_USER,
-		user: snakeToCamelCase(user),
-	};
-}
-
-export function logout() {
-	return { type: types.LOGOUT_USER };
-}
-
-export function updateUser(user) {
-	return {
-		type: types.UPDATE_USER,
-		user: snakeToCamelCase(user),
-	};
-}
-
-// Asyncronous Actions
+export const login = user => ({ type: types.LOGIN_USER, user: snakeToCamelCase(user) });
+export const logout = () => ({ type: types.LOGOUT_USER });
+export const updateUser = user => ({ type: types.UPDATE_USER, user: snakeToCamelCase(user) });
 
 export const attemptLogin = user => dispatch => postLogin(user)
 	.then((data) => {
 		dispatch(login(data.user));
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		dispatch(push('/home'));
 		return data;
 	})
@@ -45,12 +22,7 @@ export const attemptLogin = user => dispatch => postLogin(user)
 
 export const attemptRegister = newUser => dispatch => postRegister(newUser)
 	.then((data) => {
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		return dispatch(attemptLogin(newUser));
 	})
 	.then(() => dispatch(push('/settings')))
@@ -59,12 +31,7 @@ export const attemptRegister = newUser => dispatch => postRegister(newUser)
 export const attemptLogout = () => dispatch => postLogout()
 	.then((data) => {
 		dispatch(logout());
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		dispatch(push('/login'));
 		return data;
 	})
@@ -72,12 +39,7 @@ export const attemptLogout = () => dispatch => postLogout()
 
 export const attemptReset = email => dispatch => resetPassword(email)
 	.then((data) => {
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		return dispatch(push('/home'));
 	})
 	.catch(handleError(dispatch));
@@ -92,48 +54,28 @@ export const attemptGetUser = () => dispatch => getUser()
 export const attemptUpdateUser = updatedUser => dispatch => putUser(updatedUser)
 	.then((data) => {
 		dispatch(updateUser(data.user));
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		return data;
 	})
 	.catch(handleError(dispatch));
 
 export const attemptUpdateEmail = emailInfo => dispatch => putUserEmail(emailInfo)
 	.then((data) => {
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		return data;
 	})
 	.catch(handleError(dispatch));
 
 export const attemptUpdatePassword = passwordInfo => dispatch => putUserPassword(passwordInfo)
 	.then((data) => {
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		return data;
 	})
 	.catch(handleError(dispatch));
 
 export const attemptResetPassword = passwordInfo => dispatch => putNewUserPassword(passwordInfo)
 	.then((data) => {
-		dispatch(Notifications.success({
-			title: 'Success!',
-			message: data.message,
-			position: 'tr',
-			autoDismiss: 3,
-		}));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 		dispatch(push('/login'));
 		return data;
 	})

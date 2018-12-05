@@ -25,7 +25,13 @@ class ProjectInfoPage extends React.Component {
 		const [project] = projects;
 		return (
 			<div className="home-page section">
-				<Dashboard project={project} />
+				<Dashboard
+					projectId={project.projectId}
+					text={project.text}
+					readKey={project.readKey}
+					writeKey={project.writeKey}
+					masterKey={project.masterKey}
+				/>
 			</div>
 		);
 	}

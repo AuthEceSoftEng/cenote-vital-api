@@ -8,7 +8,7 @@ import ConfirmModal from '../ConfirmModal';
 
 export default function Project(props) {
 	const {
-		edit, confirm, text, currentText, updated, createdMessage, updatedMessage, openProjectInfo, updateText, updateProject,
+		edit, confirm, text, currentText, updated, createdMessage, updatedMessage, openProjectInfo, updateText, updateProjectTitle,
 		editProject, cancelEdit, deleteProject, openModal, closeModal,
 	} = props;
 
@@ -29,7 +29,7 @@ export default function Project(props) {
 						</p>
 						{edit ? (
 							<form onSubmit={(evt) => {
-								updateProject();
+								updateProjectTitle();
 								evt.preventDefault();
 							}}
 							>
@@ -52,7 +52,14 @@ export default function Project(props) {
 						</div>
 						<div className="level-right">
 							{edit ? (
-								<span className="icon space-right" role="button" tabIndex={0} onClick={updateProject} onKeyPress={updateProject}>
+								<span
+									className="icon
+								space-right"
+									role="button"
+									tabIndex={0}
+									onClick={updateProjectTitle}
+									onKeyPress={updateProjectTitle}
+								>
 									<FontAwesomeIcon icon={faSave} size="lg" />
 								</span>
 							) : (
@@ -94,7 +101,7 @@ Project.propTypes = {
 
 	openProjectInfo: PropTypes.func.isRequired,
 	updateText: PropTypes.func.isRequired,
-	updateProject: PropTypes.func.isRequired,
+	updateProjectTitle: PropTypes.func.isRequired,
 	editProject: PropTypes.func.isRequired,
 	cancelEdit: PropTypes.func.isRequired,
 	deleteProject: PropTypes.func.isRequired,

@@ -42,19 +42,11 @@ router.post('/project', requireAuth, (req, res) => {
 });
 
 router.put('/', requireAuth, (req, res) => {
-	Project.findOne({ projectId: req.body.projectId }, { __v: 0, user: 0 }, (err, project) => {
+	Project.findOneAndUpdate({ projectId: req.body.projectId }, { ...req.body, updatedAt: Date.now() }, { __v: 0, user: 0 }, (err, savedProject) => {
 		if (err) {
 			res.status(400).send({ message: 'Update project failed', err });
 		} else {
-			project.text = req.body.text;
-			project.updatedAt = Date.now();
-			project.save((err2, savedProject) => {
-				if (err2) {
-					res.status(400).send({ message: 'Update project failed', err });
-				} else {
-					res.send({ message: 'Updated project successfully', project: savedProject.hide() });
-				}
-			});
+			res.send({ message: 'Updated project successfully', project: savedProject.hide() });
 		}
 	});
 });

@@ -11,7 +11,7 @@ export default class ProjectContainer extends Component {
 		createdAt: PropTypes.string,
 		updatedAt: PropTypes.string,
 		openProjectInfo: PropTypes.func.isRequired,
-		updateProject: PropTypes.func.isRequired,
+		updateProjectTitle: PropTypes.func.isRequired,
 		deleteProject: PropTypes.func.isRequired,
 	};
 
@@ -30,7 +30,7 @@ export default class ProjectContainer extends Component {
 
 	componentDidMount() {
 		this.updateMessages();
-		this.interval = window.setInterval(this.updateMessages, 1000);
+		this.interval = window.setInterval(this.updateMessages, 1000 * 60);
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -71,11 +71,11 @@ export default class ProjectContainer extends Component {
 
 	closeModal = () => this.setState({ confirm: false })
 
-	updateProject = () => {
+	updateProjectTitle = () => {
 		const { text } = this.state;
-		const { updateProject, projectId } = this.props;
+		const { updateProjectTitle, projectId } = this.props;
 		if (text) {
-			updateProject({ projectId, text }).then(() => this.setState({ edit: false }));
+			updateProjectTitle({ projectId, text }).then(() => this.setState({ edit: false }));
 		}
 	}
 
@@ -93,7 +93,7 @@ export default class ProjectContainer extends Component {
 				updatedMessage={updatedMessage}
 				openProjectInfo={this.openProjectInfo}
 				updateText={this.updateText}
-				updateProject={this.updateProject}
+				updateProjectTitle={this.updateProjectTitle}
 				editProject={this.editProject}
 				cancelEdit={this.cancelEdit}
 				deleteProject={this.deleteProject}

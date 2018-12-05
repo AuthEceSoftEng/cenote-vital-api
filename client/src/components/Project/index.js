@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
 
-import { attemptOpenProjectInfo, attemptUpdateProject, attemptDeleteProject } from '../../actions/projects';
+import { attemptOpenProjectInfo, attemptUpdateProjectTitle, attemptDeleteProject } from '../../actions/projects';
 import ProjectContainer from './ProjectContainer';
 
 const mapDispatchToProps = dispatch => ({
 	openProjectInfo: projectId => dispatch(attemptOpenProjectInfo(projectId)),
-	updateProject: (text, id) => dispatch(attemptUpdateProject(text, id)),
+	updateProjectTitle: (text, id) => dispatch(attemptUpdateProjectTitle(text, id)),
 	deleteProject: projectId => dispatch(attemptDeleteProject(projectId)),
 });
 
