@@ -7,8 +7,8 @@ import { isEmpty, pick } from 'ramda';
 import SettingsPage from './SettingsPage';
 
 const SettingsPageContainer = (props) => {
-	const { user, pushToLogin, location } = props;
-	if (isEmpty(user)) {
+	const { organization, pushToLogin, location } = props;
+	if (isEmpty(organization)) {
 		pushToLogin();
 	}
 	return (
@@ -17,12 +17,12 @@ const SettingsPageContainer = (props) => {
 };
 
 SettingsPageContainer.propTypes = {
-	user: PropTypes.shape({}).isRequired,
+	organization: PropTypes.shape({}).isRequired,
 	pushToLogin: PropTypes.func.isRequired,
 	location: PropTypes.shape({ pathname: PropTypes.string.isRequired }).isRequired,
 };
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['organization']);
 const mapDispatchToProps = dispatch => ({ pushToLogin: () => dispatch(push('/login')) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPageContainer);

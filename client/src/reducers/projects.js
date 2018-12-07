@@ -1,21 +1,21 @@
 import update from 'immutability-helper';
 import { findIndex, propEq } from 'ramda';
 
-import { SET_PROJECTS, ADD_PROJECT, OPEN_PROJECT_INFO, UPDATE_PROJECT, REMOVE_PROJECT, LOGOUT_USER } from '../constants/actionTypes';
+import { SET_PROJECTS, ADD_PROJECT, OPEN_PROJECT_INFO, UPDATE_PROJECT, REMOVE_PROJECT, LOGOUT_ORG } from '../constants/actionTypes';
 
 export function project(state = { }, action) {
 	switch (action.type) {
 	case (ADD_PROJECT):
 		return update(state, {
 			projectId: { $set: action.projectId },
-			text: { $set: action.text },
+			title: { $set: action.title },
 			createdAt: { $set: action.createdAt },
 		});
 	case (OPEN_PROJECT_INFO):
 		return state;
 	case (UPDATE_PROJECT):
 		return update(state, {
-			text: { $set: action.text },
+			title: { $set: action.title },
 			updatedAt: { $set: action.updatedAt },
 		});
 	default:
@@ -38,7 +38,7 @@ export default function projects(state = [], action) {
 		return update(state, updatedAtIndex);
 	case (REMOVE_PROJECT):
 		return update(state, { $splice: [[index, 1]] });
-	case (LOGOUT_USER):
+	case (LOGOUT_ORG):
 		return [];
 	default:
 		return state;

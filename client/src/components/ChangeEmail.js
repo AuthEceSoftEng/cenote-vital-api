@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { identity, pick } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptUpdateEmail } from '../actions/user';
+import { attemptUpdateEmail } from '../actions/organization';
 import { validateEmail } from '../utils/validation';
 
 class ChangeEmailContainer extends React.Component {
 	static propTypes = {
-		user: PropTypes.shape({
+		organization: PropTypes.shape({
 			username: PropTypes.string,
 			email: PropTypes.string,
 		}).isRequired,
@@ -181,7 +181,7 @@ class ChangeEmailContainer extends React.Component {
 }
 
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['organization']);
 const mapDispatchToProps = dispatch => ({ attemptUpdateEmail: emailInfo => dispatch(attemptUpdateEmail(emailInfo)) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangeEmailContainer);

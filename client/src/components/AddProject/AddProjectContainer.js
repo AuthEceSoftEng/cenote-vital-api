@@ -8,7 +8,7 @@ export default class AddProjectContainer extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { text: '' };
+		this.state = { title: '' };
 	}
 
 	componentDidMount() {
@@ -19,7 +19,7 @@ export default class AddProjectContainer extends React.Component {
 		window.removeEventListener('keypress', this.keypress);
 	}
 
-	updateText = e => this.setState({ text: e.target.value })
+	updateTitle = e => this.setState({ title: e.target.value })
 
 	keypress = (e) => {
 		if (e.key === 'Enter') {
@@ -28,16 +28,16 @@ export default class AddProjectContainer extends React.Component {
 	}
 
 	addProject = () => {
-		const { text } = this.state;
+		const { title } = this.state;
 		const { addProject } = this.props;
-		if (text) {
-			addProject(text);
-			this.setState({ text: '' });
+		if (title) {
+			addProject(title);
+			this.setState({ title: '' });
 		}
 	}
 
 	render() {
-		const { text } = this.state;
-		return (<AddProject text={text} updateText={this.updateText} addProject={this.addProject} />);
+		const { title } = this.state;
+		return (<AddProject title={title} updateTitle={this.updateTitle} addProject={this.addProject} />);
 	}
 }

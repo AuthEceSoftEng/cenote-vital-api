@@ -9,14 +9,14 @@ import { AddProject, ProjectList } from '../../components';
 
 class ProjectPageContainer extends React.Component {
 	static propTypes = {
-		user: PropTypes.shape({}).isRequired,
+		organization: PropTypes.shape({}).isRequired,
 		pushToLogin: PropTypes.func.isRequired,
 		getProjects: PropTypes.func.isRequired,
 	}
 
 	componentDidMount() {
-		const { user, pushToLogin, getProjects } = this.props;
-		if (isEmpty(user)) {
+		const { organization, pushToLogin, getProjects } = this.props;
+		if (isEmpty(organization)) {
 			pushToLogin();
 		} else {
 			getProjects();
@@ -42,7 +42,7 @@ class ProjectPageContainer extends React.Component {
 	}
 }
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['organization']);
 const mapDispatchToProps = dispatch => ({
 	pushToLogin: () => dispatch(push('/login')),
 	getProjects: () => dispatch(attemptGetProjects()),

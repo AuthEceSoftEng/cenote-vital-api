@@ -5,12 +5,12 @@ import { Link } from 'react-router-dom';
 import { identity, pick } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptUpdatePassword } from '../actions/user';
+import { attemptUpdatePassword } from '../actions/organization';
 import { validatePassword } from '../utils/validation';
 
 class ChangePasswordContainer extends React.Component {
 	static propTypes = {
-		user: PropTypes.shape({ username: PropTypes.string }).isRequired,
+		organization: PropTypes.shape({ username: PropTypes.string }).isRequired,
 		attemptUpdatePassword: PropTypes.func.isRequired,
 	};
 
@@ -28,9 +28,9 @@ class ChangePasswordContainer extends React.Component {
 	updateOldPassword = e => this.setState({ oldPassword: e.target.value })
 
 	updateNewPassword = (e) => {
-		const { user } = this.props;
+		const { organization } = this.props;
 		this.setState({ newPassword: e.target.value });
-		this.validatePassword(user.username, e.target.value);
+		this.validatePassword(organization.username, e.target.value);
 	}
 
 	updateConfirmPassword = e => this.setState({ confirmPassword: e.target.value })
@@ -184,7 +184,7 @@ class ChangePasswordContainer extends React.Component {
 }
 
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['organization']);
 const mapDispatchToProps = dispatch => ({ attemptUpdatePassword: passwordInfo => dispatch(attemptUpdatePassword(passwordInfo)) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangePasswordContainer);

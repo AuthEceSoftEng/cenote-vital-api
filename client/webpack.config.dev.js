@@ -1,7 +1,6 @@
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
-import HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
 
 export default {
 	resolve: {
@@ -26,7 +25,6 @@ export default {
 		filename: 'bundle.js',
 	},
 	plugins: [
-		new HardSourceWebpackPlugin(),
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.NoEmitOnErrorsPlugin(),
 		new HtmlWebpackPlugin({

@@ -1,16 +1,16 @@
 const express = require('express');
 const path = require('path');
 const auth = require('./auth');
-const user = require('./user');
-const users = require('./users');
+const organization = require('./organization');
+const organizations = require('./organizations');
 const projects = require('./projects');
 
 const router = express.Router();
 
 router.use('/api/auth', auth);
-router.use('/api/user', user);
-router.use('/api/users', users);
+router.use('/api/organization', organization);
 router.use('/api/projects', projects);
+router.use('/api/organizations', organizations);
 
 router.get('/works', (req, res) => {
 	res.send('<h1 align="center">It does!</h1>');

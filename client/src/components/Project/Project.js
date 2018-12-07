@@ -8,7 +8,7 @@ import ConfirmModal from '../ConfirmModal';
 
 export default function Project(props) {
 	const {
-		edit, confirm, text, currentText, updated, createdMessage, updatedMessage, openProjectInfo, updateText, updateProjectTitle,
+		edit, confirm, title, currentTitle, updated, createdMessage, updatedMessage, openProjectInfo, updateTitle, updateProjectTitle,
 		editProject, cancelEdit, deleteProject, openModal, closeModal,
 	} = props;
 
@@ -33,11 +33,11 @@ export default function Project(props) {
 								evt.preventDefault();
 							}}
 							>
-								<input className="input" type="text" value={currentText} onChange={updateText} ref={inpt => inpt && inpt.focus()} />
+								<input className="input" type="text" value={currentTitle} onChange={updateTitle} ref={inpt => inpt && inpt.focus()} />
 							</form>
 						) : (
 							<p>
-								{text}
+								{title}
 							</p>
 						)}
 					</div>
@@ -94,13 +94,13 @@ Project.propTypes = {
 	edit: PropTypes.bool.isRequired,
 	updated: PropTypes.bool.isRequired,
 
-	text: PropTypes.string.isRequired,
-	currentText: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	currentTitle: PropTypes.string.isRequired,
 	createdMessage: PropTypes.string.isRequired,
 	updatedMessage: PropTypes.string.isRequired,
 
 	openProjectInfo: PropTypes.func.isRequired,
-	updateText: PropTypes.func.isRequired,
+	updateTitle: PropTypes.func.isRequired,
 	updateProjectTitle: PropTypes.func.isRequired,
 	editProject: PropTypes.func.isRequired,
 	cancelEdit: PropTypes.func.isRequired,

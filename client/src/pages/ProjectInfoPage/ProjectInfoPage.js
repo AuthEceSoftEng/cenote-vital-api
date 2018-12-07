@@ -8,14 +8,14 @@ import { Dashboard } from '../../components';
 
 class ProjectInfoPage extends React.Component {
 	static propTypes = {
-		user: PropTypes.shape({}).isRequired,
+		organization: PropTypes.shape({}).isRequired,
 		projects: PropTypes.array.isRequired,
 		pushToLogin: PropTypes.func.isRequired,
 	}
 
 	componentDidMount() {
-		const { user, pushToLogin } = this.props;
-		if (isEmpty(user)) {
+		const { organization, pushToLogin } = this.props;
+		if (isEmpty(organization)) {
 			pushToLogin();
 		}
 	}
@@ -27,7 +27,7 @@ class ProjectInfoPage extends React.Component {
 			<div className="home-page section">
 				<Dashboard
 					projectId={project.projectId}
-					text={project.text}
+					title={project.title}
 					readKey={project.readKey}
 					writeKey={project.writeKey}
 					masterKey={project.masterKey}
@@ -37,7 +37,7 @@ class ProjectInfoPage extends React.Component {
 	}
 }
 
-const mapStateToProps = pick(['user', 'projects']);
+const mapStateToProps = pick(['organization', 'projects']);
 const mapDispatchToProps = dispatch => ({ pushToLogin: () => dispatch(push('/login')) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectInfoPage);

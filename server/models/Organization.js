@@ -3,13 +3,15 @@ const { MongooseAutoIncrementID } = require('mongoose-auto-increment-reworked');
 const immutablePlugin = require('mongoose-immutable');
 const bcrypt = require('bcryptjs');
 const R = require('ramda');
+const uuid = require('uuid/v4');
 
-const userSchema = new mongoose.Schema({
+const organizationSchema = new mongoose.Schema({
 	username: {
 		type: String, lowercase: true, required: true, unique: true, immutable: true,
 	},
 	usernameCase: { type: String, required: true },
 	password: { type: String, required: true },
+	organizationId: { type: String, default: uuid, immutable: true },
 	email: { type: String, required: true },
 	profilePic: { type: String },
 	firstName: { type: String, maxlength: 20 },
@@ -23,34 +25,34 @@ const userSchema = new mongoose.Schema({
 
 MongooseAutoIncrementID.initialise('counters');
 
-userSchema.plugin(MongooseAutoIncrementID.plugin, {
-	modelName: 'User',
-	field: 'user',
+organizationSchema.plugin(MongooseAutoIncrementID.plugin, {
+	modelName: 'Organization',
+	field: 'organization',
 	incrementBy: 1,
 	startAt: 1,
 	unique: true,
 	nextCount: false,
 	resetCount: false,
 });
-userSchema.plugin(immutablePlugin);
+organizationSchema.plugin(immutablePlugin);
 
-userSchema.virtual('fullName').get(() => {
+organizationSchema.virtual('fullName').get(() => {
 	if (this.firstName && this.lastName) return `${this.firstName} ${this.lastName}`;
 	if (this.firstName && !this.lastName) return this.firstName;
 	if (!this.firstName && this.lastName) return this.lastName;
 	return undefined;
 });
-userSchema.virtual('initials').get(() => (this.firstName && this.lastName && `${this.firstName[0].concat(this.lastName[0]).toUpperCase()}`));
+organizationSchema.virtual('initials').get(() => (this.firstName && this.lastName && `${this.firstName[0].concat(this.lastName[0]).toUpperCase()}`));
 
-userSchema.methods.validPassword = function validPassword(password) {
+organizationSchema.methods.validPassword = function validPassword(password) {
 	return bcrypt.compareSync(password, this.password);
 };
 
-userSchema.methods.validEmail = function validEmail(email) {
+organizationSchema.methods.validEmail = function validEmail(email) {
 	return email === this.email;
 };
 
-userSchema.methods.hashPassword = function hashPassword() {
+organizationSchema.methods.hashPassword = function hashPassword() {
 	return new Promise((resolve, reject) => {
 		bcrypt.genSalt(10, (err1, salt) => {
 			if (err1) { reject(err1); }
@@ -62,10 +64,10 @@ userSchema.methods.hashPassword = function hashPassword() {
 		});
 	});
 };
-userSchema.methods.hidePassword = function hidePassword() {
+organizationSchema.methods.hidePassword = function hidePassword() {
 	return R.omit(['password', '__v', '_id'], this.toObject({ virtuals: true }));
 };
 
-const User = mongoose.model('User', userSchema);
+const Organization = mongoose.model('Organization', organizationSchema);
 
-module.exports = User;
+module.exports = Organization;

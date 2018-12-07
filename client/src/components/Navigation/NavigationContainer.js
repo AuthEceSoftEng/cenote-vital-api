@@ -6,22 +6,22 @@ import Navigation from './Navigation';
 export default class NavigationContainer extends Component {
 	static propTypes = {
 		pathname: PropTypes.string.isRequired,
-		user: PropTypes.object.isRequired,
+		organization: PropTypes.object.isRequired,
 	};
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			auth: !isEmpty(props.user),
+			auth: !isEmpty(props.organization),
 			dropdownOpen: false,
 			opening: false,
 		};
 	}
 
 	componentWillReceiveProps(nextProps) {
-		const { user } = this.props;
-		if (!equals(nextProps.user, user)) {
-			this.setState({ auth: !isEmpty(nextProps.user) });
+		const { organization } = this.props;
+		if (!equals(nextProps.organization, organization)) {
+			this.setState({ auth: !isEmpty(nextProps.organization) });
 		}
 	}
 
@@ -34,16 +34,16 @@ export default class NavigationContainer extends Component {
 
 	render() {
 		const { auth, dropdownOpen } = this.state;
-		const { pathname, user } = this.props;
+		const { pathname, organization } = this.props;
 
 		return (
 			<Navigation
-				user={user}
+				organization={organization}
 				auth={auth}
 				pathname={pathname}
-				userDropdownOpen={dropdownOpen}
-				toggleUserDropdown={this.toggleDropdown}
-				closeUserDropdown={this.closeDropdown}
+				organizationDropdownOpen={dropdownOpen}
+				toggleOrganizationDropdown={this.toggleDropdown}
+				closeOrganizationDropdown={this.closeDropdown}
 			/>
 		);
 	}

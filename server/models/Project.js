@@ -4,8 +4,8 @@ const immutablePlugin = require('mongoose-immutable');
 const uuid = require('uuid/v4');
 
 const projectSchema = new mongoose.Schema({
-	user: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
-	text: { type: String },
+	organization: { type: mongoose.Schema.ObjectId, ref: 'Organization', required: true },
+	title: { type: String },
 	createdAt: { type: Date, default: Date.now, immutable: true },
 	updatedAt: { type: Date },
 	projectId: { type: String, default: uuid, immutable: true, unique: true },

@@ -5,30 +5,32 @@ import { pick, identity, isEmpty } from 'ramda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSync } from '@fortawesome/free-solid-svg-icons';
 
-import { attemptGetUser, attemptUpdateUser } from '../../actions/user';
+import { attemptGetOrganization, attemptUpdateOrganization } from '../../actions/organization';
 import { validateName } from '../../utils/validation';
 import { Box } from '../../components';
 
 class ProfileSettings extends React.Component {
 	static propTypes = {
-		user: PropTypes.shape({
+		organization: PropTypes.shape({
 			usernameCase: PropTypes.string,
 			firstName: PropTypes.string,
 			lastName: PropTypes.string,
 			bio: PropTypes.string,
 			profilePic: PropTypes.string,
+			organizationId: PropTypes.string,
 		}).isRequired,
-		attemptGetUser: PropTypes.func.isRequired,
-		attemptUpdateUser: PropTypes.func.isRequired,
+		attemptGetOrganization: PropTypes.func.isRequired,
+		attemptUpdateOrganization: PropTypes.func.isRequired,
 	};
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			firstName: props.user.firstName || '',
-			lastName: props.user.lastName || '',
-			bio: props.user.bio || '',
-			profilePic: props.user.profilePic || '',
+			firstName: props.organization.firstName || '',
+			lastName: props.organization.lastName || '',
+			bio: props.organization.bio || '',
+			profilePic: props.organization.profilePic || '',
+			organizationId: props.organization.organizationId || '',
 			firstNameEdited: false,
 			lastNameEdited: false,
 			bioEdited: false,
@@ -37,12 +39,12 @@ class ProfileSettings extends React.Component {
 	}
 
 	resetState = () => {
-		const { user } = this.props;
+		const { organization } = this.props;
 		this.setState({
-			firstName: user.firstName || '',
-			lastName: user.lastName || '',
-			bio: user.bio || '',
-			profilePic: user.profilePic || '',
+			firstName: organization.firstName || '',
+			lastName: organization.lastName || '',
+			bio: organization.bio || '',
+			profilePic: organization.profilePic || '',
 			firstNameEdited: false,
 			lastNameEdited: false,
 			bioEdited: false,
@@ -67,22 +69,22 @@ class ProfileSettings extends React.Component {
 	updateProfilePic = e => this.setState({ profilePic: e.target.value, profilePicEdited: true })
 
 	refresh = () => {
-		const { attemptGetUser: attemptgetUser } = this.props;
-		attemptgetUser().then(this.resetState).catch(identity);
+		const { attemptGetOrganization: attemptgetOrganization } = this.props;
+		attemptgetOrganization().then(this.resetState).catch(identity);
 	}
 
 	save = () => {
 		const { firstNameEdited, lastNameEdited, profilePicEdited, bioEdited, firstName, lastName, profilePic, bio } = this.state;
-		const updatedUser = {};
+		const updatedOrganization = {};
 
-		if (firstNameEdited) { updatedUser.firstName = firstName; }
-		if (lastNameEdited) { updatedUser.lastName = lastName; }
-		if (profilePicEdited) { updatedUser.profilePic = profilePic; }
-		if (bioEdited) { updatedUser.bio = bio; }
+		if (firstNameEdited) { updatedOrganization.firstName = firstName; }
+		if (lastNameEdited) { updatedOrganization.lastName = lastName; }
+		if (profilePicEdited) { updatedOrganization.profilePic = profilePic; }
+		if (bioEdited) { updatedOrganization.bio = bio; }
 
-		if (!isEmpty(updatedUser)) {
-			const { attemptUpdateUser: attemptupdateUser } = this.props;
-			attemptupdateUser(updatedUser).then(this.resetState).catch(identity);
+		if (!isEmpty(updatedOrganization)) {
+			const { attemptUpdateOrganization: attemptupdateOrganization } = this.props;
+			attemptupdateOrganization(updatedOrganization).then(this.resetState).catch(identity);
 		}
 	}
 
@@ -90,6 +92,7 @@ class ProfileSettings extends React.Component {
 		const {
 			firstName,
 			lastName,
+			organizationId,
 			bio,
 			profilePic,
 			firstNameEdited,
@@ -138,6 +141,20 @@ class ProfileSettings extends React.Component {
 						</div>
 
 						<div className="column is-8">
+							<div className="field">
+								<p className="control">
+									<label htmlFor="organization-id" className="label">
+										{'Organization ID'}
+										<input
+											id="organization-id"
+											className="input has-text-danger has-text-centered has-text-weight-semibold is-size-4"
+											type="text"
+											disabled
+											value={organizationId}
+										/>
+									</label>
+								</p>
+							</div>
 							<div className="columns">
 								<div className="column is-6">
 									<div className="field">
@@ -203,10 +220,10 @@ class ProfileSettings extends React.Component {
 	}
 }
 
-const mapStateToProps = pick(['user', 'locations']);
+const mapStateToProps = pick(['organization', 'locations']);
 const mapDispatchToProps = dispatch => ({
-	attemptGetUser: () => dispatch(attemptGetUser()),
-	attemptUpdateUser: user => dispatch(attemptUpdateUser(user)),
+	attemptGetOrganization: () => dispatch(attemptGetOrganization()),
+	attemptUpdateOrganization: organization => dispatch(attemptUpdateOrganization(organization)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileSettings);

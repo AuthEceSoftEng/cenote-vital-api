@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import Button from '../Button';
 
 const AddProject = (props) => {
-	const { text, updateText, addProject } = props;
+	const { title, updateTitle, addProject } = props;
 	return (
 		<div className="add-project columns is-gapless">
 			<div className="column is-10">
-				<input className="input" type="text" value={text} onChange={updateText} />
+				<input className="input" type="text" value={title} onChange={updateTitle} />
 			</div>
 			<div className="column is-2">
 				<Button
@@ -23,8 +23,8 @@ const AddProject = (props) => {
 };
 
 AddProject.propTypes = {
-	text: PropTypes.string.isRequired,
-	updateText: PropTypes.func.isRequired,
+	title: PropTypes.string.isRequired,
+	updateTitle: PropTypes.func.isRequired,
 	addProject: PropTypes.func.isRequired,
 };
 

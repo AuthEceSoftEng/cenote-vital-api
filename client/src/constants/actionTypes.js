@@ -1,6 +1,6 @@
-export const LOGIN_USER = 'LOGIN_USER';
-export const LOGOUT_USER = 'LOGOUT_USER';
-export const UPDATE_USER = 'UPDATE_USER';
+export const LOGIN_ORG = 'LOGIN_ORG';
+export const LOGOUT_ORG = 'LOGOUT_ORG';
+export const UPDATE_ORG = 'UPDATE_ORG';
 
 export const SET_PROJECTS = 'SET_PROJECTS';
 export const ADD_PROJECT = 'ADD_PROJECT';

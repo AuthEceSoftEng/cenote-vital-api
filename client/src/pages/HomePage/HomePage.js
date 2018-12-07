@@ -8,29 +8,29 @@ import { Clock } from '../../components';
 
 class HomePageContainer extends React.Component {
 	static propTypes = {
-		user: PropTypes.shape({}).isRequired,
+		organization: PropTypes.shape({}).isRequired,
 		pushToLogin: PropTypes.func.isRequired,
 	}
 
 	componentDidMount() {
-		const { user, pushToLogin } = this.props;
-		if (isEmpty(user)) {
+		const { organization, pushToLogin } = this.props;
+		if (isEmpty(organization)) {
 			pushToLogin();
 		}
 	}
 
 	render() {
-		const { user } = this.props;
+		const { organization } = this.props;
 		return (
 			<div className="home-page section">
 				<Clock />
-				<h1 className="title is-1">{`Welcome, ${user.username}!`}</h1>
+				<h1 className="title is-1">{`Welcome, ${organization.username}!`}</h1>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['organization']);
 const mapDispatchToProps = dispatch => ({ pushToLogin: () => dispatch(push('/login')) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePageContainer);

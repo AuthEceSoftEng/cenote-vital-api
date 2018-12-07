@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import { identity } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptRegister } from '../../actions/user';
-import { postCheckUsername, postCheckEmail } from '../../api/users';
+import { attemptRegister } from '../../actions/organization';
+import { postCheckUsername, postCheckEmail } from '../../api/organization';
 import { validatePassword, validateUsername, validateEmail } from '../../utils/validation';
 import { Box, Button } from '../../components';
 
@@ -108,8 +108,8 @@ class RegisterPage extends React.Component {
 		const { usernameAvailable, username, emailAvailable, email, password, passwordValid } = this.state;
 		const { attemptRegister: attemptregister } = this.props;
 		if (usernameAvailable && emailAvailable && passwordValid) {
-			const newUser = { username, email, password };
-			attemptregister(newUser).catch(identity);
+			const newOrganization = { username, email, password };
+			attemptregister(newOrganization).catch(identity);
 		}
 	}
 
@@ -248,6 +248,6 @@ class RegisterPage extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ({ attemptRegister: newUser => dispatch(attemptRegister(newUser)) });
+const mapDispatchToProps = dispatch => ({ attemptRegister: newOrganization => dispatch(attemptRegister(newOrganization)) });
 
 export default connect(undefined, mapDispatchToProps)(RegisterPage);

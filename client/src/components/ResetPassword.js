@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { identity } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptResetPassword } from '../actions/user';
+import { attemptResetPassword } from '../actions/organization';
 import { validatePassword } from '../utils/validation';
 
 class ResetPassword extends React.Component {

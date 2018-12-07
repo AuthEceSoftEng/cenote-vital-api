@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import { slice } from 'ramda';
 
 import Button from '../Button';
-import UserDropdown from '../UserDropdown';
+import OrganizationDropdown from '../OrganizationDropdown';
 
 export default function Navigation(props) {
-	const { user, auth, pathname, toggleUserDropdown, closeUserDropdown, userDropdownOpen } = props;
+	const { organization, auth, pathname, toggleOrganizationDropdown, closeOrganizationDropdown, organizationDropdownOpen } = props;
 
 	const isHome = (pathname.length === 5) ? pathname === '/home' : slice(0, 6, pathname) === '/home/';
 	const isSettings = (pathname.length === 9) ? pathname === '/settings' : slice(0, 10, pathname) === '/settings/';
@@ -57,11 +57,15 @@ export default function Navigation(props) {
 							<button
 								className="navbar-item is-hoverable is-hidden-desktop button"
 								type="button"
-								onClick={toggleUserDropdown}
-								onKeyPress={toggleUserDropdown}
+								onClick={toggleOrganizationDropdown}
+								onKeyPress={toggleOrganizationDropdown}
 							>
 								<figure className="image navbar-image is-32x32">
-									<img className="profile-img" src={user.profilePic || require('../../assets/images/default-profile.png')} alt="" />
+									<img
+										className="profile-img"
+										src={organization.profilePic || require('../../assets/images/default-profile.png')}
+										alt=""
+									/>
 								</figure>
 								<span className="dropdown-caret" />
 							</button>
@@ -85,12 +89,16 @@ export default function Navigation(props) {
 						<div className="navbar-end">
 							<button
 								className="navbar-item is-hoverable button"
-								onClick={toggleUserDropdown}
-								onKeyPress={toggleUserDropdown}
+								onClick={toggleOrganizationDropdown}
+								onKeyPress={toggleOrganizationDropdown}
 								type="button"
 							>
 								<figure className="image navbar-image is-32x32">
-									<img className="profile-img" src={user.profilePic || require('../../assets/images/default-profile.png')} alt="" />
+									<img
+										className="profile-img"
+										src={organization.profilePic || require('../../assets/images/default-profile.png')}
+										alt=""
+									/>
 								</figure>
 								<span className="dropdown-caret" />
 							</button>
@@ -108,7 +116,7 @@ export default function Navigation(props) {
 						</div>
 					</div>
 				)}
-				<UserDropdown open={userDropdownOpen} closeDropdown={closeUserDropdown} />
+				<OrganizationDropdown open={organizationDropdownOpen} closeDropdown={closeOrganizationDropdown} />
 			</div>
 		</nav>
 	);
@@ -117,10 +125,10 @@ export default function Navigation(props) {
 Navigation.propTypes = {
 	auth: PropTypes.bool.isRequired,
 	pathname: PropTypes.string.isRequired,
-	userDropdownOpen: PropTypes.bool.isRequired,
-	toggleUserDropdown: PropTypes.func.isRequired,
-	closeUserDropdown: PropTypes.func.isRequired,
-	user: PropTypes.shape({
+	organizationDropdownOpen: PropTypes.bool.isRequired,
+	toggleOrganizationDropdown: PropTypes.func.isRequired,
+	closeOrganizationDropdown: PropTypes.func.isRequired,
+	organization: PropTypes.shape({
 		username: PropTypes.string,
 		firstName: PropTypes.string,
 		lastName: PropTypes.string,

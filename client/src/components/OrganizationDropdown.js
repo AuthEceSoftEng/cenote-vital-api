@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { identity, pick } from 'ramda';
 
-import { attemptLogout } from '../actions/user';
+import { attemptLogout } from '../actions/organization';
 
-class UserDropdown extends Component {
+class OrganizationDropdown extends Component {
 	static propTypes = {
-		user: PropTypes.object.isRequired,
+		organization: PropTypes.object.isRequired,
 		open: PropTypes.bool.isRequired,
 		closeDropdown: PropTypes.func.isRequired,
 		attemptLogout: PropTypes.func.isRequired,
@@ -42,13 +42,13 @@ class UserDropdown extends Component {
 
 
 	render() {
-		const { user, closeDropdown, open } = this.props;
+		const { organization, closeDropdown, open } = this.props;
 
 		return open && (
 			<div className="dropdown box sm" ref={(el) => { this.dropdown = el; }}>
 				<ul className="dropdown-list">
 					<li className="dropdown-header">
-						{user.usernameCase}
+						{organization.usernameCase}
 					</li>
 					<hr className="dropdown-separator" />
 					<li className="dropdown-item has-text-centered">
@@ -70,6 +70,6 @@ class UserDropdown extends Component {
 	}
 }
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['organization']);
 const mapDispatchToProps = dispatch => ({ attemptLogout: () => dispatch(attemptLogout()) });
-export default connect(mapStateToProps, mapDispatchToProps)(UserDropdown);
+export default connect(mapStateToProps, mapDispatchToProps)(OrganizationDropdown);

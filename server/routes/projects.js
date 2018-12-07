@@ -7,9 +7,9 @@ const router = express.Router();
 module.exports = router;
 
 router.get('/', requireAuth, (req, res) => {
-	Project.find({ user: req.user.id }, { __v: 0, user: 0 }, (err, projects) => {
+	Project.find({ organization: req.user.id }, { __v: 0, organization: 0 }, (err, projects) => {
 		if (err) {
-			res.status(400).send({ message: 'Get users failed', err });
+			res.status(400).send({ message: 'Get organizations failed', err });
 		} else {
 			res.send({ message: 'Projects retrieved successfully', projects });
 		}
@@ -17,7 +17,7 @@ router.get('/', requireAuth, (req, res) => {
 });
 
 router.post('/', requireAuth, (req, res) => {
-	req.body.user = req.user.id;
+	req.body.organization = req.user.id;
 
 	const newProject = Project(req.body);
 
@@ -32,7 +32,7 @@ router.post('/', requireAuth, (req, res) => {
 });
 
 router.post('/project', requireAuth, (req, res) => {
-	Project.findOne({ projectId: req.body.projectId }, { __v: 0, user: 0 }, (err, project) => {
+	Project.findOne({ projectId: req.body.projectId }, { __v: 0, organization: 0 }, (err, project) => {
 		if (err) {
 			res.status(400).send({ message: 'Toggle project failed', err });
 		} else {
@@ -42,13 +42,14 @@ router.post('/project', requireAuth, (req, res) => {
 });
 
 router.put('/', requireAuth, (req, res) => {
-	Project.findOneAndUpdate({ projectId: req.body.projectId }, { ...req.body, updatedAt: Date.now() }, { __v: 0, user: 0 }, (err, savedProject) => {
-		if (err) {
-			res.status(400).send({ message: 'Update project failed', err });
-		} else {
-			res.send({ message: 'Updated project successfully', project: savedProject.hide() });
-		}
-	});
+	Project.findOneAndUpdate({ projectId: req.body.projectId },
+		{ ...req.body, updatedAt: Date.now() }, { __v: 0, organization: 0 }, (err, savedProject) => {
+			if (err) {
+				res.status(400).send({ message: 'Update project failed', err });
+			} else {
+				res.send({ message: 'Updated project successfully', project: savedProject.hide() });
+			}
+		});
 });
 
 router.delete('/', requireAuth, (req, res) => {

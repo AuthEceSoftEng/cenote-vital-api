@@ -5,7 +5,7 @@ import ProjectContainer from './ProjectContainer';
 
 const mapDispatchToProps = dispatch => ({
 	openProjectInfo: projectId => dispatch(attemptOpenProjectInfo(projectId)),
-	updateProjectTitle: (text, id) => dispatch(attemptUpdateProjectTitle(text, id)),
+	updateProjectTitle: (title, id) => dispatch(attemptUpdateProjectTitle(title, id)),
 	deleteProject: projectId => dispatch(attemptDeleteProject(projectId)),
 });
 

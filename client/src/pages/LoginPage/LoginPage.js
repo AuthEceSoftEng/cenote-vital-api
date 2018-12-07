@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { identity } from 'ramda';
 import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
 
-import { attemptLogin } from '../../actions/user';
+import { attemptLogin } from '../../actions/organization';
 import { Box, FormInput } from '../../components';
 
 class LoginPage extends React.Component {
@@ -41,11 +41,11 @@ class LoginPage extends React.Component {
 	login = () => {
 		const { username, password, remember } = this.state;
 		const { attemptLogin: attemptlogin } = this.props;
-		const userCredentials = { username, password };
+		const organizationCredentials = { username, password };
 
 		if (remember) { localStorage.setItem('username', username); }
 
-		attemptlogin(userCredentials).catch(identity);
+		attemptlogin(organizationCredentials).catch(identity);
 	}
 
 	rememberMe = () => {
@@ -96,6 +96,6 @@ class LoginPage extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ({ attemptLogin: user => dispatch(attemptLogin(user)) });
+const mapDispatchToProps = dispatch => ({ attemptLogin: organization => dispatch(attemptLogin(organization)) });
 
 export default connect(undefined, mapDispatchToProps)(LoginPage);

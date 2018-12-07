@@ -5,7 +5,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { identity } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptReset } from '../../actions/user';
+import { attemptReset } from '../../actions/organization';
 import { Box, FormInput } from '../../components';
 import { validateEmail } from '../../utils/validation';
 

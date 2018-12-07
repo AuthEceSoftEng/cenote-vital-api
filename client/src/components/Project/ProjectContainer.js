@@ -7,7 +7,7 @@ import Project from './Project';
 export default class ProjectContainer extends Component {
 	static propTypes = {
 		projectId: PropTypes.string,
-		text: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
 		createdAt: PropTypes.string,
 		updatedAt: PropTypes.string,
 		openProjectInfo: PropTypes.func.isRequired,
@@ -20,7 +20,7 @@ export default class ProjectContainer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			text: props.text,
+			title: props.title,
 			edit: false,
 			confirm: false,
 			updatedMessage: '',
@@ -53,13 +53,13 @@ export default class ProjectContainer extends Component {
 		openProjectInfo(projectId);
 	}
 
-	updateText = e => this.setState({ text: e.target.value })
+	updateTitle = e => this.setState({ title: e.target.value })
 
 	editProject = () => this.setState({ edit: true })
 
 	cancelEdit = () => {
-		const { text } = this.props;
-		this.setState({ text, edit: false });
+		const { title } = this.props;
+		this.setState({ title, edit: false });
 	}
 
 	deleteProject = () => {
@@ -72,27 +72,27 @@ export default class ProjectContainer extends Component {
 	closeModal = () => this.setState({ confirm: false })
 
 	updateProjectTitle = () => {
-		const { text } = this.state;
+		const { title } = this.state;
 		const { updateProjectTitle, projectId } = this.props;
-		if (text) {
-			updateProjectTitle({ projectId, text }).then(() => this.setState({ edit: false }));
+		if (title) {
+			updateProjectTitle({ projectId, title }).then(() => this.setState({ edit: false }));
 		}
 	}
 
 	render() {
-		const { updatedAt, text } = this.props;
-		const { edit, confirm, createdMessage, updatedMessage, text: currentText } = this.state;
+		const { updatedAt, title } = this.props;
+		const { edit, confirm, createdMessage, updatedMessage, title: currentTitle } = this.state;
 		return (
 			<Project
 				confirm={confirm}
 				edit={edit}
 				updated={!!updatedAt}
-				currentText={currentText}
-				text={text}
+				currentTitle={currentTitle}
+				title={title}
 				createdMessage={createdMessage}
 				updatedMessage={updatedMessage}
 				openProjectInfo={this.openProjectInfo}
-				updateText={this.updateText}
+				updateTitle={this.updateTitle}
 				updateProjectTitle={this.updateProjectTitle}
 				editProject={this.editProject}
 				cancelEdit={this.cancelEdit}

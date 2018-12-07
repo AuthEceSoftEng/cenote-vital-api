@@ -10,7 +10,7 @@ import { Button } from '..';
 export default class Dashboard extends React.Component {
 	static propTypes = {
 		projectId: PropTypes.string.isRequired,
-		text: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
 		readKey: PropTypes.string.isRequired,
 		writeKey: PropTypes.string.isRequired,
 		masterKey: PropTypes.string.isRequired,
@@ -24,7 +24,7 @@ export default class Dashboard extends React.Component {
 		this.state = {
 			readKey: props.readKey,
 			writeKey: props.writeKey,
-			text: props.text,
+			title: props.title,
 			masterKey: props.masterKey,
 			editRead: false,
 			editWrite: false,
@@ -90,11 +90,11 @@ export default class Dashboard extends React.Component {
 	}
 
 	render() {
-		const { readKey, text, writeKey, masterKey, editRead, editWrite, editMaster } = this.state;
+		const { readKey, title, writeKey, masterKey, editRead, editWrite, editMaster } = this.state;
 		const { projectId } = this.props;
 		return (
 			<div>
-				<h1 className="title is-1">{text}</h1>
+				<h1 className="title is-1">{title}</h1>
 				<Tabs forceRenderTabPanel defaultIndex={1} defaultFocus>
 					<TabList>
 						<Tab>Event Collections</Tab>
@@ -133,7 +133,7 @@ export default class Dashboard extends React.Component {
 										</thead>
 										<tbody>
 											<tr>
-												<th className="has-text-centered has-text-danger">{text}</th>
+												<th className="has-text-centered has-text-danger">{title}</th>
 												<td className="has-text-centered has-text-grey">{projectId}</td>
 											</tr>
 										</tbody>

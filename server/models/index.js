@@ -1,5 +1,5 @@
-const User = require('./User');
+const Organization = require('./Organization');
 const Project = require('./Project');
 const Session = require('./Session');
 
-module.exports = { User, Project, Session };
+module.exports = { Organization, Project, Session };

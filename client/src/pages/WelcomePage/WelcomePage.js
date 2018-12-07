@@ -7,13 +7,13 @@ import Welcome from 'react-welcome-page';
 
 class WelcomePage extends Component {
 	static propTypes = {
-		user: PropTypes.shape({}).isRequired,
+		organization: PropTypes.shape({}).isRequired,
 		pushToHome: PropTypes.func.isRequired,
 	}
 
 	componentDidMount() {
-		const { user, pushToHome } = this.props;
-		if (!isEmpty(user)) {
+		const { organization, pushToHome } = this.props;
+		if (!isEmpty(organization)) {
 			pushToHome();
 		}
 	}
@@ -40,7 +40,7 @@ class WelcomePage extends Component {
 	}
 }
 
-const mapStateToProps = pick(['user']);
+const mapStateToProps = pick(['organization']);
 
 const mapDispatchToProps = dispatch => ({ pushToHome: () => dispatch(push('/home')) });
 

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
-import { attemptLogout } from '../../actions/user';
+import { attemptLogout } from '../../actions/organization';
 
 const SettingsMenuContainer = (props) => {
 	const { pathname, attemptLogout: attemptlogout } = props;

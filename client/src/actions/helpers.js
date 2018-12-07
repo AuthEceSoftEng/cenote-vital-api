@@ -1,7 +1,7 @@
 import { push } from 'connected-react-router';
 import Notifications from 'react-notification-system-redux';
 
-import { logout } from './user';
+import { logout } from './organization';
 
 export const handleError = dispatch => (res) => {
 	if (res.status === 401) {

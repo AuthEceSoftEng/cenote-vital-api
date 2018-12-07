@@ -4,27 +4,27 @@ import PropTypes from 'prop-types';
 import { pick, isEmpty, equals } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptUpdateUser } from '../actions/user';
+import { attemptUpdateOrganization } from '../actions/organization';
 
 class ChangeUsernameContainer extends React.Component {
 	static propTypes = {
-		user: PropTypes.shape({
+		organization: PropTypes.shape({
 			username: PropTypes.string,
 			usernameCase: PropTypes.string,
 			email: PropTypes.string,
 		}).isRequired,
-		attemptUpdateUser: PropTypes.func.isRequired,
+		attemptUpdateOrganization: PropTypes.func.isRequired,
 	};
 
 	constructor(props) {
 		super(props);
-		this.state = { usernameCase: props.user.usernameCase };
+		this.state = { usernameCase: props.organization.usernameCase };
 	}
 
 	componentWillReceiveProps(nextProps) {
-		const { user } = this.props;
-		if (!isEmpty(nextProps.user) && !equals(nextProps.user, user)) {
-			this.setState({ usernameCase: nextProps.user.usernameCase });
+		const { organization } = this.props;
+		if (!isEmpty(nextProps.organization) && !equals(nextProps.organization, organization)) {
+			this.setState({ usernameCase: nextProps.organization.usernameCase });
 		}
 	}
 
@@ -32,24 +32,24 @@ class ChangeUsernameContainer extends React.Component {
 
 	saveUsernameCase = () => {
 		const { usernameCase } = this.state;
-		const { user, attemptUpdateUser: attemptupdateUser } = this.props;
-		if (usernameCase.toLowerCase() === user.username) {
-			const updatedUser = { usernameCase };
-			attemptupdateUser(updatedUser).catch(() => this.setState({ usernameCase: user.usernameCase }));
+		const { organization, attemptUpdateOrganization: attemptupdateOrganization } = this.props;
+		if (usernameCase.toLowerCase() === organization.username) {
+			const updatedOrganization = { usernameCase };
+			attemptupdateOrganization(updatedOrganization).catch(() => this.setState({ usernameCase: organization.usernameCase }));
 		}
 	}
 
 	isDisabled = () => {
-		const { user } = this.props;
+		const { organization } = this.props;
 		const { usernameCase } = this.state;
-		return user.usernameCase === usernameCase || usernameCase.toLowerCase() !== user.username;
+		return organization.usernameCase === usernameCase || usernameCase.toLowerCase() !== organization.username;
 	}
 
 	render() {
 		const { usernameCase } = this.state;
-		const { user } = this.props;
+		const { organization } = this.props;
 		const disabled = this.isDisabled();
-		const { usernameCase: currentUsernameCase, username } = user;
+		const { usernameCase: currentUsernameCase, username } = organization;
 		const helpClasses = classNames({
 			help: true,
 			'is-success': !disabled,
@@ -126,7 +126,7 @@ class ChangeUsernameContainer extends React.Component {
 	}
 }
 
-const mapStateToProps = pick(['user']);
-const mapDispatchToProps = dispatch => ({ attemptUpdateUser: user => dispatch(attemptUpdateUser(user)) });
+const mapStateToProps = pick(['organization']);
+const mapDispatchToProps = dispatch => ({ attemptUpdateOrganization: organization => dispatch(attemptUpdateOrganization(organization)) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangeUsernameContainer);

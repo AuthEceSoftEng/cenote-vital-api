@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const User = require('../models/User');
+const Organization = require('../models/Organization');
 
 const router = express.Router();
 
@@ -13,22 +13,22 @@ router.post('/register', (req, res) => {
 	req.body.username = req.body.username.toLowerCase();
 
 	const { username } = req.body;
-	const newUser = User(req.body);
+	const newOrganization = Organization(req.body);
 
-	User.find({ username }, (err, users) => {
+	Organization.find({ username }, (err, organizations) => {
 		if (err) {
-			res.status(400).send({ message: 'Create user failed', err });
+			res.status(400).send({ message: 'Create organization failed', err });
 		}
-		if (users[0]) {
+		if (organizations[0]) {
 			res.status(400).send({ message: 'Username exists' });
 		}
 
-		newUser.hashPassword().then(() => {
-			newUser.save((err2, savedUser) => {
-				if (err2 || !savedUser) {
-					res.status(400).send({ message: 'Create user failed', err2 });
+		newOrganization.hashPassword().then(() => {
+			newOrganization.save((err2, savedOrganization) => {
+				if (err2 || !savedOrganization) {
+					res.status(400).send({ message: 'Create organization failed', err2 });
 				} else {
-					res.send({ message: 'User created successfully', user: savedUser.hidePassword() });
+					res.send({ message: 'Organization created successfully', organization: savedOrganization.hidePassword() });
 				}
 			});
 		});
@@ -38,14 +38,14 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res, next) => {
 	req.body.username = req.body.username.toLowerCase();
 
-	passport.authenticate('local', (err, user, info) => {
+	passport.authenticate('local', (err, organization, info) => {
 		if (err) return next(err);
 		if (info && info.message === 'Missing credentials') return res.status(401).send({ message: 'Missing credentials' });
-		if (!user) return res.status(401).send(info);
+		if (!organization) return res.status(401).send(info);
 
-		return req.login(user, (err2) => {
+		return req.login(organization, (err2) => {
 			if (err2) res.status(401).send({ message: 'Login failed', err2 });
-			res.send({ message: 'Logged in successfully', user: user.hidePassword() });
+			res.send({ message: 'Logged in successfully', organization: organization.hidePassword() });
 		});
 	})(req, res, next);
 });

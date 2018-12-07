@@ -6,7 +6,7 @@ const uuid = require('uuid');
 const mongoose = require('mongoose');
 
 const Strategies = require('./strategies');
-const { User } = require('../models');
+const { Organization } = require('../models');
 
 module.exports = (app) => {
 	const sessionConfig = {
@@ -26,10 +26,10 @@ module.exports = (app) => {
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	passport.serializeUser((user, done) => done(null, user.id));
+	passport.serializeUser((organization, done) => done(null, organization.id));
 
-	passport.deserializeUser((id, done) => User.findById({ _id: id })
-		.then(user => done(null, user))
+	passport.deserializeUser((id, done) => Organization.findById({ _id: id })
+		.then(organization => done(null, organization))
 		.catch(err => console.warn(`err at deserialize: ${err}`)));
 
 	passport.use(Strategies.local);
