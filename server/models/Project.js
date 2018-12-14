@@ -9,9 +9,9 @@ const projectSchema = new mongoose.Schema({
 	createdAt: { type: Date, default: Date.now, immutable: true },
 	updatedAt: { type: Date },
 	projectId: { type: String, default: uuid, immutable: true, unique: true },
-	readKey: { type: String, default: uuid, immutable: true },
-	writeKey: { type: String, default: uuid, immutable: true },
-	masterKey: { type: String, default: uuid, immutable: true },
+	readKey: { type: String, default: uuid },
+	writeKey: { type: String, default: uuid },
+	masterKey: { type: String, default: uuid },
 });
 
 projectSchema.plugin(immutablePlugin);

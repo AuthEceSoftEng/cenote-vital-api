@@ -19,4 +19,4 @@ export const resetPassword = emailInfo => request.post('/api/organizations/reset
 export const postCheckUsername = username => request.post('/api/organizations/checkUsername')
 	.send({ username }).then(handleSuccess).catch(handleError);
 
-export const postCheckEmail = email => request.post('/api/organizationstext/checkEmail').send({ email }).then(handleSuccess).catch(handleError);
+export const postCheckEmail = email => request.post('/api/organizations/checkEmail').send({ email }).then(handleSuccess).catch(handleError);
