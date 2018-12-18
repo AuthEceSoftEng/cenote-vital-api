@@ -5,13 +5,16 @@ const bcrypt = require('bcryptjs');
 const R = require('ramda');
 const uuid = require('uuid/v4');
 
+const pid = () => `pid${uuid().replace(/-/g, '')}`;
+
+
 const organizationSchema = new mongoose.Schema({
 	username: {
 		type: String, lowercase: true, required: true, unique: true, immutable: true,
 	},
 	usernameCase: { type: String, required: true },
 	password: { type: String, required: true },
-	organizationId: { type: String, default: uuid, immutable: true },
+	organizationId: { type: String, default: pid, immutable: true },
 	email: { type: String, required: true },
 	profilePic: { type: String },
 	firstName: { type: String, maxlength: 20 },
