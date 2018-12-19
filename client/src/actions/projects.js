@@ -9,9 +9,9 @@ export const setProjects = projects => ({ type: types.SET_PROJECTS, projects });
 export const addProject = ({ projectId, title, createdAt }) => ({ type: types.ADD_PROJECT, createdAt, projectId, title });
 export const openProjectInfo = project => ({ type: types.OPEN_PROJECT_INFO, project });
 export const updateProjectTitle = ({ projectId, title, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, projectId, title });
-export const updateProjectReadKey = ({ projectId, readKey, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, projectId, readKey });
-export const updateProjectWriteKey = ({ projectId, writeKey, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, projectId, writeKey });
-export const updateProjectMasterKey = ({ projectId, masterKey, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, projectId, masterKey });
+export const updateProjectReadKey = ({ projectId, readKeys, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, projectId, readKeys });
+export const updateProjectWriteKey = ({ projectId, writeKeys, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, projectId, writeKeys });
+export const updateProjectMasterKey = ({ projectId, masterKeys, updatedAt }) => ({ type: types.UPDATE_PROJECT, updatedAt, projectId, masterKeys });
 export const removeProject = projectId => ({ type: types.REMOVE_PROJECT, projectId });
 
 export const attemptGetProjects = () => dispatch => getProjects().then((data) => {
@@ -37,23 +37,24 @@ export const attemptUpdateProjectTitle = ({ projectId, title }) => dispatch => p
 	return data;
 }).catch(handleError(dispatch));
 
-export const attemptUpdateProjectReadKey = ({ projectId, readKey }) => dispatch => putProject({ projectId, readKey }).then((data) => {
-	dispatch(updateProjectReadKey({ projectId, readKey, updatedAt: data.project.updatedAt }));
+export const attemptUpdateProjectReadKey = ({ projectId, readKeys }) => dispatch => putProject({ projectId, readKeys }).then((data) => {
+	dispatch(updateProjectReadKey({ projectId, readKeys, updatedAt: data.project.updatedAt }));
 	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 	return data;
 }).catch(handleError(dispatch));
 
-export const attemptUpdateProjectWriteKey = ({ projectId, writeKey }) => dispatch => putProject({ projectId, writeKey }).then((data) => {
-	dispatch(updateProjectWriteKey({ projectId, writeKey, updatedAt: data.project.updatedAt }));
+export const attemptUpdateProjectWriteKey = ({ projectId, writeKeys }) => dispatch => putProject({ projectId, writeKeys }).then((data) => {
+	dispatch(updateProjectWriteKey({ projectId, writeKeys, updatedAt: data.project.updatedAt }));
 	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
 	return data;
 }).catch(handleError(dispatch));
 
-export const attemptUpdateProjectMasterKey = ({ projectId, masterKey }) => dispatch => putProject({ projectId, masterKey }).then((data) => {
-	dispatch(updateProjectMasterKey({ projectId, masterKey, updatedAt: data.project.updatedAt }));
-	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-	return data;
-}).catch(handleError(dispatch));
+export const attemptUpdateProjectMasterKey = ({ projectId, masterKeys }) => dispatch => putProject({ projectId, masterKeys })
+	.then((data) => {
+		dispatch(updateProjectMasterKey({ projectId, masterKeys, updatedAt: data.project.updatedAt }));
+		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+		return data;
+	}).catch(handleError(dispatch));
 
 export const attemptDeleteProject = projectId => dispatch => deleteProject({ projectId }).then((data) => {
 	dispatch(removeProject(projectId));

@@ -17,6 +17,9 @@ export function project(state = { }, action) {
 		return update(state, {
 			title: { $set: action.title },
 			updatedAt: { $set: action.updatedAt },
+			// readKeys: { $set: action.readKeys },
+			// writeKeys: { $set: action.writeKeys },
+			// masterKeys: { $set: action.masterKeys },
 		});
 	default:
 		return state;

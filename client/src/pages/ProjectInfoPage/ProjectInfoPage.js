@@ -28,9 +28,9 @@ class ProjectInfoPage extends React.Component {
 				<Dashboard
 					projectId={project.projectId}
 					title={project.title}
-					readKey={project.readKey}
-					writeKey={project.writeKey}
-					masterKey={project.masterKey}
+					readKeys={project.readKeys}
+					writeKeys={project.writeKeys}
+					masterKeys={project.masterKeys}
 				/>
 			</div>
 		);

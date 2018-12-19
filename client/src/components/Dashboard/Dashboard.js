@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -11,9 +12,9 @@ export default class Dashboard extends React.Component {
 	static propTypes = {
 		projectId: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
-		readKey: PropTypes.string.isRequired,
-		writeKey: PropTypes.string.isRequired,
-		masterKey: PropTypes.string.isRequired,
+		readKeys: PropTypes.array.isRequired,
+		writeKeys: PropTypes.array.isRequired,
+		masterKeys: PropTypes.array.isRequired,
 		updateProjectReadKey: PropTypes.func.isRequired,
 		updateProjectWriteKey: PropTypes.func.isRequired,
 		updateProjectMasterKey: PropTypes.func.isRequired,
@@ -22,75 +23,96 @@ export default class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			readKey: props.readKey,
-			writeKey: props.writeKey,
+			readKeys: props.readKeys,
+			writeKeys: props.writeKeys,
 			title: props.title,
-			masterKey: props.masterKey,
-			editRead: false,
-			editWrite: false,
-			editMaster: false,
+			masterKeys: props.masterKeys,
+			editRead: new Array(props.readKeys.length).fill(false),
+			editWrite: new Array(props.writeKeys.length).fill(false),
+			editMaster: new Array(props.readKeys.length).fill(false),
 		};
 	}
 
 	updateProjectReadKey = () => {
-		const { readKey } = this.state;
+		const { readKeys } = this.state;
 		const { updateProjectReadKey, projectId } = this.props;
-		if (readKey) {
-			updateProjectReadKey({ projectId, readKey }).then(() => this.setState({ editRead: false }));
-		}
+		updateProjectReadKey({ projectId, readKeys }).then(() => this.setState({ editRead: new Array(readKeys.length).fill(false) }));
 	}
 
 	updateProjectWriteKey = () => {
-		const { writeKey } = this.state;
+		const { writeKeys } = this.state;
 		const { updateProjectWriteKey, projectId } = this.props;
-		if (writeKey) {
-			updateProjectWriteKey({ projectId, writeKey }).then(() => this.setState({ editWrite: false }));
-		}
+		updateProjectWriteKey({ projectId, writeKeys }).then(() => this.setState({ editWrite: new Array(writeKeys.length).fill(false) }));
 	}
 
 	updateProjectMasterKey = () => {
-		const { masterKey } = this.state;
+		const { masterKeys } = this.state;
 		const { updateProjectMasterKey, projectId } = this.props;
-		if (masterKey) {
-			updateProjectMasterKey({ projectId, masterKey }).then(() => this.setState({ editMaster: false }));
+		updateProjectMasterKey({ projectId, masterKeys }).then(() => this.setState({ editWrite: new Array(masterKeys.length).fill(false) }));
+	}
+
+	updateRead = (value, ind) => this.setState((prevState) => {
+		prevState.readKeys[ind] = value;
+		return ({ readKey: prevState.readKeys });
+	})
+
+	updateWrite = (value, ind) => this.setState((prevState) => {
+		prevState.writeKeys[ind] = value;
+		return ({ writeKeys: prevState.writeKeys });
+	})
+
+	updateMaster = (value, ind) => this.setState((prevState) => {
+		prevState.masterKeys[ind] = value;
+		return ({ masterKeys: prevState.masterKeys });
+	})
+
+	editRead = (i) => {
+		let { editRead, editWrite, editMaster } = this.state;
+		if (editRead[i]) {
+			editRead[i] = false;
+			this.setState({ editRead });
+		} else {
+			editRead = new Array(editRead.length).fill(false);
+			editWrite = new Array(editWrite.length).fill(false);
+			editMaster = new Array(editMaster.length).fill(false);
+			editRead[i] = true;
+
+			this.setState({ editRead, editWrite, editMaster });
 		}
 	}
 
-	updateRead = e => this.setState({ readKey: e.target.value })
-
-	updateWrite = e => this.setState({ writeKey: e.target.value })
-
-	updateMaster = e => this.setState({ masterKey: e.target.value })
-
-	editRead = () => {
-		const { editRead } = this.state;
-		if (editRead) {
-			this.setState({ editRead: false });
+	editWrite = (i) => {
+		let { editRead, editWrite, editMaster } = this.state;
+		if (editWrite[i]) {
+			editWrite[i] = false;
+			this.setState({ editWrite });
 		} else {
-			this.setState({ editRead: true, editWrite: false, editMaster: false });
+			editRead = new Array(editRead.length).fill(false);
+			editWrite = new Array(editWrite.length).fill(false);
+			editMaster = new Array(editMaster.length).fill(false);
+			editWrite[i] = true;
+
+			this.setState({ editRead, editWrite, editMaster });
 		}
 	}
 
-	editWrite = () => {
-		const { editWrite } = this.state;
-		if (editWrite) {
-			this.setState({ editWrite: false });
+	editMaster = (i) => {
+		let { editRead, editWrite, editMaster } = this.state;
+		if (editMaster[i]) {
+			editMaster[i] = false;
+			this.setState({ editMaster });
 		} else {
-			this.setState({ editRead: false, editWrite: true, editMaster: false });
-		}
-	}
+			editRead = new Array(editRead.length).fill(false);
+			editWrite = new Array(editWrite.length).fill(false);
+			editMaster = new Array(editMaster.length).fill(false);
+			editMaster[i] = true;
 
-	editMaster = () => {
-		const { editMaster } = this.state;
-		if (editMaster) {
-			this.setState({ editMaster: false });
-		} else {
-			this.setState({ editRead: false, editWrite: false, editMaster: true });
+			this.setState({ editRead, editWrite, editMaster });
 		}
 	}
 
 	render() {
-		const { readKey, title, writeKey, masterKey, editRead, editWrite, editMaster } = this.state;
+		const { readKeys, title, writeKeys, masterKeys, editRead, editWrite, editMaster } = this.state;
 		const { projectId } = this.props;
 		return (
 			<div>
@@ -104,15 +126,7 @@ export default class Dashboard extends React.Component {
 						<Tabs forceRenderTabPanel>
 							<TabList>
 								<Tab>Event Collection 1</Tab>
-								<Tab>Event Collection 2</Tab>
-								<Tab>Event Collection 3</Tab>
-								<Tab>Event Collection 4</Tab>
-								<Tab>Event Collection 5</Tab>
 							</TabList>
-							<TabPanel><EventCollection /></TabPanel>
-							<TabPanel><EventCollection /></TabPanel>
-							<TabPanel><EventCollection /></TabPanel>
-							<TabPanel><EventCollection /></TabPanel>
 							<TabPanel><EventCollection /></TabPanel>
 						</Tabs>
 					</TabPanel>
@@ -151,87 +165,105 @@ export default class Dashboard extends React.Component {
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<th className="has-text-centered has-text-primary">Read key</th>
-												{editRead
-													? (
-														<input
-															className="input"
-															type="text"
-															value={readKey}
-															onChange={this.updateRead}
-															ref={inpt => inpt && inpt.focus()}
-														/>
-													)
-													: (<td className="has-text-centered has-text-grey">{readKey}</td>)}
-												{editRead
-													? (
-														<td>
-															<Button
-																label="Change!"
-																type="danger"
-																onClick={() => { this.editRead(); this.updateProjectReadKey(); }}
-															/>
+											{
+												readKeys.map((key, ind) => (
+													<tr key={`rowread${ind}`}>
+														<th className="has-text-centered has-text-primary">Read key</th>
+														{editRead[ind]
+															? (
+																<td className="has-text-centered has-text-grey">
+																	<input
+																		className="input"
+																		type="text"
+																		value={key}
+																		onChange={({ target }) => this.updateRead(target.value, ind)}
+																		ref={inpt => inpt && inpt.focus()}
+																	/>
+																</td>
+															)
+															: (<td className="has-text-centered has-text-grey">{key}</td>)}
+														{editRead[ind]
+															? (
+																<td>
+																	<Button
+																		label="Change!"
+																		type="danger"
+																		onClick={() => { this.editRead(ind); this.updateProjectReadKey(ind); }}
+																	/>
 
-														</td>
-													)
-													: (<td><Button label="Edit" type="info" onClick={this.editRead} /></td>)
-												}
-											</tr>
-											<tr>
-												<th className="has-text-centered has-text-link">Write key</th>
-												{editWrite
-													? (
-														<input
-															className="input"
-															type="text"
-															value={writeKey}
-															onChange={this.updateWrite}
-															ref={inpt => inpt && inpt.focus()}
-														/>
-													)
-													: (<td className="has-text-centered has-text-grey">{writeKey}</td>)}
-												{editWrite
-													? (
-														<td>
-															<Button
-																label="Change!"
-																type="danger"
-																onClick={() => { this.editWrite(); this.updateProjectWriteKey(); }}
-															/>
+																</td>
+															)
+															: (<td><Button label="Edit" type="info" onClick={() => this.editRead(ind)} /></td>)
+														}
+													</tr>
+												))
+											}
+											{
+												writeKeys.map((key, ind) => (
+													<tr key={`rowwrite${ind}`}>
+														<th className="has-text-centered has-text-link">Write key</th>
+														{editWrite[ind]
+															? (
+																<td className="has-text-centered has-text-grey">
+																	<input
+																		className="input"
+																		type="text"
+																		value={key}
+																		onChange={({ target }) => this.updateWrite(target.value, ind)}
+																		ref={inpt => inpt && inpt.focus()}
+																	/>
+																</td>
+															)
+															: (<td className="has-text-centered has-text-grey">{key}</td>)}
+														{editWrite[ind]
+															? (
+																<td>
+																	<Button
+																		label="Change!"
+																		type="danger"
+																		onClick={() => { this.editWrite(ind); this.updateProjectWriteKey(); }}
+																	/>
 
-														</td>
-													)
-													: (<td><Button label="Edit" type="info" onClick={this.editWrite} /></td>)
-												}
-											</tr>
-											<tr>
-												<th className="has-text-centered has-text-danger">Master key</th>
-												{editMaster
-													? (
-														<input
-															className="input"
-															type="text"
-															value={masterKey}
-															onChange={this.updateMaster}
-															ref={inpt => inpt && inpt.focus()}
-														/>
-													)
-													: (<td className="has-text-centered has-text-grey">{masterKey}</td>)}
-												{editMaster
-													? (
-														<td>
-															<Button
-																label="Change!"
-																type="danger"
-																onClick={() => { this.editMaster(); this.updateProjectMasterKey(); }}
-															/>
+																</td>
+															)
+															: (<td><Button label="Edit" type="info" onClick={() => this.editWrite(ind)} /></td>)
+														}
+													</tr>
+												))
+											}
+											{
+												masterKeys.map((key, ind) => (
+													<tr key={`rowmaster${ind}`}>
+														<th className="has-text-centered has-text-danger">Master key</th>
+														{editMaster[ind]
+															? (
+																<td className="has-text-centered has-text-grey">
+																	<input
+																		className="input"
+																		type="text"
+																		value={key}
+																		onChange={({ target }) => this.updateMaster(target.value, ind)}
+																		ref={inpt => inpt && inpt.focus()}
+																	/>
+																</td>
+															)
+															: (<td className="has-text-centered has-text-grey">{key}</td>)}
+														{editMaster[ind]
+															? (
+																<td>
+																	<Button
+																		label="Change!"
+																		type="danger"
+																		onClick={() => { this.editMaster(ind); this.updateProjectMasterKey(ind); }}
+																	/>
 
-														</td>
-													)
-													: (<td><Button label="Edit" type="info" onClick={this.editMaster} /></td>)
-												}
-											</tr>
+																</td>
+															)
+															: (<td><Button label="Edit" type="info" onClick={() => this.editMaster(ind)} /></td>)
+														}
+													</tr>
+												))
+											}
 										</tbody>
 									</table>
 								</div>

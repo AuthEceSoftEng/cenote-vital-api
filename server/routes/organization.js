@@ -2,6 +2,7 @@ const express = require('express');
 
 const { Organization, Project } = require('../models');
 const events = require('./events');
+const keys = require('./keys');
 
 const router = express.Router();
 
@@ -89,5 +90,6 @@ router.delete('/:ORG_ID/projects/:PROJECT_ID', (req, res) => {
 });
 
 router.use('/:ORG_ID/projects/:PROJECT_ID/events', events);
+router.use('/:ORG_ID/projects/:PROJECT_ID/keys', keys);
 
 module.exports = router;
