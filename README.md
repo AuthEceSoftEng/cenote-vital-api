@@ -4,6 +4,8 @@
 
 ## Quick Start
 
+* Install [Apache Kafka](http://kafka.apache.org/documentation.html#quickstart)
+
 * Install dependencies:
 
 ```bash
