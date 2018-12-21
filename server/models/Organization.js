@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const R = require('ramda');
 const uuid = require('uuid/v4');
 
-const pid = () => `pid${uuid().replace(/-/g, '').slice(0, 17)}`;
+const pid = () => `pid${uuid().replace(/-/g, '')}`;
 
 
 const organizationSchema = new mongoose.Schema({

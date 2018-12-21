@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const immutablePlugin = require('mongoose-immutable');
 const uuid = require('uuid/v4');
 
-const pid = () => `pid${uuid().replace(/-/g, '')}`;
+const pid = () => `pid${uuid().replace(/-/g, '').slice(0, 11)}`;
 
 const projectSchema = new mongoose.Schema({
 	organization: { type: mongoose.Schema.ObjectId, ref: 'Organization', required: true },
