@@ -17,7 +17,7 @@ module.exports = (app) => {
 		}),
 		genid: () => uuid.v4(),
 		cookie: { secure: false },
-		secret: 'bdms-secret',
+		secret: 'cenote-secret',
 		resave: false,
 		saveUninitialized: false,
 	};

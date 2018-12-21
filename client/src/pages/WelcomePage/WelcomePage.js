@@ -28,13 +28,13 @@ class WelcomePage extends Component {
 							{
 								backgroundColor: 'rgb(229, 243, 251)',
 								textColor: '#0A6C8D',
-								text: 'BDMS',
+								text: 'cenote',
 								image: require('../../assets/images/logo.png'),
 							},
 						]
 					}
 				/>
-				<h1 className="title is-1">Welcome to BDMS Dashboard!</h1>
+				<h1 className="title is-1">{'Welcome to cenote\'s Dashboard!'}</h1>
 			</div>
 		);
 	}

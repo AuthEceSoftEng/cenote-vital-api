@@ -60,7 +60,7 @@ router.post('/password', (req, res) => {
 						auth: { organization: 'protipa@issel.ee.auth.gr', pass: 'qW5Rj3CZbmsN' },
 					});
 					const message = {
-						from: 'BDMS System <no-reply@issel.ee.auth.gr>',
+						from: 'cenote System <no-reply@issel.ee.auth.gr>',
 						to: `"${organization.username}" <${organization.email}>`,
 						subject: 'Your password has been changed!',
 						text: `${'Hello,\n\nThis is a confirmation that the password for your account '
@@ -138,9 +138,9 @@ router.post('/reset', (req, res) => {
 				auth: { organization: 'protipa@issel.ee.auth.gr', pass: 'qW5Rj3CZbmsN' },
 			});
 			const message = {
-				from: 'BDMS System <no-reply@issel.ee.auth.gr>',
+				from: 'cenote System <no-reply@issel.ee.auth.gr>',
 				to: `"${organization.username}" <${organization.email}>`,
-				subject: 'BDMS Password Reset',
+				subject: 'cenote Password Reset',
 				text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n'
 					+ 'Please click on the following link, or paste this into your browser to complete the process:\n\n'
 					+ 'http://'}${req.headers.host}/reset/${token}\n\n`

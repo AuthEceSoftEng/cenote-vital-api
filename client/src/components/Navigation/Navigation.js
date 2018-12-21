@@ -40,7 +40,7 @@ export default function Navigation(props) {
 			<div className="container">
 				<div className="navbar-brand">
 					<Link to={auth ? '/home' : '/'} className="navbar-item" aria-label="main navigation">
-						<h3 className="title is-3 logo">BDMS Dashboard</h3>
+						<h3 className="title is-3 logo">Cenote Dashboard</h3>
 					</Link>
 					<div className="navbar-brand-right">
 						{!auth && (

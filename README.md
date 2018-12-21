@@ -1,10 +1,10 @@
-# smack-bdms-web
+# cenote-api
 
->BDMS Management Dashboard
+>API server & web client used by cenote
 
 ## Quick Start
 
-* Install [Apache Kafka](http://kafka.apache.org/documentation.html#quickstart)
+* Install [gcc](https://gcc.gnu.org/)
 
 * Install dependencies:
 

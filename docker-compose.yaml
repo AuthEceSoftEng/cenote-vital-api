@@ -10,7 +10,7 @@ services:
       - mongo
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=mongodb://mongo:27017/bdms-db
+      - DATABASE_URL=mongodb://mongo:27017/cenote-db
       - HOST=0.0.0.0
     command: npm start
   mongo:

@@ -1,13 +1,13 @@
 {
-  "name": "smack-bdms-web",
+  "name": "cenote-api-server",
   "version": "0.1.0",
   "private": true,
-  "description": "BDMS Management",
-  "homepage": "https://github.com/AuthEceSoftEng/smack-bdms-web#readme",
+  "description": "API server & web client used by cenote",
+  "homepage": "https://github.com/AuthEceSoftEng/cenote-api#readme",
   "bugs": {
-    "url": "https://github.com/AuthEceSoftEng/smack-bdms-web/issues"
+    "url": "https://github.com/AuthEceSoftEng/cenote-api/issues"
   },
-  "repository": "github:AuthEceSoftEng/smack-bdms-web",
+  "repository": "github:AuthEceSoftEng/cenote-api",
   "license": "MIT",
   "author": {
     "name": "Napoleon Oikonomou",
