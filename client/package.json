@@ -8,7 +8,7 @@
     "build": "babel-node tools/build.js",
     "clean": "rm -rf node_modules && npm i",
     "clean-dist": "npm run remove-dist && mkdir dist",
-    "lint": "eslint . --fix",
+    "lint": "eslint ./*.js tools/*.js src/**/*.js --fix",
     "open:cover": "npm run test:cover && opn ./coverage/lcov-report/index.html",
     "open:dist": "babel-node tools/distServer.js",
     "open:src": "babel-node tools/srcServer.js",
