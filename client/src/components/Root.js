@@ -8,21 +8,22 @@ import App from './App';
 
 // eslint-disable-next-line
 export default class Root extends Component {
-	render() {
-		const { store, history, persistor } = this.props;
-		return (
-			<Provider store={store}>
-				<PersistGate loading={<div />} persistor={persistor}>
-					<ConnectedRouter history={history}>
-						<App {...this.props} />
-					</ConnectedRouter>
-				</PersistGate>
-			</Provider>
-		);
-	}
+  render() {
+    const { store, history, persistor } = this.props;
+    return (
+      <Provider store={store}>
+        <PersistGate loading={<div />} persistor={persistor}>
+          <ConnectedRouter history={history}>
+            <App />
+          </ConnectedRouter>
+        </PersistGate>
+      </Provider>
+    );
+  }
 }
 
 Root.propTypes = {
-	store: PropTypes.object.isRequired,
-	history: PropTypes.object.isRequired,
+  store: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  persistor: PropTypes.object.isRequired,
 };

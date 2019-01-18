@@ -13,13 +13,13 @@ router.use('/api/projects', projects);
 router.use('/api/organizations', organizations);
 
 router.get('/works', (req, res) => {
-	res.send('<h1 align="center">It does!</h1>');
+  res.send('<h1 align="center">It does!</h1>');
 });
 
 const root = path.join(__dirname, '../../client/dist');
 router.use(express.static(root));
 router.get('/*', (req, res) => {
-	res.sendFile('index.html', { root });
+  res.sendFile('index.html', { root });
 });
 
 module.exports = router;

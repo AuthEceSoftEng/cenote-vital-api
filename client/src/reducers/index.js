@@ -6,8 +6,8 @@ import organization from './organization';
 import projects from './projects';
 
 export default history => combineReducers({
-	router: connectRouter(history),
-	alerts,
-	organization,
-	projects,
+  router: connectRouter(history),
+  alerts,
+  organization,
+  projects,
 });

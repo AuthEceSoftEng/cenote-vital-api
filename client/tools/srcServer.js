@@ -9,32 +9,32 @@ import config from '../webpack.config.dev';
 
 const bundler = webpack(config);
 browserSync({
-	port: 4000,
-	ui: { port: 4001 },
-	server: {
-		baseDir: 'src',
+  port: 4000,
+  ui: { port: 4001 },
+  server: {
+    baseDir: 'src',
 
-		middleware: [
-			historyApiFallback(),
-			proxy(['/api'], { target: 'http://localhost:3000', changeOrigin: false }),
-			webpackDevMiddleware(bundler, {
-				publicPath: config.output.publicPath,
-				noInfo: true,
-				quiet: false,
-				stats: {
-					assets: false,
-					colors: true,
-					version: false,
-					hash: false,
-					timings: false,
-					chunks: false,
-					chunkModules: false,
-				},
-			}),
-			webpackHotMiddleware(bundler),
-		],
-	},
-	files: [
-		'src/*.html',
-	],
+    middleware: [
+      historyApiFallback(),
+      proxy(['/api'], { target: 'http://localhost:3000', changeOrigin: false }),
+      webpackDevMiddleware(bundler, {
+        publicPath: config.output.publicPath,
+        noInfo: true,
+        quiet: false,
+        stats: {
+          assets: false,
+          colors: true,
+          version: false,
+          hash: false,
+          timings: false,
+          chunks: false,
+          chunkModules: false,
+        },
+      }),
+      webpackHotMiddleware(bundler),
+    ],
+  },
+  files: [
+    'src/*.html',
+  ],
 });

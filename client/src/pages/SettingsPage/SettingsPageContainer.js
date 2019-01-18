@@ -7,19 +7,19 @@ import { isEmpty, pick } from 'ramda';
 import SettingsPage from './SettingsPage';
 
 const SettingsPageContainer = (props) => {
-	const { organization, pushToLogin, location } = props;
-	if (isEmpty(organization)) {
-		pushToLogin();
-	}
-	return (
-		<SettingsPage location={location} />
-	);
+  const { organization, pushToLogin, location } = props;
+  if (isEmpty(organization)) {
+    pushToLogin();
+  }
+  return (
+    <SettingsPage location={location} />
+  );
 };
 
 SettingsPageContainer.propTypes = {
-	organization: PropTypes.shape({}).isRequired,
-	pushToLogin: PropTypes.func.isRequired,
-	location: PropTypes.shape({ pathname: PropTypes.string.isRequired }).isRequired,
+  organization: PropTypes.shape({}).isRequired,
+  pushToLogin: PropTypes.func.isRequired,
+  location: PropTypes.shape({ pathname: PropTypes.string.isRequired }).isRequired,
 };
 
 const mapStateToProps = pick(['organization']);

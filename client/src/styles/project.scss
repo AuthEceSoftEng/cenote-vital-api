@@ -12,7 +12,7 @@ $orange500: #ff9800;
 $lime500: #cddc39;
 
 .dashboard {
-	align-items: center;
+  align-items: center;
   background-color: $grey;
   color: $white;
   display: flex;
@@ -23,8 +23,8 @@ $lime500: #cddc39;
 }
 
 .widget {
-	width: 20em;
-	height: 20em;
+  width: 20em;
+  height: 20em;
   align-items: center;
   background-color: $grey800;
   border: 1px solid $grey700;
@@ -36,42 +36,42 @@ $lime500: #cddc39;
 }
 
 .time-item {
-	font-size: 4em;
-	text-align: center;
-	color: black;
+  font-size: 4em;
+  text-align: center;
+  color: black;
 }
 
 .date-item {
-	font-size: 1.5em;
-	text-align: center;
-	color: black;
+  font-size: 1.5em;
+  text-align: center;
+  color: black;
 }
 
 .counter {
-	font-size: 4em;
+  font-size: 4em;
   color: $pinkA200;
 }
 
 .text {
-	fill: $white;
+  fill: $white;
   font-size: 4em;
   text-anchor: middle;
 }
 
 .svg {
-	fill: transparent;
-	margin: auto;
-	width: 14em;
-	height: 14em;
+  fill: transparent;
+  margin: auto;
+  width: 14em;
+  height: 14em;
 }
 
 .circle {
-	stroke-linecap: round;
+  stroke-linecap: round;
   stroke-width: 10;
   transform: translate(100px, 100px) rotate(-89.9deg);
   transition: stroke-dashoffset 0.3s linear;
 
-	&.background {
+  &.background {
     stroke: black;
   }
 
@@ -81,13 +81,13 @@ $lime500: #cddc39;
 }
 
 table {
-	border-spacing: 0.75em;
+  border-spacing: 0.75em;
 
-	> th {
-		text-align: right;
-	}
+  > th {
+    text-align: right;
+  }
 
-	> td {
-		text-align: left;
-	}
+  > td {
+    text-align: left;
+  }
 }

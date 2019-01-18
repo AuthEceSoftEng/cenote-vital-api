@@ -7,25 +7,25 @@ import { isEmpty, pick } from 'ramda';
 import LoginPage from './LoginPage';
 
 class LoginPageContainer extends React.Component {
-	static propTypes = {
-		organization: PropTypes.shape({}).isRequired,
-		pushToHome: PropTypes.func.isRequired,
-	}
+  static propTypes = {
+    organization: PropTypes.shape({}).isRequired,
+    pushToHome: PropTypes.func.isRequired,
+  }
 
-	componentDidMount() {
-		const { organization, pushToHome } = this.props;
-		if (!isEmpty(organization)) {
-			pushToHome();
-		}
-	}
+  componentDidMount() {
+    const { organization, pushToHome } = this.props;
+    if (!isEmpty(organization)) {
+      pushToHome();
+    }
+  }
 
-	render() {
-		return (
-			<div className="login-page section">
-				<LoginPage />
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div className="login-page section">
+        <LoginPage />
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = pick(['organization']);

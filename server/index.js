@@ -11,11 +11,11 @@ const routes = require('./routes');
 const configPassport = require('./config/passport');
 
 const mongooseOptions = {
-	useNewUrlParser: true,
-	useCreateIndex: true,
-	useFindAndModify: false,
-	reconnectTries: 30,
-	reconnectInterval: 500,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  reconnectTries: 30,
+  reconnectInterval: 500,
 };
 mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-db', mongooseOptions).catch(err => console.error(err.message));
 
@@ -30,11 +30,11 @@ app.use('/', routes);
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || 'localhost';
 if (cluster.isMaster) {
-	for (let i = 0; i < numCPUs; i += 1) cluster.fork();
-	cluster.on('death', (worker) => {
-		console.log(`Worker: ${worker.pid} died. Trying to restart it...`);
-		cluster.fork();
-	});
+  for (let i = 0; i < numCPUs; i += 1) cluster.fork();
+  cluster.on('death', (worker) => {
+    console.log(`Worker: ${worker.pid} died. Trying to restart it...`);
+    cluster.fork();
+  });
 } else {
-	app.listen(port, host, () => console.log(chalk.bold.rgb(0, 255, 255)(`>>> Server started at http://${host}:${port}`)));
+  app.listen(port, host, () => console.log(chalk.bold.rgb(0, 255, 255)(`>>> Server started at http://${host}:${port}`)));
 }

@@ -15,49 +15,49 @@ export const updateProjectMasterKey = ({ projectId, masterKeys, updatedAt }) => 
 export const removeProject = projectId => ({ type: types.REMOVE_PROJECT, projectId });
 
 export const attemptGetProjects = () => dispatch => getProjects().then((data) => {
-	dispatch(setProjects(data.projects));
-	return data.projects;
+  dispatch(setProjects(data.projects));
+  return data.projects;
 }).catch(handleError(dispatch));
 
 export const attemptAddProject = title => dispatch => postProject({ title }).then((data) => {
-	dispatch(addProject(data.project));
-	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-	return data;
+  dispatch(addProject(data.project));
+  dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+  return data;
 }).catch(handleError(dispatch));
 
 export const attemptOpenProjectInfo = projectId => dispatch => getProject({ projectId }).then((data) => {
-	dispatch(openProjectInfo(data.project));
-	dispatch(push(`/projects/${data.project.projectId}`));
-	return data.project;
+  dispatch(openProjectInfo(data.project));
+  dispatch(push(`/projects/${data.project.projectId}`));
+  return data.project;
 }).catch(handleError(dispatch));
 
 export const attemptUpdateProjectTitle = ({ projectId, title }) => dispatch => putProject({ projectId, title }).then((data) => {
-	dispatch(updateProjectTitle({ projectId, title, updatedAt: data.project.updatedAt }));
-	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-	return data;
+  dispatch(updateProjectTitle({ projectId, title, updatedAt: data.project.updatedAt }));
+  dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+  return data;
 }).catch(handleError(dispatch));
 
 export const attemptUpdateProjectReadKey = ({ projectId, readKeys }) => dispatch => putProject({ projectId, readKeys }).then((data) => {
-	dispatch(updateProjectReadKey({ projectId, readKeys, updatedAt: data.project.updatedAt }));
-	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-	return data;
+  dispatch(updateProjectReadKey({ projectId, readKeys, updatedAt: data.project.updatedAt }));
+  dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+  return data;
 }).catch(handleError(dispatch));
 
 export const attemptUpdateProjectWriteKey = ({ projectId, writeKeys }) => dispatch => putProject({ projectId, writeKeys }).then((data) => {
-	dispatch(updateProjectWriteKey({ projectId, writeKeys, updatedAt: data.project.updatedAt }));
-	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-	return data;
+  dispatch(updateProjectWriteKey({ projectId, writeKeys, updatedAt: data.project.updatedAt }));
+  dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+  return data;
 }).catch(handleError(dispatch));
 
 export const attemptUpdateProjectMasterKey = ({ projectId, masterKeys }) => dispatch => putProject({ projectId, masterKeys })
-	.then((data) => {
-		dispatch(updateProjectMasterKey({ projectId, masterKeys, updatedAt: data.project.updatedAt }));
-		dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-		return data;
-	}).catch(handleError(dispatch));
+  .then((data) => {
+    dispatch(updateProjectMasterKey({ projectId, masterKeys, updatedAt: data.project.updatedAt }));
+    dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+    return data;
+  }).catch(handleError(dispatch));
 
 export const attemptDeleteProject = projectId => dispatch => deleteProject({ projectId }).then((data) => {
-	dispatch(removeProject(projectId));
-	dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-	return data;
+  dispatch(removeProject(projectId));
+  dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+  return data;
 }).catch(handleError(dispatch));

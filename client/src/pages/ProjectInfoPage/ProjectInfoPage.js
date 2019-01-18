@@ -7,34 +7,34 @@ import { pick, isEmpty } from 'ramda';
 import { Dashboard } from '../../components';
 
 class ProjectInfoPage extends React.Component {
-	static propTypes = {
-		organization: PropTypes.shape({}).isRequired,
-		projects: PropTypes.array.isRequired,
-		pushToLogin: PropTypes.func.isRequired,
-	}
+  static propTypes = {
+    organization: PropTypes.shape({}).isRequired,
+    projects: PropTypes.array.isRequired,
+    pushToLogin: PropTypes.func.isRequired,
+  }
 
-	componentDidMount() {
-		const { organization, pushToLogin } = this.props;
-		if (isEmpty(organization)) {
-			pushToLogin();
-		}
-	}
+  componentDidMount() {
+    const { organization, pushToLogin } = this.props;
+    if (isEmpty(organization)) {
+      pushToLogin();
+    }
+  }
 
-	render() {
-		const { projects } = this.props;
-		const [project] = projects;
-		return (
-			<div className="home-page section">
-				<Dashboard
-					projectId={project.projectId}
-					title={project.title}
-					readKeys={project.readKeys}
-					writeKeys={project.writeKeys}
-					masterKeys={project.masterKeys}
-				/>
-			</div>
-		);
-	}
+  render() {
+    const { projects } = this.props;
+    const [project] = projects;
+    return (
+      <div className="home-page section">
+        <Dashboard
+          projectId={project.projectId}
+          title={project.title}
+          readKeys={project.readKeys}
+          writeKeys={project.writeKeys}
+          masterKeys={project.masterKeys}
+        />
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = pick(['organization', 'projects']);

@@ -7,25 +7,25 @@ import { isEmpty, pick } from 'ramda';
 import RegisterPage from './RegisterPage';
 
 class RegisterPageContainer extends React.Component {
-	static propTypes = {
-		organization: PropTypes.shape({}).isRequired,
-		pushToHome: PropTypes.func.isRequired,
-	}
+  static propTypes = {
+    organization: PropTypes.shape({}).isRequired,
+    pushToHome: PropTypes.func.isRequired,
+  }
 
-	componentDidMount() {
-		const { organization, pushToHome } = this.props;
-		if (!isEmpty(organization)) {
-			pushToHome();
-		}
-	}
+  componentDidMount() {
+    const { organization, pushToHome } = this.props;
+    if (!isEmpty(organization)) {
+      pushToHome();
+    }
+  }
 
-	render() {
-		return (
-			<div className="register-page section">
-				<RegisterPage />
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div className="register-page section">
+        <RegisterPage />
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = pick(['organization']);

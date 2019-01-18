@@ -3,28 +3,28 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 const Box = (props) => {
-	const { children, className } = props;
+  const { children, className } = props;
 
-	const boxClasses = classNames({
-		[className]: !!className,
-		box: true,
-	});
+  const boxClasses = classNames({
+    [className]: !!className,
+    box: true,
+  });
 
-	return (
-		<div className={boxClasses}>
-			{children}
-		</div>
-	);
+  return (
+    <div className={boxClasses}>
+      {children}
+    </div>
+  );
 };
 
 Box.defaultProps = { className: '' };
 
 Box.propTypes = {
-	children: PropTypes.oneOfType([
-		PropTypes.element,
-		PropTypes.array,
-	]).isRequired,
-	className: PropTypes.string,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.array,
+  ]).isRequired,
+  className: PropTypes.string,
 };
 
 export default Box;

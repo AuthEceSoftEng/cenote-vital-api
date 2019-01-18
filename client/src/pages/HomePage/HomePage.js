@@ -7,27 +7,27 @@ import { pick, isEmpty } from 'ramda';
 import { Clock } from '../../components';
 
 class HomePageContainer extends React.Component {
-	static propTypes = {
-		organization: PropTypes.shape({}).isRequired,
-		pushToLogin: PropTypes.func.isRequired,
-	}
+  static propTypes = {
+    organization: PropTypes.shape({}).isRequired,
+    pushToLogin: PropTypes.func.isRequired,
+  }
 
-	componentDidMount() {
-		const { organization, pushToLogin } = this.props;
-		if (isEmpty(organization)) {
-			pushToLogin();
-		}
-	}
+  componentDidMount() {
+    const { organization, pushToLogin } = this.props;
+    if (isEmpty(organization)) {
+      pushToLogin();
+    }
+  }
 
-	render() {
-		const { organization } = this.props;
-		return (
-			<div className="home-page section">
-				<Clock />
-				<h1 className="title is-1">{`Welcome, ${organization.username}!`}</h1>
-			</div>
-		);
-	}
+  render() {
+    const { organization } = this.props;
+    return (
+      <div className="home-page section">
+        <Clock />
+        <h1 className="title is-1">{`Welcome, ${organization.username}!`}</h1>
+      </div>
+    );
+  }
 }
 
 const mapStateToProps = pick(['organization']);
