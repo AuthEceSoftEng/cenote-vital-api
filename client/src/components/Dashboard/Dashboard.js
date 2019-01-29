@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-import EventCollection from './dashboardComponents/EventCollection';
+import { EventCollection, MostRecentEvent } from './dashboardComponents';
+import { getEventCollections, getRecentEvents } from './widgets';
 import { Button } from '..';
 
 
@@ -30,7 +31,30 @@ export default class Dashboard extends React.Component {
       editRead: new Array(props.readKeys.length).fill(false),
       editWrite: new Array(props.writeKeys.length).fill(false),
       editMaster: new Array(props.readKeys.length).fill(false),
+      collections: {},
+      events: {},
     };
+    this._isMounted = false;
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+    const { projectId } = this.props;
+    const { readKeys } = this.state;
+    getEventCollections(projectId).then((collections) => {
+      if (this._isMounted) this.setState({ collections });
+
+      const events = {};
+      const promises = [];
+      Object.keys(collections).forEach((col) => {
+        promises.push(getRecentEvents(projectId, col, readKeys[0], collections[col]).then(evts => events[col] = evts));
+      });
+      Promise.all(promises).then(() => this._isMounted && this.setState({ events }));
+    });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   updateProjectReadKey = () => {
@@ -111,24 +135,73 @@ export default class Dashboard extends React.Component {
     }
   }
 
+  _getEventCollectionInfo() {
+    const { collections } = this.state;
+    const tabList = [];
+    const tabPanel = [];
+    Object.keys(collections).forEach((col, ind) => {
+      tabList.push(<Tab key={`tab_col_${ind}`}>{col}</Tab>);
+      tabPanel.push(<TabPanel key={`tabpanel_col_${ind}`}><EventCollection properties={collections[col]} /></TabPanel>);
+    });
+    if (tabList.length === 0) {
+      return (
+        <div>
+          <p>
+            {'None yet. Send some events!'}
+          </p>
+        </div>
+      );
+    }
+    return (
+      <Tabs forceRenderTabPanel>
+        <TabList>
+          {tabList}
+        </TabList>
+        {tabPanel}
+      </Tabs>
+    );
+  }
+
+  _getLastFiveEvents() {
+    const { collections, events } = this.state;
+    const tabList = [];
+    const tabPanel = [];
+    Object.keys(collections).forEach((col, ind) => {
+      tabList.push(<Tab key={`tab_col_${ind}`}>{col}</Tab>);
+      tabPanel.push(<TabPanel key={`tabpanel_col_${ind}`}><MostRecentEvent properties={collections[col]} events={events[col] || []} /></TabPanel>);
+    });
+    if (tabList.length === 0) {
+      return (
+        <div>
+          <p>
+            {'None yet. Send some events!'}
+          </p>
+        </div>
+      );
+    }
+    return (
+      <Tabs forceRenderTabPanel>
+        <TabList>
+          {tabList}
+        </TabList>
+        {tabPanel}
+      </Tabs>
+    );
+  }
+
   render() {
     const { readKeys, title, writeKeys, masterKeys, editRead, editWrite, editMaster } = this.state;
     const { projectId } = this.props;
     return (
       <div>
         <h1 className="title is-1">{title}</h1>
-        <Tabs forceRenderTabPanel defaultIndex={1} defaultFocus>
+        <Tabs forceRenderTabPanel defaultIndex={0} defaultFocus>
           <TabList>
             <Tab>Event Collections</Tab>
             <Tab>Project Information</Tab>
           </TabList>
           <TabPanel>
-            <Tabs forceRenderTabPanel>
-              <TabList>
-                <Tab>Event Collection 1</Tab>
-              </TabList>
-              <TabPanel><EventCollection /></TabPanel>
-            </Tabs>
+            {this._getEventCollectionInfo()}
           </TabPanel>
           <TabPanel>
             <Tabs forceRenderTabPanel>
@@ -270,6 +343,10 @@ export default class Dashboard extends React.Component {
               </TabPanel>
             </Tabs>
           </TabPanel>
+        </Tabs>
+        <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
+        <Tabs forceRenderTabPanel defaultIndex={0} defaultFocus>
+          {this._getLastFiveEvents()}
         </Tabs>
       </div>
     );

@@ -26,10 +26,8 @@ class WelcomePage extends Component {
           data={
             [
               {
-                backgroundColor: 'rgb(229, 243, 251)',
-                textColor: '#0A6C8D',
-                text: 'cenote',
                 image: require('../../assets/images/logo.png'),
+                imageAnimation: 'flipInX',
               },
             ]
           }

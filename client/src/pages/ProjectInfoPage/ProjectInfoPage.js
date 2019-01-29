@@ -14,8 +14,8 @@ class ProjectInfoPage extends React.Component {
   }
 
   componentDidMount() {
-    const { organization, pushToLogin } = this.props;
-    if (isEmpty(organization)) {
+    const { organization, pushToLogin, projects } = this.props;
+    if (isEmpty(organization) || isEmpty(projects)) {
       pushToLogin();
     }
   }
@@ -23,6 +23,7 @@ class ProjectInfoPage extends React.Component {
   render() {
     const { projects } = this.props;
     const [project] = projects;
+    if (!project) return (<div />);
     return (
       <div className="home-page section">
         <Dashboard
