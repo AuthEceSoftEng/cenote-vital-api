@@ -2,8 +2,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import request from 'superagent';
 import 'react-tabs/style/react-tabs.css';
 
+import { handleSuccess, handleError } from '../../api/helpers';
 import { EventCollection, MostRecentEvent } from './dashboardComponents';
 import { getEventCollections, getRecentEvents } from './widgets';
 import { Button } from '..';
@@ -135,6 +137,36 @@ export default class Dashboard extends React.Component {
     }
   }
 
+  regenRead = (i) => {
+    const { projectId } = this.props;
+    const { readKeys } = this.state;
+    request.post(`/api/projects/${projectId}/keys/regenerate`).send({ readKey: readKeys[i] }).then(handleSuccess).catch(handleError)
+      .then(({ readKey }) => {
+        readKeys[i] = readKey;
+        this.setState(readKeys);
+      });
+  }
+
+  regenWrite = (i) => {
+    const { projectId } = this.props;
+    const { writeKeys } = this.state;
+    request.post(`/api/projects/${projectId}/keys/regenerate`).send({ writeKey: writeKeys[i] }).then(handleSuccess).catch(handleError)
+      .then(({ writeKey }) => {
+        writeKeys[i] = writeKey;
+        this.setState(writeKeys);
+      });
+  }
+
+  regenMaster = (i) => {
+    const { projectId } = this.props;
+    const { masterKeys } = this.state;
+    request.post(`/api/projects/${projectId}/keys/regenerate`).send({ masterKey: masterKeys[i] }).then(handleSuccess).catch(handleError)
+      .then(({ masterKey }) => {
+        masterKeys[i] = masterKey;
+        this.setState(masterKeys);
+      });
+  }
+
   _getEventCollectionInfo() {
     const { collections } = this.state;
     const tabList = [];
@@ -202,6 +234,8 @@ export default class Dashboard extends React.Component {
           </TabList>
           <TabPanel>
             {this._getEventCollectionInfo()}
+            <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
+            {this._getLastFiveEvents()}
           </TabPanel>
           <TabPanel>
             <Tabs forceRenderTabPanel>
@@ -266,7 +300,7 @@ export default class Dashboard extends React.Component {
 
                                 </td>
                               )
-                              : (<td><Button label="Edit" type="info" onClick={() => this.editRead(ind)} /></td>)
+                              : (<td><Button label="Regenerate" type="info" onClick={() => this.regenRead(ind)} /></td>)
                             }
                           </tr>
                         ))
@@ -299,7 +333,7 @@ export default class Dashboard extends React.Component {
 
                                 </td>
                               )
-                              : (<td><Button label="Edit" type="info" onClick={() => this.editWrite(ind)} /></td>)
+                              : (<td><Button label="Regenerate" type="info" onClick={() => this.regenWrite(ind)} /></td>)
                             }
                           </tr>
                         ))
@@ -332,7 +366,7 @@ export default class Dashboard extends React.Component {
 
                                 </td>
                               )
-                              : (<td><Button label="Edit" type="info" onClick={() => this.editMaster(ind)} /></td>)
+                              : (<td><Button label="Regenerate" type="info" onClick={() => this.regenMaster(ind)} /></td>)
                             }
                           </tr>
                         ))
@@ -343,10 +377,6 @@ export default class Dashboard extends React.Component {
               </TabPanel>
             </Tabs>
           </TabPanel>
-        </Tabs>
-        <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
-        <Tabs forceRenderTabPanel defaultIndex={0} defaultFocus>
-          {this._getLastFiveEvents()}
         </Tabs>
       </div>
     );

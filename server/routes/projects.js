@@ -4,10 +4,9 @@ const { requireAuth } = require('./middleware');
 const { Project } = require('../models');
 const queries = require('./queries');
 const events = require('./events');
+const keys = require('./keys');
 
 const router = express.Router();
-
-module.exports = router;
 
 router.get('/', requireAuth, (req, res) => {
   Project.find({ organization: req.user.id }, { __v: 0, organization: 0 }, (err, projects) => {
@@ -68,3 +67,6 @@ router.delete('/', requireAuth, (req, res) => {
 
 router.use('/:PROJECT_ID/queries', queries);
 router.use('/:PROJECT_ID/events', events);
+router.use('/:PROJECT_ID/keys', keys);
+
+module.exports = router;

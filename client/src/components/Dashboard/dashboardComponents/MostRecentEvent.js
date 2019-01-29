@@ -6,7 +6,7 @@ import { ClipLoader } from 'react-spinners';
 const MostRecentEvents = (props) => {
   const { properties, events } = props;
   return (
-    <div className="container is-fluid">
+    <div className="container is-fluid" style={{ display: 'block', overflowX: 'auto', whiteSpace: 'nowrap' }}>
       {
         Object.keys(events).length
           ? (

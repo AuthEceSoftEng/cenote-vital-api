@@ -1,7 +1,6 @@
 const express = require('express');
 
 const { Organization, Project } = require('../models');
-const keys = require('./keys');
 
 const router = express.Router();
 
@@ -87,7 +86,5 @@ router.delete('/:ORG_NAME/projects/:PROJECT_ID', (req, res) => {
     });
   });
 });
-
-router.use('/:ORG_NAME/projects/:PROJECT_ID/keys', keys);
 
 module.exports = router;

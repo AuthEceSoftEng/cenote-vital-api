@@ -6,7 +6,7 @@ import { ClipLoader } from 'react-spinners';
 const EventCollection = (props) => {
   const { properties } = props;
   return (
-    <div className="container is-fluid">
+    <div className="container is-fluid" style={{ display: 'block', overflowX: 'auto', whiteSpace: 'nowrap' }}>
       {
         Object.keys(properties).length
           ? (
