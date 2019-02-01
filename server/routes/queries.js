@@ -1,11 +1,14 @@
 const express = require('express');
 const Drpcjs = require('drpcjs');
+const cassandra = require('cassandra-driver');
 
 const { Project } = require('../models');
 const { requireAuth } = require('./middleware');
 
 const router = express.Router({ mergeParams: true });
 const drpc = new Drpcjs({ host: process.env.DRPC_URL });
+const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_URL], keyspace: 'cenote', localDataCenter: 'datacenter1' });
+client.connect(console.error);
 
 router.get('/count', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
   if (err2 || !project) {
@@ -134,12 +137,21 @@ router.get('/extraction', (req, res) => Project.findOne({ projectId: req.params.
   if (err2 || !project) {
     return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
   }
-  const { readKey, masterKey, event_collection } = req.query;
+  const { readKey, masterKey, event_collection, target_property, latest } = req.query;
   if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
   if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'extraction' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
+  const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
+  const answer = [];
+  return client.stream(query)
+    .on('readable', function readable() {
+      let row = this.read();
+      while (row) {
+        answer.push(row);
+        row = this.read();
+      }
+    })
+    .on('end', () => res.json({ ok: true, msg: answer }))
+    .on('error', err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
 }));
 
 router.get('/collections', requireAuth, (req, res) => drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'collections' }))
