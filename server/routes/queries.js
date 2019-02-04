@@ -1,146 +1,293 @@
 const express = require('express');
-const Drpcjs = require('drpcjs');
 const cassandra = require('cassandra-driver');
 
 const { Project } = require('../models');
-const { requireAuth } = require('./middleware');
+const { requireAuth, hasReadAccessForCollection } = require('./middleware');
 
 const router = express.Router({ mergeParams: true });
-const drpc = new Drpcjs({ host: process.env.DRPC_URL });
 const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_URL], keyspace: 'cenote', localDataCenter: 'datacenter1' });
 client.connect(console.error);
 
-router.get('/count', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!(readKey === project.readKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'Key hasn\'t authorization' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'count' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/count', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!` });
+    }
+    const { readKey, masterKey, event_collection, target_property } = req.query;
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property ? target_property.split(',').map(el => `COUNT(${el}) `)
+      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => res.json({ ok: true, msg: JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, '')) }))
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/count_unique', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  if (!(readKey === project.readKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'Key hasn\'t authorization' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'count_unique' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
 
-router.get('/minimum', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  if (!(readKey === project.readKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'Key hasn\'t authorization' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'min' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/minimum', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!` });
+    }
+    const { readKey, masterKey, event_collection, target_property } = req.query;
+    if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property.split(',').map(el => `MIN(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => res.json({ ok: true, msg: JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, '')) }))
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/maximum', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  if (!(readKey === project.readKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'Key hasn\'t authorization' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'max' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/maximum', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!` });
+    }
+    const { readKey, masterKey, event_collection, target_property } = req.query;
+    if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property.split(',').map(el => `MAX(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => res.json({ ok: true, msg: JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, '')) }))
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/sum', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  if (!(readKey === project.readKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'Key hasn\'t authorization' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'sum' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/sum', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!` });
+    }
+    const { readKey, masterKey, event_collection, target_property } = req.query;
+    if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property.split(',').map(el => `SUM(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => res.json({ ok: true, msg: JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, '')) }))
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/average', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  if (!(readKey === project.readKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'Key hasn\'t authorization' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'average' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/average', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!` });
+    }
+    const { readKey, masterKey, event_collection, target_property } = req.query;
+    if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property.split(',').map(el => `AVG(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => res.json({ ok: true, msg: JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, '')) }))
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/median', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'median' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/median', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!` });
+    }
+    const { readKey, masterKey, event_collection, target_property } = req.query;
+    if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => {
+        const median = (values) => {
+          values.sort((a, b) => a - b);
+          if (values.length === 0) return 0;
+          const half = Math.floor(values.length / 2);
+          if (values.length % 2) return values[half];
+          return (values[half - 1] + values[half]) / 2.0;
+        };
+        const results = [];
+        target_property.split(',').forEach(col => results.push({ [col]: median(answer.map(el => el[col])) }));
+        res.json({ ok: true, msg: results });
+      })
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/percentile', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property, percentile } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  if (!percentile) return res.status(400).json({ error: 'No `percentile` param provided!' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'percentile' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/percentile', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!` });
+    }
+    const { readKey, masterKey, event_collection, target_property, percentile } = req.query;
+    if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
+    if (!percentile) return res.status(400).json({ ok: false, msg: 'No `percentile` param provided!' });
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => {
+        function percentle(arr, p) {
+          if (arr.length === 0) return 0;
+          arr.sort((a, b) => a - b);
+          if (p <= 0) return arr[0];
+          if (p >= 100) return arr[arr.length - 1];
+          return arr[Math.ceil(arr.length * (p / 100)) - 1];
+        }
+        const results = [];
+        target_property.split(',').forEach(col => results.push({ [col]: percentle(answer.map(el => el[col]), percentile) }));
+        res.json({ ok: true, msg: results });
+      })
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/select_unique', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  if (!target_property) return res.status(400).json({ error: 'No `target_property` param provided!' });
-  return drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'select_unique' }))
-    .then(answer => res.json(JSON.parse(answer)))
-    .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
+router.get('/extraction', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!`, err: err2 });
+    }
+    const { readKey, masterKey, event_collection, target_property, latest } = req.query;
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => res.json({ ok: true, msg: answer }))
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
 
-router.get('/extraction', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
-  if (err2 || !project) {
-    return res.status(404).json({ message: `Can't find project with id ${req.params.PROJECT_ID}!`, err2 });
-  }
-  const { readKey, masterKey, event_collection, target_property, latest } = req.query;
-  if (!readKey && !masterKey) return res.status(403).json({ error: 'No key credentials sent!' });
-  if (!event_collection) return res.status(400).json({ error: 'No `event_collection` param provided!' });
-  const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
+router.get('/count_unique', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!`, err: err2 });
+    }
+    const { readKey, masterKey, event_collection, target_property, latest } = req.query;
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => {
+        const results = {};
+        if (target_property) {
+          target_property.split(',').forEach(col => results[col] = [...new Set(answer.map(el => el[col]))].length);
+        } else {
+          Object.keys(answer[0]).forEach(col => results[col] = [...new Set(answer.map(el => el[col]))].length);
+        }
+        res.json({ ok: true, msg: [results] });
+      })
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
+
+router.get('/select_unique', hasReadAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true },
+  (err2, project) => {
+    if (err2 || !project) {
+      return res.status(404).json({ ok: false, msg: `Can't find project with id ${req.params.PROJECT_ID}!`, err: err2 });
+    }
+    const { readKey, masterKey, event_collection, target_property, latest } = req.query;
+    if (!(readKey === project.readKey || masterKey === project.masterKey)) {
+      return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
+    }
+    if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
+    const query = `SELECT * FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
+    const answer = [];
+    return client.stream(query)
+      .on('readable', function readable() {
+        let row = this.read();
+        while (row) {
+          answer.push(row);
+          row = this.read();
+        }
+      })
+      .on('end', () => {
+        const alreadyIncluded = [];
+        const results = answer.filter((el) => {
+          if (alreadyIncluded.includes(el[target_property])) return false;
+          alreadyIncluded.push(el[target_property]);
+          return true;
+        });
+        res.json({ ok: true, msg: results });
+      })
+      .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+  }));
+
+router.get('/collections', requireAuth, (req, res) => {
+  const query = 'SELECT table_name,column_name,type FROM system_schema.columns WHERE keyspace_name = \'cenote\'';
   const answer = [];
   return client.stream(query)
     .on('readable', function readable() {
@@ -150,12 +297,16 @@ router.get('/extraction', (req, res) => Project.findOne({ projectId: req.params.
         row = this.read();
       }
     })
-    .on('end', () => res.json({ ok: true, msg: answer }))
-    .on('error', err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 }));
-}));
-
-router.get('/collections', requireAuth, (req, res) => drpc.execute('read', JSON.stringify({ ...req.query, ...req.params, query_type: 'collections' }))
-  .then(answer => res.json(JSON.parse(answer).msg))
-  .catch(err3 => res.status(404).json({ message: 'Can\'t execute query!', err: err3 })));
+    .on('end', () => {
+      const results = {};
+      answer.filter(el => el.table_name.startsWith(req.params.PROJECT_ID)).forEach((prop) => {
+        const collection = prop.table_name.split('_')[1];
+        if (!results[collection]) results[collection] = [];
+        results[collection].push({ column_name: prop.column_name, type: prop.type });
+      });
+      res.json(results);
+    })
+    .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
+});
 
 module.exports = router;

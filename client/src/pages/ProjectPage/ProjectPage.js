@@ -28,14 +28,16 @@ class ProjectPageContainer extends React.Component {
       <div className="project-page section">
         <h1 className="title is-1 has-text-centered">Projects</h1>
         <div className="columns">
-          <div className="column is-8 is-offset-2 text-center">
+          <div className="column text-center">
             <AddProject />
           </div>
         </div>
         <div className="columns">
-          <div className="column is-8 is-offset-2 text-left">
+          <div className="column is-2" />
+          <div className="column is-8 text-center">
             <ProjectList />
           </div>
+          <div className="column is-2" />
         </div>
       </div>
     );

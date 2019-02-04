@@ -41,3 +41,24 @@
     }
   }
 }
+
+.add-project {
+  justify-content: center;
+}
+
+.project-list ul {
+  padding: 0;
+}
+
+.project-list li {
+  float: left;
+  display: inline;
+  width: 32%;
+  margin-right: 5px;
+}
+
+article {
+  display: block;
+  padding: 10px;
+  margin-right: 5px;
+}

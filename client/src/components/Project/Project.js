@@ -15,11 +15,6 @@ export default function Project(props) {
   return (
     <li className="project box">
       <article className="media">
-        <figure className="media-left">
-          <span className="icon" role="button" tabIndex={0} onClick={openProjectInfo} onKeyPress={openProjectInfo}>
-            <FontAwesomeIcon icon={faFolderOpen} size="lg" />
-          </span>
-        </figure>
         <div className="media-content">
           <div className="content">
             <p>
@@ -51,6 +46,9 @@ export default function Project(props) {
               )}
             </div>
             <div className="level-right">
+              <span className="icon space-right" role="button" tabIndex={0} onClick={openProjectInfo} onKeyPress={openProjectInfo}>
+                <FontAwesomeIcon icon={faFolderOpen} color="orange" size="lg" />
+              </span>
               {edit ? (
                 <span
                   className="icon
