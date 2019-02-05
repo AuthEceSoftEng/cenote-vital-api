@@ -38,5 +38,5 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  app.listen(port, host, () => console.log(chalk.bold.rgb(0, 255, 255)(`>>> Server started at http://${host}:${port}`)));
+  app.listen(port, host, () => console.log(chalk.bold.cyan(`CPU core: ${cluster.worker.id} >>> Server started at http://${host}:${port}`)));
 }

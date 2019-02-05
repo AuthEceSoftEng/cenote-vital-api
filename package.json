@@ -21,10 +21,16 @@
     "dev:client": "npm run open:src --prefix=\"./client\"",
     "dev:server": "nodemon server",
     "postinstall": "npm i --prefix=\"./client\"",
+    "lint": "concurrently \"npm run lint:server\" \"npm run lint:client\"",
     "lint:client": "npm run lint --prefix=\"./client\"",
     "lint:server": "eslint server/**/* --fix",
     "start": "node server",
     "test:server": "jest server"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
   },
   "jest": {
     "collectCoverageFrom": [
@@ -69,6 +75,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
+    "husky": "^1.3.1",
     "jest": "^24.0.0",
     "node-sass": "^4.11.0",
     "nodemon": "^1.18.9",

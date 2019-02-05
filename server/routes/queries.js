@@ -3,6 +3,7 @@ const cassandra = require('cassandra-driver');
 
 const { Project } = require('../models');
 const { requireAuth, hasReadAccessForCollection } = require('./middleware');
+const { isJSON, applyFilter } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
 const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_URL], keyspace: 'cenote', localDataCenter: 'datacenter1' });
@@ -17,8 +18,26 @@ router.get('/count', hasReadAccessForCollection, (req, res) => Project.findOne({
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
     const query = `SELECT ${target_property ? target_property.split(',').map(el => `COUNT(${el}) `)
-      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${filterQuery !== 'WHERE ' ? filterQuery : ''} ${
+      timeframe ? ` AND cenote_timestamp >= ${timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -43,7 +62,26 @@ router.get('/minimum', hasReadAccessForCollection, (req, res) => Project.findOne
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property.split(',').map(el => `MIN(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property.split(',').map(el => `MIN(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -67,7 +105,26 @@ router.get('/maximum', hasReadAccessForCollection, (req, res) => Project.findOne
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property.split(',').map(el => `MAX(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property.split(',').map(el => `MAX(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -91,7 +148,26 @@ router.get('/sum', hasReadAccessForCollection, (req, res) => Project.findOne({ p
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property.split(',').map(el => `SUM(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property.split(',').map(el => `SUM(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -115,7 +191,26 @@ router.get('/average', hasReadAccessForCollection, (req, res) => Project.findOne
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property.split(',').map(el => `AVG(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property.split(',').map(el => `AVG(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -139,8 +234,27 @@ router.get('/median', hasReadAccessForCollection, (req, res) => Project.findOne(
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
-    const answer = [];
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+    let answer = [];
     return client.stream(query)
       .on('readable', function readable() {
         let row = this.read();
@@ -157,6 +271,7 @@ router.get('/median', hasReadAccessForCollection, (req, res) => Project.findOne(
           if (values.length % 2) return values[half];
           return (values[half - 1] + values[half]) / 2.0;
         };
+        filters.forEach(filter => answer = applyFilter(filter, answer));
         const results = [];
         target_property.split(',').forEach(col => results.push({ [col]: median(answer.map(el => el[col])) }));
         res.json({ ok: true, msg: results });
@@ -175,8 +290,27 @@ router.get('/percentile', hasReadAccessForCollection, (req, res) => Project.find
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection}`;
-    const answer = [];
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+    let answer = [];
     return client.stream(query)
       .on('readable', function readable() {
         let row = this.read();
@@ -193,6 +327,7 @@ router.get('/percentile', hasReadAccessForCollection, (req, res) => Project.find
           if (p >= 100) return arr[arr.length - 1];
           return arr[Math.ceil(arr.length * (p / 100)) - 1];
         }
+        filters.forEach(filter => answer = applyFilter(filter, answer));
         const results = [];
         target_property.split(',').forEach(col => results.push({ [col]: percentle(answer.map(el => el[col]), percentile) }));
         res.json({ ok: true, msg: results });
@@ -209,7 +344,26 @@ router.get('/extraction', hasReadAccessForCollection, (req, res) => Project.find
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${latest ? `LIMIT ${latest}` : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -219,7 +373,11 @@ router.get('/extraction', hasReadAccessForCollection, (req, res) => Project.find
           row = this.read();
         }
       })
-      .on('end', () => res.json({ ok: true, msg: answer }))
+      .on('end', () => {
+        let results = answer;
+        filters.forEach(filter => results = applyFilter(filter, results));
+        res.json({ ok: true, msg: results });
+      })
       .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
   }));
 
@@ -232,7 +390,27 @@ router.get('/count_unique', hasReadAccessForCollection, (req, res) => Project.fi
     if (!(readKey === project.readKey || masterKey === project.masterKey)) {
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
-    const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property ? target_property.split(',').map(el => `COUNT(${el}) `)
+      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${filterQuery !== 'WHERE ' ? filterQuery : ''} ${
+      timeframe ? ` AND cenote_timestamp >= ${timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ${
+      latest ? `LIMIT ${latest}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -264,8 +442,27 @@ router.get('/select_unique', hasReadAccessForCollection, (req, res) => Project.f
       return res.status(401).json({ ok: false, msg: 'Key hasn\'t authorization' });
     }
     if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
-    const query = `SELECT * FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${latest ? `LIMIT ${latest}` : ''}`;
-    const answer = [];
+    const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
+    const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    let filterQuery = 'WHERE ';
+    filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
+      if (filter.operator === 'eq') {
+        filterQuery += `${filter.property_name} = ${filter.property_value}`;
+      } else if (filter.operator === 'lt') {
+        filterQuery += `${filter.property_name} < ${filter.property_value}`;
+      } else if (filter.operator === 'lte') {
+        filterQuery += `${filter.property_name} <= ${filter.property_value}`;
+      } else if (filter.operator === 'gt') {
+        filterQuery += `${filter.property_name} > ${filter.property_value}`;
+      } else if (filter.operator === 'gte') {
+        filterQuery += `${filter.property_name} >= ${filter.property_value}`;
+      }
+      if (ind !== arr.length - 1) filterQuery += ' AND ';
+    });
+    const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
+      filterQuery !== 'WHERE ' ? filterQuery : ''} ${latest ? `LIMIT ${latest}` : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+    let answer = [];
     return client.stream(query)
       .on('readable', function readable() {
         let row = this.read();
@@ -276,6 +473,7 @@ router.get('/select_unique', hasReadAccessForCollection, (req, res) => Project.f
       })
       .on('end', () => {
         const alreadyIncluded = [];
+        filters.forEach(filter => answer = applyFilter(filter, answer));
         const results = answer.filter((el) => {
           if (alreadyIncluded.includes(el[target_property])) return false;
           alreadyIncluded.push(el[target_property]);
@@ -308,5 +506,7 @@ router.get('/collections', requireAuth, (req, res) => {
     })
     .on('error', err3 => res.status(404).json({ ok: false, msg: 'Can\'t execute query!', err: err3.message }));
 });
+
+router.all('/*', (req, res) => res.status(404).json({ ok: false, msg: 'This is not a valid query!' }));
 
 module.exports = router;
