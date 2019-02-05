@@ -1,3 +1,5 @@
+const chrono = require('chrono-node');
+
 function isJSON(str) {
   try {
     return (JSON.parse(str) && !!str);
@@ -47,4 +49,14 @@ function applyFilter(filter, results) {
   return results;
 }
 
-module.exports = { isJSON, applyFilter };
+function parseTimeframe(relTimeframe) {
+  if (typeof relTimeframe !== 'string') return '';
+  if (relTimeframe.split('_').length !== 3) return '';
+  relTimeframe = relTimeframe.split('_');
+  const nlpDate = `${relTimeframe[1]} ${relTimeframe[2]} ago`;
+  const now = new Date();
+  const jsDate = chrono.parseDate(nlpDate, now);
+  return `cenote_timestamp >= '${jsDate.toISOString()}' AND cenote_timestamp ${relTimeframe[0] === 'this' ? '<=' : '<'} '${now.toISOString()}'`;
+}
+
+module.exports = { isJSON, applyFilter, parseTimeframe };

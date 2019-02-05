@@ -3,7 +3,7 @@ const cassandra = require('cassandra-driver');
 
 const { Project } = require('../models');
 const { requireAuth, hasReadAccessForCollection } = require('./middleware');
-const { isJSON, applyFilter } = require('../utils');
+const { isJSON, applyFilter, parseTimeframe } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
 const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_URL], keyspace: 'cenote', localDataCenter: 'datacenter1' });
@@ -20,6 +20,7 @@ router.get('/count', hasReadAccessForCollection, (req, res) => Project.findOne({
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -36,8 +37,9 @@ router.get('/count', hasReadAccessForCollection, (req, res) => Project.findOne({
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property ? target_property.split(',').map(el => `COUNT(${el}) `)
-      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${filterQuery !== 'WHERE ' ? filterQuery : ''} ${
-      timeframe ? ` AND cenote_timestamp >= ${timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${filterQuery !== 'WHERE ' || relativeTimeframe
+      ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${timeframe.start} AND cenote_timestamp <= ${timeframe.end}`
+      : relativeTimeframe} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -64,6 +66,7 @@ router.get('/minimum', hasReadAccessForCollection, (req, res) => Project.findOne
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -80,8 +83,8 @@ router.get('/minimum', hasReadAccessForCollection, (req, res) => Project.findOne
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property.split(',').map(el => `MIN(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -107,6 +110,7 @@ router.get('/maximum', hasReadAccessForCollection, (req, res) => Project.findOne
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -123,8 +127,8 @@ router.get('/maximum', hasReadAccessForCollection, (req, res) => Project.findOne
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property.split(',').map(el => `MAX(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -150,6 +154,7 @@ router.get('/sum', hasReadAccessForCollection, (req, res) => Project.findOne({ p
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -166,8 +171,8 @@ router.get('/sum', hasReadAccessForCollection, (req, res) => Project.findOne({ p
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property.split(',').map(el => `SUM(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -193,6 +198,7 @@ router.get('/average', hasReadAccessForCollection, (req, res) => Project.findOne
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -209,8 +215,8 @@ router.get('/average', hasReadAccessForCollection, (req, res) => Project.findOne
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property.split(',').map(el => `AVG(${el}) `)}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -236,6 +242,7 @@ router.get('/median', hasReadAccessForCollection, (req, res) => Project.findOne(
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -252,8 +259,8 @@ router.get('/median', hasReadAccessForCollection, (req, res) => Project.findOne(
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     let answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -292,6 +299,7 @@ router.get('/percentile', hasReadAccessForCollection, (req, res) => Project.find
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -308,8 +316,8 @@ router.get('/percentile', hasReadAccessForCollection, (req, res) => Project.find
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     let answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -346,6 +354,7 @@ router.get('/extraction', hasReadAccessForCollection, (req, res) => Project.find
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -362,8 +371,8 @@ router.get('/extraction', hasReadAccessForCollection, (req, res) => Project.find
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${latest ? `LIMIT ${latest}` : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${latest ? `LIMIT ${latest}` : ''} ${timeframe ? ` AND cenote_timestamp >= ${
+      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -392,6 +401,7 @@ router.get('/count_unique', hasReadAccessForCollection, (req, res) => Project.fi
     }
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -408,9 +418,9 @@ router.get('/count_unique', hasReadAccessForCollection, (req, res) => Project.fi
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property ? target_property.split(',').map(el => `COUNT(${el}) `)
-      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${filterQuery !== 'WHERE ' ? filterQuery : ''} ${
-      timeframe ? ` AND cenote_timestamp >= ${timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ${
-      latest ? `LIMIT ${latest}` : ''} ALLOW FILTERING`;
+      : 'COUNT(*)'}FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${filterQuery !== 'WHERE ' || relativeTimeframe
+      ? filterQuery : ''} ${timeframe ? ` AND cenote_timestamp >= ${timeframe.start} AND cenote_timestamp <= ${timeframe.end}`
+      : relativeTimeframe} ${latest ? `LIMIT ${latest}` : ''} ALLOW FILTERING`;
     const answer = [];
     return client.stream(query)
       .on('readable', function readable() {
@@ -444,6 +454,7 @@ router.get('/select_unique', hasReadAccessForCollection, (req, res) => Project.f
     if (!target_property) return res.status(400).json({ ok: false, msg: 'No `target_property` param provided!' });
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframe = isJSON(req.query.timeframe) ? JSON.parse(req.query.timeframe) : null;
+    const relativeTimeframe = parseTimeframe(req.query.relative_timeframe);
     let filterQuery = 'WHERE ';
     filters.filter(el => ['eq', 'gt', 'gte', 'lt', 'lte'].includes(el.operator)).forEach((filter, ind, arr) => {
       if (filter.operator === 'eq') {
@@ -460,8 +471,8 @@ router.get('/select_unique', hasReadAccessForCollection, (req, res) => Project.f
       if (ind !== arr.length - 1) filterQuery += ' AND ';
     });
     const query = `SELECT ${target_property || '*'} FROM cenote.${req.params.PROJECT_ID}_${event_collection} ${
-      filterQuery !== 'WHERE ' ? filterQuery : ''} ${latest ? `LIMIT ${latest}` : ''} ${timeframe ? ` AND cenote_timestamp >= ${
-      timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : ''} ALLOW FILTERING`;
+      filterQuery !== 'WHERE ' || relativeTimeframe ? filterQuery : ''} ${latest ? `LIMIT ${latest}` : ''} ${timeframe
+      ? ` AND cenote_timestamp >= ${timeframe.start} AND cenote_timestamp <= ${timeframe.end}` : relativeTimeframe} ALLOW FILTERING`;
     let answer = [];
     return client.stream(query)
       .on('readable', function readable() {
