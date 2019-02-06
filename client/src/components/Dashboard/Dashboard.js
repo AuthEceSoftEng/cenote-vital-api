@@ -168,54 +168,26 @@ export default class Dashboard extends React.Component {
   }
 
   _getEventCollectionInfo() {
-    const { collections } = this.state;
-    const tabList = [];
-    const tabPanel = [];
-    Object.keys(collections).forEach((col, ind) => {
-      tabList.push(<Tab key={`tab_col_${ind}`}>{col}</Tab>);
-      tabPanel.push(<TabPanel key={`tabpanel_col_${ind}`}><EventCollection properties={collections[col]} /></TabPanel>);
-    });
-    if (tabList.length === 0) {
-      return (
-        <div>
-          <p>
-            {'None yet. Send some events!'}
-          </p>
-        </div>
-      );
-    }
-    return (
-      <Tabs forceRenderTabPanel>
-        <TabList>
-          {tabList}
-        </TabList>
-        {tabPanel}
-      </Tabs>
-    );
-  }
-
-  _getLastFiveEvents() {
     const { collections, events } = this.state;
     const tabList = [];
     const tabPanel = [];
     Object.keys(collections).forEach((col, ind) => {
       tabList.push(<Tab key={`tab_col_${ind}`}>{col}</Tab>);
-      tabPanel.push(<TabPanel key={`tabpanel_col_${ind}`}><MostRecentEvent properties={collections[col]} events={events[col] || []} /></TabPanel>);
+      tabPanel.push(
+        <TabPanel key={`tabpanel_col_${ind}`}>
+          <EventCollection properties={collections[col]} />
+          <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
+          {
+            (events[col] || []).length > 0
+              ? <MostRecentEvent properties={collections[col]} events={events[col] || []} />
+              : <div><p>None yet. Send some events!</p></div>
+          }
+        </TabPanel>);
     });
-    if (tabList.length === 0) {
-      return (
-        <div>
-          <p>
-            {'None yet. Send some events!'}
-          </p>
-        </div>
-      );
-    }
+    if (tabList.length === 0) return (<div><p>None yet. Send some events!</p></div>);
     return (
       <Tabs forceRenderTabPanel>
-        <TabList>
-          {tabList}
-        </TabList>
+        <TabList>{tabList}</TabList>
         {tabPanel}
       </Tabs>
     );
@@ -234,8 +206,6 @@ export default class Dashboard extends React.Component {
           </TabList>
           <TabPanel>
             {this._getEventCollectionInfo()}
-            <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
-            {this._getLastFiveEvents()}
           </TabPanel>
           <TabPanel>
             <Tabs forceRenderTabPanel>

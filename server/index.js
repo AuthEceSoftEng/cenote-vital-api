@@ -25,8 +25,10 @@ const app = express();
 app.use(compression());
 app.use(express.static(path.resolve(__dirname, '../dist/')));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.locals.GLOBAL_LIMIT = process.env.GLOBAL_LIMIT || 5000;
 configPassport(app);
+
 app.use('/', routes);
 
 const port = process.env.PORT || 3000;
