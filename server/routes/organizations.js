@@ -18,25 +18,18 @@ router.put('/password', requireAuth, (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
   if (req.user.validPassword(oldPassword)) {
-    bcrypt.genSalt(10, (err, salt) => {
-      if (err) {
-        res.status(400).send({ err, message: 'Error updating password!' });
-      }
-      bcrypt.hash(newPassword, salt, (err2, hash) => {
-        if (err2) {
-          res.status(400).send({ err2, message: 'Error updating password!' });
-        }
-        Organization.findByIdAndUpdate({ _id: req.user._id }, { password: hash }, (err3) => {
-          if (err3) {
-            res.status(400).send({ err3, message: 'Error updating password!' });
-          }
-          res.status(200).send({ message: 'Password successfully updated!' });
+    return bcrypt.genSalt(10, (err, salt) => {
+      if (err) return res.status(400).send({ err, message: 'Error updating password!' });
+      return bcrypt.hash(newPassword, salt, (err2, hash) => {
+        if (err2) return res.status(400).send({ err2, message: 'Error updating password!' });
+        return Organization.findByIdAndUpdate({ _id: req.user._id }, { password: hash }, (err3) => {
+          if (err3) return res.status(400).send({ err3, message: 'Error updating password!' });
+          return res.status(200).send({ message: 'Password successfully updated!' });
         });
       });
     });
-  } else {
-    res.status(400).send({ message: 'Old password did not match!' });
   }
+  return res.status(400).send({ message: 'Old password did not match!' });
 });
 
 router.post('/password', (req, res) => {
@@ -80,25 +73,19 @@ router.post('/password', (req, res) => {
 router.put('/email', requireAuth, (req, res) => {
   const { oldEmail, newEmail } = req.body;
   if (req.user.validEmail(oldEmail)) {
-    Organization.findByIdAndUpdate({ _id: req.user._id }, { email: newEmail }, (err) => {
-      if (err) {
-        res.status(400).send({ err, message: 'Error updating email!' });
-      }
-      res.status(200).send({ message: 'Email successfully updated!' });
+    return Organization.findByIdAndUpdate({ _id: req.user._id }, { email: newEmail }, (err) => {
+      if (err) return res.status(400).send({ err, message: 'Error updating email!' });
+      return res.status(200).send({ message: 'Email successfully updated!' });
     });
-  } else {
-    res.status(400).send({ message: 'Old email did not match!' });
   }
+  return res.status(400).send({ message: 'Old email did not match!' });
 });
 
 router.put('/', requireAuth, (req, res) => {
   req.body.updatedAt = Date.now();
-
   Organization.findByIdAndUpdate({ _id: req.user._id }, req.body, { new: true }, (err, organization) => {
-    if (err) {
-      res.status(400).send({ err, message: 'Error updating organization!' });
-    }
-    res.status(200).send({ message: 'Organization successfully updated!', organization: organization.hidePassword() });
+    if (err) return res.status(400).send({ err, message: 'Error updating organization!' });
+    return res.status(200).send({ message: 'Organization successfully updated!', organization: organization.hidePassword() });
   });
 });
 

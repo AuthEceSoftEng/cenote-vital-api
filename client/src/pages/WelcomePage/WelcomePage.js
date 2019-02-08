@@ -26,7 +26,7 @@ class WelcomePage extends Component {
           data={
             [
               {
-                image: require('../../assets/images/logo.png'),
+                image: require('../../assets/images/logo_color.png'),
                 imageAnimation: 'flipInX',
               },
             ]

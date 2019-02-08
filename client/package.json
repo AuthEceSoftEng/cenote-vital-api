@@ -37,7 +37,7 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "autoprefixer": "^9.4.7",
     "browser-sync": "^2.26.3",
-    "bulma": "^0.7.2",
+    "bulma": "^0.7.3",
     "chalk": "^2.4.2",
     "classnames": "^2.2.6",
     "connect-history-api-fallback": "^1.6.0",

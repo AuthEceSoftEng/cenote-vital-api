@@ -20,12 +20,22 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "npm run open:src --prefix=\"./client\"",
     "dev:server": "nodemon server",
+    "docs": "apidoc -i server/ -o docs/",
     "postinstall": "npm i --prefix=\"./client\"",
     "lint": "concurrently \"npm run lint:server\" \"npm run lint:client\"",
     "lint:client": "npm run lint --prefix=\"./client\"",
     "lint:server": "eslint server/**/* --fix",
     "start": "node server",
     "test:server": "jest server"
+  },
+  "apidoc": {
+    "title": "cenote API",
+    "url": "http://snf-843202.vm.okeanos.grnet.gr:3000/api",
+    "template": {
+      "forceLanguage": "en",
+      "withCompare": false,
+      "withGenerator": false
+    }
   },
   "husky": {
     "hooks": {
@@ -47,6 +57,7 @@
     "testURL": "http://localhost"
   },
   "dependencies": {
+    "apidoc": "^0.17.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cassandra-driver": "^4.0.0",

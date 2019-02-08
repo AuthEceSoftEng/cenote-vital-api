@@ -59,22 +59,12 @@ function groupBy(items, key, wayOfGrouping, target = '', p = 100) {
   } else if (wayOfGrouping === 'count_unique') {
     Object.keys(tmp).forEach(value => results.push({ [key]: value, result: [...new Set(tmp[value].map(el => el[target]))].length }));
   } else if (wayOfGrouping === 'select_unique') {
-    Object.keys(tmp).forEach((value) => {
-      const alreadyIncluded = [];
-      results.push({
-        [key]: value,
-        result: tmp[value].filter((el) => {
-          if (alreadyIncluded.includes(el[target])) return false;
-          alreadyIncluded.push(el[target]);
-          return true;
-        }).map(el => el[target]),
-      });
-    });
+    Object.keys(tmp).forEach(value => results.push({ [key]: value, result: [...new Set(tmp[value].map(el => el[target]))] }));
   }
   return results.length ? results : items;
 }
 
-function groupByInterval(items, interval, type, target, p) {
+function groupByInterval(items, interval, type, target = '', p = 100) {
   const results = [];
   const grouped = {};
   items.forEach((value) => {

@@ -16,10 +16,12 @@ router.get('/works', (req, res) => {
   res.send('<h1 align="center">It does!</h1>');
 });
 
+const docs = path.join(__dirname, '../../docs');
+router.use('/docs', express.static(docs));
+router.get('/docs/*', (req, res) => res.sendFile('index.html', { root: docs }));
+
 const root = path.join(__dirname, '../../client/dist');
 router.use(express.static(root));
-router.get('/*', (req, res) => {
-  res.sendFile('index.html', { root });
-});
+router.get('/*', (req, res) => res.sendFile('index.html', { root }));
 
 module.exports = router;
