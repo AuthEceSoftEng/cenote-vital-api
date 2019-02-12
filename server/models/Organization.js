@@ -9,10 +9,7 @@ const pid = () => `pid${uuid().replace(/-/g, '')}`;
 
 
 const organizationSchema = new mongoose.Schema({
-  username: {
-    type: String, lowercase: true, required: true, unique: true, immutable: true,
-  },
-  usernameCase: { type: String, required: true },
+  username: { type: String, lowercase: true, required: true, unique: true },
   password: { type: String, required: true },
   organizationId: { type: String, default: pid, immutable: true },
   email: { type: String, required: true },
@@ -49,6 +46,10 @@ organizationSchema.virtual('initials').get(() => (this.firstName && this.lastNam
 
 organizationSchema.methods.validPassword = function validPassword(password) {
   return bcrypt.compareSync(password, this.password);
+};
+
+organizationSchema.methods.validUsername = function validUsername(username) {
+  return username === this.username;
 };
 
 organizationSchema.methods.validEmail = function validEmail(email) {

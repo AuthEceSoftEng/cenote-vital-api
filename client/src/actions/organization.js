@@ -7,6 +7,7 @@ import { getOrganization,
   putOrganization,
   putOrganizationPassword,
   putNewOrganizationPassword,
+  putOrganizationUsername,
   putOrganizationEmail,
   resetPassword } from '../api/organization';
 import { handleError, handleLoginError } from './helpers';
@@ -37,7 +38,7 @@ export const attemptLogout = () => dispatch => postLogout()
   .then((data) => {
     dispatch(logout());
     dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-    dispatch(push('/login'));
+    dispatch(push('/'));
     return data;
   })
   .catch(handleError(dispatch));
@@ -59,6 +60,15 @@ export const attemptGetOrganization = () => dispatch => getOrganization()
 export const attemptUpdateOrganization = updatedOrganization => dispatch => putOrganization(updatedOrganization)
   .then((data) => {
     dispatch(updateOrganization(data.organization));
+    dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+    return data;
+  })
+  .catch(handleError(dispatch));
+
+export const attemptUpdateUsername = usernameInfo => dispatch => putOrganizationUsername(usernameInfo)
+  .then((data) => {
+    if (localStorage.getItem('username')) localStorage.setItem('username', usernameInfo.newUsername);
+    dispatch(logout());
     dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
     return data;
   })

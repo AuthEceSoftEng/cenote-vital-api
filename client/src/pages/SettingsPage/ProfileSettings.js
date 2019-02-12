@@ -12,7 +12,7 @@ import { Box } from '../../components';
 class ProfileSettings extends React.Component {
   static propTypes = {
     organization: PropTypes.shape({
-      usernameCase: PropTypes.string,
+      username: PropTypes.string,
       firstName: PropTypes.string,
       lastName: PropTypes.string,
       bio: PropTypes.string,
@@ -27,6 +27,7 @@ class ProfileSettings extends React.Component {
     super(props);
     this.state = {
       firstName: props.organization.firstName || '',
+      username: props.organization.username || '',
       lastName: props.organization.lastName || '',
       bio: props.organization.bio || '',
       profilePic: props.organization.profilePic || '',
@@ -99,6 +100,7 @@ class ProfileSettings extends React.Component {
       lastNameEdited,
       bioEdited,
       profilePicEdited,
+      username,
     } = this.state;
 
     const edited = firstNameEdited || lastNameEdited || bioEdited || profilePicEdited;
@@ -114,7 +116,7 @@ class ProfileSettings extends React.Component {
           <div className="columns">
             <div className="column is-4">
               <h3 className="title is-3 has-text-centered">
-                {this.usernameCase}
+                {username}
               </h3>
               <figure className="image">
                 <img

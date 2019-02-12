@@ -22,7 +22,7 @@ class App extends React.Component {
   render() {
     const { location, alerts } = this.props;
     return (
-      <div className="has-navbar-fixed-top">
+      <nav>
         <Notifications notifications={alerts} />
         <Navigation pathname={location.pathname} />
         <div className="main">
@@ -31,16 +31,16 @@ class App extends React.Component {
             <Route path="/login" component={LoginPage} />
             <Route path="/register" component={RegisterPage} />
             <Route path="/home" component={HomePage} />
-            <Route path="/projects" exact component={ProjectPage} />
+            <Route exact path="/projects" component={ProjectPage} />
             <Route path="/projects/:id" component={ProjectInfoPage} />
             <Route path="/settings" component={SettingsPage} />
             <Route path="/recovery" component={RecoveryPage} />
             <Route path="/reset/:token" component={ResetPage} />
             <Route path="*" component={NotFoundPage} />
           </Switch>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </nav>
     );
   }
 }

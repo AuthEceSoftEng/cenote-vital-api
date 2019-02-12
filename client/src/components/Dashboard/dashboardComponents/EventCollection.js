@@ -23,10 +23,14 @@ const EventCollection = (props) => {
                   properties.map((prop, ind) => (
                     <tr key={`tr_key_${ind}`}>
                       <th className="has-text-centered">{ind + 1}</th>
-                      <td className={`has-text-centered ${prop.column_name.startsWith('cenote') ? 'has-text-danger' : 'has-text-info'}`}>
+                      <td className={`has-text-centered ${
+                        prop.column_name.startsWith('cenote') || prop.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
+                      >
                         {prop.column_name}
                       </td>
-                      <td className={`has-text-centered ${prop.column_name.startsWith('cenote') ? 'has-text-danger' : 'has-text-info'}`}>
+                      <td className={`has-text-centered ${
+                        prop.column_name.startsWith('cenote') || prop.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
+                      >
                         {prop.type}
                       </td>
                     </tr>

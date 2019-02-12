@@ -164,7 +164,7 @@ class ChangePasswordContainer extends React.Component {
           </p>
           {confirmPassword && (
             <p className={confirmPasswordHelpClasses}>
-              {match ? 'Passwords match' : 'Passwords must match'}
+              {match ? 'Passwords match!' : 'Passwords must match!'}
             </p>
           )}
         </div>

@@ -14,6 +14,9 @@ export const putNewOrganizationPassword = passwordInfo => request.post('/api/org
 export const putOrganizationEmail = emailInfo => request.put('/api/organizations/email')
   .send(emailInfo).then(handleSuccess).catch(handleError);
 
+export const putOrganizationUsername = usernameInfo => request.put('/api/organizations/username')
+  .send(usernameInfo).then(handleSuccess).catch(handleError);
+
 export const resetPassword = emailInfo => request.post('/api/organizations/reset').send(emailInfo).then(handleSuccess).catch(handleError);
 
 export const postCheckUsername = username => request.post('/api/organizations/checkUsername')

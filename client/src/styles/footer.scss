@@ -1,6 +1,10 @@
 .footer {
   background-color: $light-grey;
-  padding: 3rem 1.5rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 1.5rem 1.5rem 1.5rem;
 
   .content {
     a:visited {

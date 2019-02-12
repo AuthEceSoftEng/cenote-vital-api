@@ -118,6 +118,9 @@ export default function Navigation(props) {
         )}
         <OrganizationDropdown open={organizationDropdownOpen} closeDropdown={closeOrganizationDropdown} />
       </div>
+      <Link to="/docs" target="_self" className="navbar-item" style={{ position: 'absolute', left: 0 }}>
+        <Button label="Docs" style={{ backgroundColor: '#101737' }} />
+      </Link>
     </nav>
   );
 }
@@ -132,7 +135,6 @@ Navigation.propTypes = {
     username: PropTypes.string,
     firstName: PropTypes.string,
     lastName: PropTypes.string,
-    usernameCase: PropTypes.string,
     profilePic: PropTypes.string,
   }).isRequired,
 };

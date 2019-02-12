@@ -30,7 +30,8 @@ const MostRecentEvents = (props) => {
                         properties.map((prop2, ind2) => (
                           <td
                             key={`td_key_${ind2}`}
-                            className={`has-text-centered ${prop2.column_name.startsWith('cenote') ? 'has-text-danger' : 'has-text-info'}`}
+                            className={`has-text-centered ${
+                              prop2.column_name.startsWith('cenote') || prop2.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
                           >
                             {prop[prop2.column_name] || '-'}
                           </td>

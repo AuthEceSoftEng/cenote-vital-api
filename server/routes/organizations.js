@@ -70,6 +70,17 @@ router.post('/password', (req, res) => {
   });
 });
 
+router.put('/username', requireAuth, (req, res) => {
+  const { oldUsername, newUsername } = req.body;
+  if (req.user.validUsername(oldUsername)) {
+    return Organization.findByIdAndUpdate({ _id: req.user._id }, { username: newUsername }, (err) => {
+      if (err) return res.status(400).send({ err, message: 'Error updating username!' });
+      return res.status(200).send({ message: 'Username successfully updated!' });
+    });
+  }
+  return res.status(400).send({ message: 'Old username did not match!' });
+});
+
 router.put('/email', requireAuth, (req, res) => {
   const { oldEmail, newEmail } = req.body;
   if (req.user.validEmail(oldEmail)) {

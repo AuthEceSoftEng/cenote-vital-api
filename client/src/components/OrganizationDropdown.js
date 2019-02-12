@@ -48,7 +48,7 @@ class OrganizationDropdown extends Component {
       <div className="dropdown box sm" ref={(el) => { this.dropdown = el; }}>
         <ul className="dropdown-list">
           <li className="dropdown-header">
-            {organization.usernameCase}
+            {organization.username}
           </li>
           <hr className="dropdown-separator" />
           <li className="dropdown-item has-text-centered">

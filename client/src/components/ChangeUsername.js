@@ -1,132 +1,185 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { pick, isEmpty, equals } from 'ramda';
+import { connect } from 'react-redux';
+import { identity, pick } from 'ramda';
 import classNames from 'classnames';
 
-import { attemptUpdateOrganization } from '../actions/organization';
+import { attemptUpdateUsername } from '../actions/organization';
+import { validateUsername } from '../utils/validation';
 
 class ChangeUsernameContainer extends React.Component {
   static propTypes = {
-    organization: PropTypes.shape({
-      username: PropTypes.string,
-      usernameCase: PropTypes.string,
-      email: PropTypes.string,
-    }).isRequired,
-    attemptUpdateOrganization: PropTypes.func.isRequired,
+    organization: PropTypes.shape({ username: PropTypes.string }).isRequired,
+    attemptUpdateUsername: PropTypes.func.isRequired,
   };
 
   constructor(props) {
     super(props);
-    this.state = { usernameCase: props.organization.usernameCase };
+    this.state = {
+      newUsername: '',
+      confirmUsername: '',
+      message: '',
+      valid: false,
+      oldUsername: props.organization.username,
+    };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { organization } = this.props;
-    if (!isEmpty(nextProps.organization) && !equals(nextProps.organization, organization)) {
-      this.setState({ usernameCase: nextProps.organization.usernameCase });
+  updateOldUsername = e => this.setState({ oldUsername: e.target.value })
+
+  updateNewUsername = (e) => {
+    this.setState({ newUsername: e.target.value });
+    this.validateUsername(e.target.value);
+  }
+
+  updateConfirmUsername = e => this.setState({ confirmUsername: e.target.value })
+
+  validateUsername = (username) => {
+    const { valid, message } = validateUsername(username);
+
+    this.setState({ valid, message });
+  }
+
+  save = () => {
+    const { valid, oldUsername, newUsername, confirmUsername } = this.state;
+    const { attemptUpdateUsername: attemptupdateUsername } = this.props;
+    if (valid && newUsername === confirmUsername && oldUsername) {
+      attemptupdateUsername({ oldUsername, newUsername }).then(() => this.setState({
+        oldUsername: '',
+        newUsername: '',
+        confirmUsername: '',
+        message: '',
+        valid: false,
+      })).catch(identity);
     }
-  }
-
-  updateUsernameCase = e => this.setState({ usernameCase: e.target.value })
-
-  saveUsernameCase = () => {
-    const { usernameCase } = this.state;
-    const { organization, attemptUpdateOrganization: attemptupdateOrganization } = this.props;
-    if (usernameCase.toLowerCase() === organization.username) {
-      const updatedOrganization = { usernameCase };
-      attemptupdateOrganization(updatedOrganization).catch(() => this.setState({ usernameCase: organization.usernameCase }));
-    }
-  }
-
-  isDisabled = () => {
-    const { organization } = this.props;
-    const { usernameCase } = this.state;
-    return organization.usernameCase === usernameCase || usernameCase.toLowerCase() !== organization.username;
   }
 
   render() {
-    const { usernameCase } = this.state;
-    const { organization } = this.props;
-    const disabled = this.isDisabled();
-    const { usernameCase: currentUsernameCase, username } = organization;
-    const helpClasses = classNames({
+    const { oldUsername, newUsername, confirmUsername, message, valid } = this.state;
+    const match = newUsername === confirmUsername;
+
+    const newUsernameHelpClasses = classNames({
       help: true,
-      'is-success': !disabled,
-      'is-danger': disabled,
+      'is-danger': !valid,
+      'is-success': valid,
     });
 
-    const inputClasses = classNames({
-      input: true,
-      'is-success': !disabled,
-      'is-danger': disabled && usernameCase !== currentUsernameCase,
-    });
-
-    const iconClasses = classNames({
+    const newUsernameIconClasses = classNames({
       fa: true,
-      'fa-check': !disabled,
-      'is-success': !disabled,
-      'fa-warning': disabled && usernameCase !== currentUsernameCase,
-      'is-danger': disabled && usernameCase !== currentUsernameCase,
+      'fa-check': valid,
+      'is-success': valid,
+      'fa-warning': newUsername && !valid,
+      'is-danger': newUsername && !valid,
     });
 
-    const helpMessage = disabled ? `Username case must match: ${username}` : 'Username case valid.';
+    const newUsernameInputClasses = classNames({
+      input: true,
+      'is-success': valid,
+      'is-danger': newUsername && !valid,
+    });
+
+    const confirmUsernameIconClasses = classNames({
+      fa: true,
+      'fa-check': confirmUsername && match,
+      'is-success': confirmUsername && match,
+      'fa-warning': confirmUsername && !match,
+      'is-danger': confirmUsername && !match,
+    });
+
+    const confirmUsernameInputClasses = classNames({
+      input: true,
+      'is-success': confirmUsername && match,
+      'is-danger': confirmUsername && !match,
+    });
+
+    const confirmUsernameHelpClasses = classNames({
+      help: true,
+      'is-success': match,
+      'is-danger': !match,
+    });
+
     return (
       <div className="change-username box">
-        <h3 className="title is-3">Username</h3>
+        <h3 className="title is-3">Change Username</h3>
         <hr className="separator" />
         <div className="field">
           <p className="control">
-            <label htmlFor="username" className="label">
+            <label className="label" htmlFor="old-username">
               {'Current Username'}
               <input
-                id="username"
-                className={inputClasses}
-                type="text"
-                value={currentUsernameCase}
-                readOnly
+                id="old-username"
+                className="input"
+                type="username"
+                placeholder="Current Username"
+                value={oldUsername}
+                disabled
               />
             </label>
           </p>
         </div>
         <div className="field has-help">
           <p className="control has-icons-right">
-            <label htmlFor="username-case" className="label">
-              {'Username Case'}
+            <label htmlFor="new-username" className="label">
+              {'New Username'}
               <input
-                id="username-case"
-                className={inputClasses}
-                type="text"
-                placeholder="Username Case"
-                value={usernameCase}
-                onChange={this.updateUsernameCase}
+                id="new-username"
+                className={newUsernameInputClasses}
+                type="username"
+                placeholder="New Username"
+                value={newUsername}
+                onChange={this.updateNewUsername}
               />
             </label>
             <span className="icon is-small is-right">
-              <i className={iconClasses} />
+              <i className={newUsernameIconClasses} />
             </span>
           </p>
-          {usernameCase !== currentUsernameCase && (
-            <p className={helpClasses}>
-              {helpMessage}
+          {newUsername && (
+            <p className={newUsernameHelpClasses}>
+              {message}
             </p>
           )}
         </div>
+
+        <div className="field has-help">
+          <p className="control has-icons-right">
+            <label htmlFor="confirm-username" className="label">
+              {'Confirm Username'}
+              <input
+                id="confirm-username"
+                className={confirmUsernameInputClasses}
+                type="username"
+                placeholder="Confirm Username"
+                value={confirmUsername}
+                onChange={this.updateConfirmUsername}
+              />
+            </label>
+            <span className="icon is-small is-right">
+              <i className={confirmUsernameIconClasses} />
+            </span>
+          </p>
+          {confirmUsername && (
+            <p className={confirmUsernameHelpClasses}>
+              {match ? 'Usernames match!' : 'Usernames must match!'}
+            </p>
+          )}
+        </div>
+
         <hr className="separator" />
         <button
           type="button"
           className="button is-success"
-          disabled={disabled}
-          onClick={this.saveUsernameCase}
+          onClick={this.save}
+          disabled={!match || !valid || !oldUsername}
         >
-          {'Save'}
+          {'Update Username'}
         </button>
       </div>
     );
   }
 }
 
+
 const mapStateToProps = pick(['organization']);
-const mapDispatchToProps = dispatch => ({ attemptUpdateOrganization: organization => dispatch(attemptUpdateOrganization(organization)) });
+const mapDispatchToProps = dispatch => ({ attemptUpdateUsername: usernameInfo => dispatch(attemptUpdateUsername(usernameInfo)) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangeUsernameContainer);

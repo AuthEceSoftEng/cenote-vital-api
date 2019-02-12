@@ -35,10 +35,11 @@ const port = process.env.PORT || 3000;
 const host = process.env.HOST || 'localhost';
 if (cluster.isMaster) {
   for (let i = 0; i < numCPUs; i += 1) cluster.fork();
+  console.log(chalk.bold.cyan(`>>> Server started at http://${host}:${port}`));
   cluster.on('death', (worker) => {
     console.log(`Worker: ${worker.pid} died. Trying to restart it...`);
     cluster.fork();
   });
 } else {
-  app.listen(port, host, () => console.log(chalk.bold.cyan(`CPU core: ${cluster.worker.id} >>> Server started at http://${host}:${port}`)));
+  app.listen(port, host, () => console.log(chalk.cyan(`CPU core: ${cluster.worker.id} ✔️`)));
 }

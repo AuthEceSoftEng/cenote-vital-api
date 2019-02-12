@@ -161,7 +161,7 @@ class ChangeEmailContainer extends React.Component {
           </p>
           {confirmEmail && (
             <p className={confirmEmailHelpClasses}>
-              {match ? 'Emails match' : 'Emails must match'}
+              {match ? 'Emails match!' : 'Emails must match!'}
             </p>
           )}
         </div>

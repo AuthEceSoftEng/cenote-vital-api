@@ -16,7 +16,7 @@ browserSync({
 
     middleware: [
       historyApiFallback(),
-      proxy(['/api'], { target: 'http://localhost:3000', changeOrigin: false }),
+      proxy(['/api', '/docs'], { target: 'http://localhost:3000', changeOrigin: false }),
       webpackDevMiddleware(bundler, {
         publicPath: config.output.publicPath,
         noInfo: true,
