@@ -52,9 +52,6 @@ class OrganizationDropdown extends Component {
           </li>
           <hr className="dropdown-separator" />
           <li className="dropdown-item has-text-centered">
-            <Link to="/home" onClick={closeDropdown}>Home</Link>
-          </li>
-          <li className="dropdown-item has-text-centered">
             <Link to="/projects" onClick={closeDropdown}>Project List</Link>
           </li>
           <li className="dropdown-item has-text-centered">

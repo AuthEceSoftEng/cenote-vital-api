@@ -6,7 +6,7 @@ import { hot } from 'react-hot-loader';
 import Notifications from 'react-notification-system-redux';
 import { pick } from 'ramda';
 
-import { WelcomePage, RegisterPage, LoginPage, HomePage, NotFoundPage, ProjectPage, RecoveryPage, SettingsPage, ProjectInfoPage,
+import { WelcomePage, RegisterPage, LoginPage, NotFoundPage, ProjectPage, RecoveryPage, SettingsPage, ProjectInfoPage,
   ResetPage } from '../pages';
 import Navigation from './Navigation';
 import Footer from './Footer';
@@ -30,7 +30,6 @@ class App extends React.Component {
             <Route exact path="/" component={WelcomePage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/register" component={RegisterPage} />
-            <Route path="/home" component={HomePage} />
             <Route exact path="/projects" component={ProjectPage} />
             <Route path="/projects/:id" component={ProjectInfoPage} />
             <Route path="/settings" component={SettingsPage} />

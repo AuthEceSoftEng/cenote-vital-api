@@ -7,6 +7,7 @@
 
   .navbar-brand-right {
     margin-left: auto;
+    float: right;
     display: flex;
   }
 
@@ -15,7 +16,7 @@
   }
 
   .navbar-item {
-    min-height: 44px;
+    min-height: 4rem;
   }
 
   .navbar-item.is-hoverable:hover {
@@ -48,8 +49,12 @@
   }
 
   .profile-img {
-    height: 32px;
-    width: 32px;
+    height: 4rem;
+    width: 4rem;
+  }
+
+  .navbar-item:hover {
+    background-color: $mern-hover;
   }
 
   .button {

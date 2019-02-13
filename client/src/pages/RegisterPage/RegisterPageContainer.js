@@ -9,13 +9,13 @@ import RegisterPage from './RegisterPage';
 class RegisterPageContainer extends React.Component {
   static propTypes = {
     organization: PropTypes.shape({}).isRequired,
-    pushToHome: PropTypes.func.isRequired,
+    pushToProjects: PropTypes.func.isRequired,
   }
 
   componentDidMount() {
-    const { organization, pushToHome } = this.props;
+    const { organization, pushToProjects } = this.props;
     if (!isEmpty(organization)) {
-      pushToHome();
+      pushToProjects();
     }
   }
 
@@ -29,6 +29,6 @@ class RegisterPageContainer extends React.Component {
 }
 
 const mapStateToProps = pick(['organization']);
-const mapDispatchToProps = dispatch => ({ pushToHome: () => dispatch(push('/home')) });
+const mapDispatchToProps = dispatch => ({ pushToProjects: () => dispatch(push('/projects')) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterPageContainer);

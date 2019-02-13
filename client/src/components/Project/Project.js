@@ -3,14 +3,30 @@ import PropTypes from 'prop-types';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faBan, faPencilAlt, faSave } from '@fortawesome/free-solid-svg-icons';
-
-import ConfirmModal from '../ConfirmModal';
+import swal from '@sweetalert/with-react';
 
 export default function Project(props) {
   const {
-    edit, confirm, title, currentTitle, updated, createdMessage, updatedMessage, openProjectInfo, updateTitle, updateProjectTitle,
-    editProject, cancelEdit, deleteProject, openModal, closeModal,
+    edit, title, currentTitle, updated, createdMessage, updatedMessage, openProjectInfo, updateTitle, updateProjectTitle,
+    editProject, cancelEdit, deleteProject,
   } = props;
+
+  const openModal = () => {
+    swal({
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover data lost!',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        deleteProject();
+        swal('Poof! Your project has been deleted!', { icon: 'success' });
+      } else {
+        swal('Your project is safe!');
+      }
+    });
+  };
 
   return (
     <li className="project box">
@@ -78,17 +94,11 @@ export default function Project(props) {
           </nav>
         </div>
       </article>
-      <ConfirmModal
-        confirm={confirm}
-        closeModal={closeModal}
-        deleteProject={deleteProject}
-      />
     </li>
   );
 }
 
 Project.propTypes = {
-  confirm: PropTypes.bool.isRequired,
   edit: PropTypes.bool.isRequired,
   updated: PropTypes.bool.isRequired,
 
@@ -103,6 +113,4 @@ Project.propTypes = {
   editProject: PropTypes.func.isRequired,
   cancelEdit: PropTypes.func.isRequired,
   deleteProject: PropTypes.func.isRequired,
-  openModal: PropTypes.func.isRequired,
-  closeModal: PropTypes.func.isRequired,
 };

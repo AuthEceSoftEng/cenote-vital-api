@@ -22,7 +22,6 @@ export default class ProjectContainer extends Component {
     this.state = {
       title: props.title,
       edit: false,
-      confirm: false,
       updatedMessage: '',
       createdMessage: '',
     };
@@ -67,10 +66,6 @@ export default class ProjectContainer extends Component {
     deleteProject(projectId);
   }
 
-  openModal = () => this.setState({ confirm: true })
-
-  closeModal = () => this.setState({ confirm: false })
-
   updateProjectTitle = () => {
     const { title } = this.state;
     const { updateProjectTitle, projectId } = this.props;
@@ -97,8 +92,6 @@ export default class ProjectContainer extends Component {
         editProject={this.editProject}
         cancelEdit={this.cancelEdit}
         deleteProject={this.deleteProject}
-        openModal={this.openModal}
-        closeModal={this.closeModal}
       />
     );
   }

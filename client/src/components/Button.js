@@ -87,7 +87,7 @@ Button.propTypes = {
 
 Button.defaultProps = {
   className: '',
-  style: {},
+  style: { margin: '10px' },
   label: '',
   type: 'info',
   size: 'normal',

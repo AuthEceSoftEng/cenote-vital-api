@@ -3,11 +3,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import request from 'superagent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import swal from '@sweetalert/with-react';
+
 import 'react-tabs/style/react-tabs.css';
 
 import { handleSuccess, handleError } from '../../api/helpers';
-import { EventCollection, MostRecentEvent } from './dashboardComponents';
-import { getEventCollections, getRecentEvents } from './widgets';
+import { EventCollection, MostRecentEvent } from './components';
+import { getEventCollections, getRecentEvents } from './utils';
 import { Button } from '..';
 
 
@@ -37,6 +41,7 @@ export default class Dashboard extends React.Component {
       events: {},
     };
     this._isMounted = false;
+    this.deleteCollection = this.deleteCollection.bind(this);
   }
 
   componentDidMount() {
@@ -167,12 +172,37 @@ export default class Dashboard extends React.Component {
       });
   }
 
+  deleteCollection(col) {
+    const { collections } = this.state;
+    swal({
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover data lost!',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        delete collections[col];
+        this.setState({ collections });
+        swal('Poof! Your collection has been deleted!', { icon: 'success' });
+      } else {
+        swal('Your collection is safe!');
+      }
+    });
+  }
+
   _getEventCollectionInfo() {
     const { collections, events } = this.state;
     const tabList = [];
     const tabPanel = [];
     Object.keys(collections).forEach((col, ind) => {
-      tabList.push(<Tab key={`tab_col_${ind}`}>{col}</Tab>);
+      tabList.push(
+        <Tab key={`tab_col_${ind}`}>
+          {col}
+          <span className="icon" role="button" tabIndex={-1} onKeyPress={() => this.deleteCollection(col)} onClick={() => this.deleteCollection(col)}>
+            <FontAwesomeIcon icon={faTrashAlt} size="sm" color="red" />
+          </span>
+        </Tab>);
       tabPanel.push(
         <TabPanel key={`tabpanel_col_${ind}`}>
           <EventCollection properties={collections[col]} />

@@ -21,7 +21,7 @@ export const attemptLogin = organization => dispatch => postLogin(organization)
   .then((data) => {
     dispatch(login(data.organization));
     dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-    dispatch(push('/home'));
+    dispatch(push('/projects'));
     return data;
   })
   .catch(handleLoginError(dispatch));
@@ -46,7 +46,7 @@ export const attemptLogout = () => dispatch => postLogout()
 export const attemptReset = email => dispatch => resetPassword(email)
   .then((data) => {
     dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-    return dispatch(push('/home'));
+    return dispatch(push('/projects'));
   })
   .catch(handleError(dispatch));
 

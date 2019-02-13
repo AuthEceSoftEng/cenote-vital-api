@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import AddProject from './AddProject';
+import Button from './Button';
+import { attemptAddProject } from '../actions/projects';
 
-export default class AddProjectContainer extends React.Component {
+class AddProject extends React.Component {
   static propTypes = { addProject: PropTypes.func.isRequired };
 
   constructor(props) {
@@ -38,6 +40,23 @@ export default class AddProjectContainer extends React.Component {
 
   render() {
     const { title } = this.state;
-    return (<AddProject title={title} updateTitle={this.updateTitle} addProject={this.addProject} />);
+    return (
+      <div className="add-project columns">
+        <div className="is-8">
+          <input className="input" type="text" value={title} onChange={this.updateTitle} />
+        </div>
+        <div className="is-2">
+          <Button
+            style={{ width: '100%' }}
+            onClick={this.addProject}
+            label="Add"
+            type="success"
+          />
+        </div>
+      </div>
+    );
   }
 }
+
+const mapDispatchToProps = dispatch => ({ addProject: title => dispatch(attemptAddProject(title)) });
+export default connect(undefined, mapDispatchToProps)(AddProject);
