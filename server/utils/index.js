@@ -7,4 +7,5 @@ module.exports = {
   median: require('./median'),
   parseTimeframe: require('./parseTimeframe'),
   percentile: require('./percentile'),
+  parseNumbers: require('./parseNumbers'),
 };

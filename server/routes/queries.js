@@ -3,7 +3,17 @@ const cassandra = require('cassandra-driver');
 
 const { Project } = require('../models');
 const { requireAuth, canAccessForCollection } = require('./middleware');
-const { isJSON, applyFilter, parseTimeframe, groupBy, getFilterQuery, groupByInterval, median, percentile: percentle } = require('../utils');
+const {
+  isJSON,
+  applyFilter,
+  parseTimeframe,
+  groupBy,
+  getFilterQuery,
+  groupByInterval,
+  median,
+  percentile: percentle,
+  parseNumbers,
+} = require('../utils');
 
 const router = express.Router({ mergeParams: true });
 const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_URL], keyspace: 'cenote', localDataCenter: 'datacenter1' });
@@ -47,16 +57,15 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${group_by || interval ? '*' : 'COUNT(*)'} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  const answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'count');
       if (group_by) results = groupBy(answer, group_by, 'count');
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 /**
@@ -107,18 +116,17 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `MIN(${target_property})`} FROM cenote.${
+  const query = `SELECT ${group_by || interval ? '*' : `MIN("${target_property}")`} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  const answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'minimum', target_property);
       if (group_by) results = groupBy(answer, group_by, 'minimum', target_property);
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 /**
@@ -160,18 +168,17 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `MAX(${target_property})`} FROM cenote.${
+  const query = `SELECT ${group_by || interval ? '*' : `MAX("${target_property}")`} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  const answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'maximum', target_property);
       if (group_by) results = groupBy(answer, group_by, 'maximum', target_property);
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 /**
@@ -213,18 +220,17 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `SUM(${target_property})`} FROM cenote.${
+  const query = `SELECT ${group_by || interval ? '*' : `SUM("${target_property}")`} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  const answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'sum', target_property);
       if (group_by) results = groupBy(answer, group_by, 'sum', target_property);
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 /**
@@ -266,18 +272,17 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `AVG(${target_property})`} FROM cenote.${
+  const query = `SELECT ${group_by || interval ? '*' : `AVG("${target_property}")`} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  const answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'average', target_property);
       if (group_by) results = groupBy(answer, group_by, 'average', target_property);
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 /**
@@ -319,20 +324,19 @@ router.get('/median', canAccessForCollection, (req, res) => Project.findOne({ pr
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : target_property} FROM cenote.${
+  const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  let answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = [];
       results.push({ [target_property]: median(answer.map(el => el[target_property])) });
       if (interval) results = groupByInterval(answer, interval, 'median', target_property);
       if (group_by) results = groupBy(answer, group_by, 'median', target_property);
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 /**
@@ -376,20 +380,19 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : target_property} FROM cenote.${
+  const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  let answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = [];
       results.push({ [target_property]: percentle(answer.map(el => el[target_property]), percentile) });
       if (interval) results = groupByInterval(answer, interval, 'percentile', target_property, percentile);
       if (group_by) results = groupBy(answer, group_by, 'percentile', target_property, percentile);
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 /**
@@ -433,20 +436,19 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframeQuery = parseTimeframe(req.query.timeframe);
     const filterQuery = getFilterQuery(filters);
-    const query = `SELECT ${group_by || interval ? '*' : target_property} FROM cenote.${
+    const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
       req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-    let answer = [];
-    return client.stream(query)
-      .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-      .on('end', () => {
+    return client.execute(query, [], { prepare: true })
+      .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
         let results = [];
         results.push({ [target_property]: [...new Set(answer.map(el => el[target_property]))].length });
         if (interval) results = groupByInterval(answer, interval, 'count_unique', target_property);
         if (group_by) results = groupBy(answer, group_by, 'count_unique', target_property);
+        results = parseNumbers(results);
         res.json({ ok: true, results });
       })
-      .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+      .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
   }));
 
 /**
@@ -491,19 +493,18 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframeQuery = parseTimeframe(req.query.timeframe);
     const filterQuery = getFilterQuery(filters);
-    const query = `SELECT ${group_by || interval ? '*' : target_property} FROM cenote.${
+    const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
       req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-    let answer = [];
-    return client.stream(query)
-      .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-      .on('end', () => {
+    return client.execute(query, [], { prepare: true })
+      .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
         let results = [...new Set(answer.map(el => el[target_property]))];
         if (interval) results = groupByInterval(answer, interval, 'select_unique', target_property);
         if (group_by) results = groupBy(answer, group_by, 'select_unique', target_property);
+        results = parseNumbers(results);
         res.json({ ok: true, results });
       })
-      .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+      .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
   }));
 
 /**
@@ -551,25 +552,22 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${target_property || '*'} FROM cenote.${
+  const query = `SELECT ${target_property ? `"${target_property}"` : '*'} FROM cenote.${
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  const answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       let results = answer;
       filters.forEach(filter => results = applyFilter(filter, results));
+      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
-    .on('error', err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 }));
 
 router.get('/collections', requireAuth, (req, res) => {
   const query = 'SELECT table_name,column_name,type FROM system_schema.columns WHERE keyspace_name = \'cenote\'';
-  const answer = [];
-  return client.stream(query)
-    .on('readable', function readable() { let row = this.read(); while (row) { answer.push(row); row = this.read(); } })
-    .on('end', () => {
+  return client.execute(query, [], { prepare: true })
+    .then(({ rows: answer }) => {
       const results = {};
       answer.filter(el => el.table_name.startsWith(req.params.PROJECT_ID)).forEach((prop) => {
         const collection = prop.table_name.split('_')[1];
@@ -578,7 +576,7 @@ router.get('/collections', requireAuth, (req, res) => {
       });
       res.json(results);
     })
-    .on('error', err3 => res.status(404).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 });
 
 router.all('/*', (req, res) => res.status(400).json({ ok: false, results: 'This is not a valid query!' }));

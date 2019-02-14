@@ -5,6 +5,7 @@ const { Project } = require('../models');
 const queries = require('./queries');
 const events = require('./events');
 const keys = require('./keys');
+const alter = require('./alter');
 
 const router = express.Router();
 
@@ -50,5 +51,6 @@ router.delete('/', requireAuth, (req, res) => {
 router.use('/:PROJECT_ID/queries', queries);
 router.use('/:PROJECT_ID/events', events);
 router.use('/:PROJECT_ID/keys', keys);
+router.use('/:PROJECT_ID/alter', alter);
 
 module.exports = router;

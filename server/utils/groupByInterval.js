@@ -7,7 +7,7 @@ module.exports = (items, interval, type, target = '', p = 100) => {
   const results = [];
   const grouped = {};
   items.forEach((value) => {
-    let d = moment(value.cenote_timestamp);
+    let d = moment(value.cenote$timestamp);
     if (interval === 'minutely') d = d.minute();
     if (interval === 'hourly') d = d.hour();
     if (interval === 'daily') d = d.dayOfYear();
