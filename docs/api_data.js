@@ -25,6 +25,13 @@ define({ "api": [
           },
           {
             "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "writeKey/masterKey",
+            "description": "<p>Key for authorized write.</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Object/Object[]",
             "optional": false,
             "field": "payload",

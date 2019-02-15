@@ -30,10 +30,10 @@ export default function Navigation(props) {
   return (
     <nav className="navbar is-fixed-top has-shadow" role="navigation" style={{ display: 'flex' }}>
       <div className="container fluid">
-        <Link to={auth ? '/projects' : '/'} className="navbar-item" aria-label="main navigation">
-          <img className="profile-img logo" src={require('../../assets/images/logo.png')} alt="cenote" />
-        </Link>
         <div className="navbar-brand">
+          <Link to={auth ? '/projects' : '/'} className="navbar-item" aria-label="main navigation">
+            <img className="profile-img logo" src={require('../../assets/images/logo.png')} alt="cenote" />
+          </Link>
           <div className="navbar-brand-right">
             {!auth && (
               <Link to="/login" className="navbar-item is-hidden-desktop">

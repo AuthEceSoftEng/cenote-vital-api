@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax, no-await-in-loop */
 const express = require('express');
 const { Producer } = require('sinek');
 const uuid = require('uuid/v4');
@@ -53,6 +54,7 @@ producer.connect();
 * @apiGroup Events
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} EVENT_COLLECTION The event collection name.
+* @apiParam {String} writeKey/masterKey Key for authorized write.
 * @apiParam {Object/Object[]} payload Event data.
 * @apiParamExample {json} payload Example:
 *"payload": [{
@@ -88,12 +90,20 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   };
   if (!Array.isArray(payload)) payload = [payload];
   const allDataResponses = [];
-  payload.forEach((dato) => {
-    const { data, timestamp } = dato;
-    if (timestamp && Number.isInteger(timestamp) && timestamp < Date.now()) cenote.timestamp = timestamp;
-    allDataResponses.push(producer.send(process.env.KAFKA_TOPIC, JSON.stringify({ data, cenote })));
-  });
-  return Promise.all(allDataResponses).then(allReponses => res.status(202).json(allReponses.map(() => ({ message: 'Event sent.' }))));
+  async function loopMessages() {
+    for (const dato of payload) {
+      const { data, timestamp } = dato;
+      if (timestamp && Number.isInteger(timestamp) && timestamp < Date.now()) cenote.timestamp = timestamp;
+      cenote.id = uuid();
+      try {
+        await producer.send(process.env.KAFKA_TOPIC, JSON.stringify({ data, cenote }));
+        allDataResponses.push({ message: 'Event sent.' });
+      } catch (error) {
+        allDataResponses.push({ message: error });
+      }
+    }
+  }
+  return loopMessages().then(() => res.status(202).json(allDataResponses));
 }));
 
 module.exports = router;
