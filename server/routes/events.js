@@ -99,7 +99,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
         await producer.send(process.env.KAFKA_TOPIC, JSON.stringify({ data, cenote }));
         allDataResponses.push({ message: 'Event sent.' });
       } catch (error) {
-        allDataResponses.push({ message: error });
+        allDataResponses.push({ message: 'An error occurred.', error });
       }
     }
   }

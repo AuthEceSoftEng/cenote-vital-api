@@ -29,9 +29,9 @@ class OrganizationDropdown extends Component {
     window.removeEventListener('touchend', this.dropdownListener);
   }
 
-  dropdownListener = (e) => {
+  dropdownListener = () => {
     const { closeDropdown } = this.props;
-    return !e.path.includes(this.dropdown) && closeDropdown();
+    return this.dropdown && closeDropdown();
   }
 
   logout = () => {

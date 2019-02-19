@@ -1,5 +1,5 @@
 const express = require('express');
-const cassandra = require('cassandra-driver');
+const { Pool } = require('pg');
 
 const { Project } = require('../models');
 const { requireAuth, canAccessForCollection } = require('./middleware');
@@ -16,8 +16,8 @@ const {
 } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
-const client = new cassandra.Client({ contactPoints: [process.env.CASSANDRA_URL], keyspace: 'cenote', localDataCenter: 'datacenter1' });
-client.connect(console.error);
+const client = new Pool({ user: 'cockroach', host: process.env.COCKROACH_URL, database: 'bank', port: 26257 });
+client.connect(err => err && console.error(err));
 
 /**
 * @api {get} /projects/:PROJECT_ID/queries/count Count
@@ -55,13 +55,12 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : 'COUNT(*)'} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(*)`} FROM ${req.params.PROJECT_ID}_${event_collection
+  } ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'count');
-      if (group_by) results = groupBy(answer, group_by, 'count');
       results = parseNumbers(results);
       res.json({ ok: true, results });
     })
@@ -99,7 +98,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
 *       "ok": true
 *       "results": [
 *            {
-*               "voltage": 0.0001
+*               "min": 0.0001
 *            }
 *       ]
 *     }
@@ -116,13 +115,12 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `MIN("${target_property}")`} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MIN(${target_property})`} FROM ${req.params.PROJECT_ID
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'minimum', target_property);
-      if (group_by) results = groupBy(answer, group_by, 'minimum', target_property);
       results = parseNumbers(results);
       res.json({ ok: true, results });
     })
@@ -151,7 +149,7 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
 *       "ok": true
 *       "results": [
 *            {
-*               "voltage": 9.999
+*               "max": 9.999
 *            }
 *       ]
 *     }
@@ -168,13 +166,12 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `MAX("${target_property}")`} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MAX(${target_property})`} FROM ${req.params.PROJECT_ID
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'maximum', target_property);
-      if (group_by) results = groupBy(answer, group_by, 'maximum', target_property);
       results = parseNumbers(results);
       res.json({ ok: true, results });
     })
@@ -203,7 +200,7 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
 *       "ok": true
 *       "results": [
 *            {
-*               "voltage": 337231
+*               "sum": 337231
 *            }
 *       ]
 *     }
@@ -220,13 +217,12 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `SUM("${target_property}")`} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} SUM(${target_property})`} FROM ${req.params.PROJECT_ID
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'sum', target_property);
-      if (group_by) results = groupBy(answer, group_by, 'sum', target_property);
       results = parseNumbers(results);
       res.json({ ok: true, results });
     })
@@ -255,7 +251,7 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
 *       "ok": true
 *       "results": [
 *            {
-*               "voltage":  1.92
+*               "avg":  1.92
 *            }
 *       ]
 *     }
@@ -272,13 +268,12 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `AVG("${target_property}")`} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} AVG(${target_property})`} FROM ${req.params.PROJECT_ID
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
       if (interval) results = groupByInterval(answer, interval, 'average', target_property);
-      if (group_by) results = groupBy(answer, group_by, 'average', target_property);
       results = parseNumbers(results);
       res.json({ ok: true, results });
     })
@@ -307,7 +302,7 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
 *       "ok": true
 *       "results": [
 *            {
-*               "voltage":  1.1
+*               "median":  1.1
 *            }
 *       ]
 *     }
@@ -324,13 +319,13 @@ router.get('/median', canAccessForCollection, (req, res) => Project.findOne({ pr
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${group_by || interval ? '*' : target_property} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
+  } ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = [];
-      results.push({ [target_property]: median(answer.map(el => el[target_property])) });
+      results.push({ median: median(answer.map(el => el[target_property])) });
       if (interval) results = groupByInterval(answer, interval, 'median', target_property);
       if (group_by) results = groupBy(answer, group_by, 'median', target_property);
       results = parseNumbers(results);
@@ -362,7 +357,7 @@ router.get('/median', canAccessForCollection, (req, res) => Project.findOne({ pr
 *       "ok": true
 *       "results": [
 *            {
-*               "voltage": 0.945
+*               "percentile": 0.945
 *            }
 *       ]
 *     }
@@ -380,13 +375,12 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${group_by || interval ? '*' : target_property} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
+  } ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`; return client.query(query)
     .then(({ rows: answer }) => {
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = [];
-      results.push({ [target_property]: percentle(answer.map(el => el[target_property]), percentile) });
+      results.push({ percentile: percentle(answer.map(el => el[target_property]), percentile) });
       if (interval) results = groupByInterval(answer, interval, 'percentile', target_property, percentile);
       if (group_by) results = groupBy(answer, group_by, 'percentile', target_property, percentile);
       results = parseNumbers(results);
@@ -436,15 +430,13 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframeQuery = parseTimeframe(req.query.timeframe);
     const filterQuery = getFilterQuery(filters);
-    const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
-      req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-    return client.execute(query, [], { prepare: true })
+    const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(DISTINCT ${target_property})`} FROM ${req.params.PROJECT_ID
+    }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+    return client.query(query)
       .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
-        let results = [];
-        results.push({ [target_property]: [...new Set(answer.map(el => el[target_property]))].length });
+        let results = answer;
         if (interval) results = groupByInterval(answer, interval, 'count_unique', target_property);
-        if (group_by) results = groupBy(answer, group_by, 'count_unique', target_property);
         results = parseNumbers(results);
         res.json({ ok: true, results });
       })
@@ -493,12 +485,12 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframeQuery = parseTimeframe(req.query.timeframe);
     const filterQuery = getFilterQuery(filters);
-    const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM cenote.${
-      req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-    return client.execute(query, [], { prepare: true })
+    const query = `SELECT ${group_by || interval ? '*' : `DISTINCT ${target_property}`} FROM ${
+      req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+    return client.query(query)
       .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
-        let results = [...new Set(answer.map(el => el[target_property]))];
+        let results = answer;
         if (interval) results = groupByInterval(answer, interval, 'select_unique', target_property);
         if (group_by) results = groupBy(answer, group_by, 'select_unique', target_property);
         results = parseNumbers(results);
@@ -552,9 +544,9 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
   const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${target_property ? `"${target_property}"` : '*'} FROM cenote.${
-    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT} ALLOW FILTERING`;
-  return client.execute(query, [], { prepare: true })
+  const query = `SELECT ${target_property ? `"${target_property}"` : '*'} FROM ${
+    req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       let results = answer;
       filters.forEach(filter => results = applyFilter(filter, results));
@@ -565,14 +557,14 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
 }));
 
 router.get('/collections', requireAuth, (req, res) => {
-  const query = 'SELECT table_name,column_name,type FROM system_schema.columns WHERE keyspace_name = \'cenote\'';
-  return client.execute(query, [], { prepare: true })
+  const query = 'SELECT * from information_schema.columns WHERE table_schema=\'public\'';
+  return client.query(query)
     .then(({ rows: answer }) => {
       const results = {};
       answer.filter(el => el.table_name.startsWith(req.params.PROJECT_ID)).forEach((prop) => {
         const collection = prop.table_name.split('_')[1];
         if (!results[collection]) results[collection] = [];
-        results[collection].push({ column_name: prop.column_name, type: prop.type });
+        results[collection].push({ column_name: prop.column_name, type: prop.data_type });
       });
       res.json(results);
     })

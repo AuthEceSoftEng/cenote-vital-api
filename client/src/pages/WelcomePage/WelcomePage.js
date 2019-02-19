@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { isEmpty, pick } from 'ramda';
-import Welcome from 'react-welcome-page';
 
 class WelcomePage extends Component {
   static propTypes = {
@@ -21,18 +20,13 @@ class WelcomePage extends Component {
   render() {
     return (
       <div className="welcome-page section">
-        <Welcome
-          loopDuration={3000}
-          data={
-            [
-              {
-                image: require('../../assets/images/logo_color.png'),
-                imageAnimation: 'flipInX',
-              },
-            ]
-          }
-        />
         <h1 className="title is-1">{'Welcome to cenote\'s Dashboard!'}</h1>
+        <img
+          src={require('../../assets/images/logo_color.png')}
+          alt=""
+          className="animated flipInX"
+          style={{ animationDuration: '2s', delay: '800ms', width: '17%' }}
+        />
       </div>
     );
   }
