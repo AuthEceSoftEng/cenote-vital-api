@@ -3,20 +3,10 @@ const { Pool } = require('pg');
 
 const { Project } = require('../models');
 const { requireAuth, canAccessForCollection } = require('./middleware');
-const {
-  isJSON,
-  applyFilter,
-  parseTimeframe,
-  groupBy,
-  getFilterQuery,
-  groupByInterval,
-  median,
-  percentile: percentle,
-  parseNumbers,
-} = require('../utils');
+const { isJSON, applyFilter, parseTimeframe, groupBy, getFilterQuery, groupByInterval, parseNumbers, percentile: percentle } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
-const client = new Pool({ user: 'cockroach', host: process.env.COCKROACH_URL, database: 'bank', port: 26257 });
+const client = new Pool({ user: 'cockroach', host: process.env.COCKROACH_URL, database: process.env.COCKROACH_DBNAME, port: 26257 });
 client.connect(err => err && console.error(err));
 
 /**
@@ -56,7 +46,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(*)`} FROM ${req.params.PROJECT_ID}_${event_collection
-  } ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  } ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
@@ -116,7 +106,8 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MIN(${target_property})`} FROM ${req.params.PROJECT_ID
-  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
+    latest || req.app.locals.GLOBAL_LIMIT}`;
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
@@ -167,7 +158,8 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MAX(${target_property})`} FROM ${req.params.PROJECT_ID
-  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
+    latest || req.app.locals.GLOBAL_LIMIT}`;
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
@@ -218,7 +210,8 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} SUM(${target_property})`} FROM ${req.params.PROJECT_ID
-  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
+    latest || req.app.locals.GLOBAL_LIMIT}`;
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
@@ -269,7 +262,8 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} AVG(${target_property})`} FROM ${req.params.PROJECT_ID
-  }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  }_${event_collection} ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
+    latest || req.app.locals.GLOBAL_LIMIT}`;
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
@@ -311,28 +305,11 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
 */
-router.get('/median', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean().exec((err2, project) => {
-  if (err2 || !project) return res.status(404).json({ ok: false, results: 'ProjectNotFoundError' });
-  const { readKey, masterKey, event_collection, target_property, group_by, latest, interval } = req.query;
-  if (!target_property) return res.status(400).json({ ok: false, results: 'TargetNotProvidedError' });
-  if (!(readKey === project.readKey || masterKey === project.masterKey)) return res.status(401).json({ ok: false, results: 'KeyNotAuthorizedError' });
-  const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
-  const timeframeQuery = parseTimeframe(req.query.timeframe);
-  const filterQuery = getFilterQuery(filters);
-  const query = `SELECT ${group_by || interval ? '*' : target_property} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
-  } ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
-  return client.query(query)
-    .then(({ rows: answer }) => {
-      filters.forEach(filter => answer = applyFilter(filter, answer));
-      let results = [];
-      results.push({ median: median(answer.map(el => el[target_property])) });
-      if (interval) results = groupByInterval(answer, interval, 'median', target_property);
-      if (group_by) results = groupBy(answer, group_by, 'median', target_property);
-      results = parseNumbers(results);
-      res.json({ ok: true, results });
-    })
-    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
-}));
+router.get('/median', canAccessForCollection, (req, res) => {
+  req.url = '/percentile';
+  req.query = { ...req.query, percentile: 50, isMedian: true };
+  return router.handle(req, res);
+});
 
 /**
 * @api {get} /projects/:PROJECT_ID/queries/percentile Percentile
@@ -376,13 +353,14 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
   const timeframeQuery = parseTimeframe(req.query.timeframe);
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${group_by || interval ? '*' : target_property} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
-  } ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`; return client.query(query)
+  } ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  return client.query(query)
     .then(({ rows: answer }) => {
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = [];
-      results.push({ percentile: percentle(answer.map(el => el[target_property]), percentile) });
+      results.push({ [req.query.isMedian ? 'median' : 'percentile']: percentle(answer.map(el => el[target_property]), percentile) });
       if (interval) results = groupByInterval(answer, interval, 'percentile', target_property, percentile);
-      if (group_by) results = groupBy(answer, group_by, 'percentile', target_property, percentile);
+      if (!interval && group_by) results = groupBy(answer, group_by, 'percentile', target_property, percentile);
       results = parseNumbers(results);
       res.json({ ok: true, results });
     })
@@ -431,7 +409,8 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
     const timeframeQuery = parseTimeframe(req.query.timeframe);
     const filterQuery = getFilterQuery(filters);
     const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(DISTINCT ${target_property})`} FROM ${req.params.PROJECT_ID
-    }_${event_collection} ${timeframeQuery} ${filterQuery} ${group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+    }_${event_collection} ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
+      latest || req.app.locals.GLOBAL_LIMIT}`;
     return client.query(query)
       .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
@@ -485,14 +464,14 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
     const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
     const timeframeQuery = parseTimeframe(req.query.timeframe);
     const filterQuery = getFilterQuery(filters);
-    const query = `SELECT ${group_by || interval ? '*' : `DISTINCT ${target_property}`} FROM ${
-      req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+    const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} ARRAY_AGG(DISTINCT ${target_property}) AS ${target_property}`
+    } FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''
+    } LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
     return client.query(query)
       .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
         let results = answer;
         if (interval) results = groupByInterval(answer, interval, 'select_unique', target_property);
-        if (group_by) results = groupBy(answer, group_by, 'select_unique', target_property);
         results = parseNumbers(results);
         res.json({ ok: true, results });
       })
@@ -562,9 +541,10 @@ router.get('/collections', requireAuth, (req, res) => {
     .then(({ rows: answer }) => {
       const results = {};
       answer.filter(el => el.table_name.startsWith(req.params.PROJECT_ID)).forEach((prop) => {
+        if (prop.column_name === 'rowid') return;
         const collection = prop.table_name.split('_')[1];
         if (!results[collection]) results[collection] = [];
-        results[collection].push({ column_name: prop.column_name, type: prop.data_type });
+        results[collection].push({ column_name: prop.column_name, type: prop.crdb_sql_type });
       });
       res.json(results);
     })

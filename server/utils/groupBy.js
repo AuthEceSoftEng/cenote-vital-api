@@ -1,4 +1,3 @@
-const median = require('./median');
 const percentile = require('./percentile');
 
 module.exports = (items, key, wayOfGrouping, target = '', p = 100) => {
@@ -18,7 +17,7 @@ module.exports = (items, key, wayOfGrouping, target = '', p = 100) => {
       result: tmp[value].map(el => el[target]).reduce((a, b) => a + b, 0) / tmp[value].length,
     }));
   } else if (wayOfGrouping === 'median') {
-    Object.keys(tmp).forEach(value => results.push({ [key]: value, result: median(tmp[value].map(el => el[target])) }));
+    Object.keys(tmp).forEach(value => results.push({ [key]: value, result: percentile(tmp[value].map(el => el[target]), 50) }));
   } else if (wayOfGrouping === 'percentile') {
     Object.keys(tmp).forEach(value => results.push({ [key]: value, result: percentile(tmp[value].map(el => el[target]), p) }));
   } else if (wayOfGrouping === 'count_unique') {

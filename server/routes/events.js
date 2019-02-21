@@ -48,13 +48,13 @@ producer.connect();
 *     }
 */
 /**
-* @api {post} /projects/:PROJECT_ID/events/:EVENT_COLLECTION Record events
+* @api {post} /projects/:PROJECT_ID/events/:EVENT_COLLECTION?writeKey=:WRITE_KEY&MASTER_KEY=:MASTER_KEY Record events
 * @apiVersion 0.1.0
 * @apiName RecordEvents
 * @apiGroup Events
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} EVENT_COLLECTION The event collection name.
-* @apiParam {String} writeKey/masterKey Key for authorized write.
+* @apiParam {String} WRITE_KEY/MASTER_KEY Key for authorized write.
 * @apiParam {Object/Object[]} payload Event data.
 * @apiParamExample {json} payload Example:
 *"payload": [{
@@ -90,10 +90,10 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   };
   if (!Array.isArray(payload)) payload = [payload];
   const allDataResponses = [];
-  async function loopMessages() {
+  return (async () => {
     for (const dato of payload) {
       const { data, timestamp } = dato;
-      if (timestamp && Number.isInteger(timestamp) && timestamp < Date.now()) cenote.timestamp = timestamp;
+      if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = timestamp;
       cenote.id = uuid();
       try {
         await producer.send(process.env.KAFKA_TOPIC, JSON.stringify({ data, cenote }));
@@ -102,8 +102,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
         allDataResponses.push({ message: 'An error occurred.', error });
       }
     }
-  }
-  return loopMessages().then(() => res.status(202).json(allDataResponses));
+  })().then(() => res.status(202).json(allDataResponses));
 }));
 
 module.exports = router;

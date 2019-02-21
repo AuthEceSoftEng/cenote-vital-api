@@ -1,7 +1,7 @@
 define({ "api": [
   {
     "type": "post",
-    "url": "/projects/:PROJECT_ID/events/:EVENT_COLLECTION",
+    "url": "/projects/:PROJECT_ID/events/:EVENT_COLLECTION?writeKey=:WRITE_KEY&MASTER_KEY=:MASTER_KEY",
     "title": "Record events",
     "version": "0.1.0",
     "name": "RecordEvents",
@@ -27,7 +27,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "writeKey/masterKey",
+            "field": "WRITE_KEY/MASTER_KEY",
             "description": "<p>Key for authorized write.</p>"
           },
           {
@@ -1293,7 +1293,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"voltage\":  1.92\n       }\n  ]\n}",
+          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"avg\":  1.92\n       }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -1937,7 +1937,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"voltage\": 9.999\n       }\n  ]\n}",
+          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"max\": 9.999\n       }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -2108,7 +2108,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"voltage\":  1.1\n       }\n  ]\n}",
+          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"median\":  1.1\n       }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -2279,7 +2279,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"voltage\": 0.0001\n       }\n  ]\n}",
+          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"min\": 0.0001\n       }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -2458,7 +2458,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"voltage\": 0.945\n       }\n  ]\n}",
+          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"percentile\": 0.945\n       }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -2789,7 +2789,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"voltage\": 337231\n       }\n  ]\n}",
+          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"ok\": true\n  \"results\": [\n       {\n          \"sum\": 337231\n       }\n  ]\n}",
           "type": "json"
         }
       ]
