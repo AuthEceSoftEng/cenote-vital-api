@@ -1,6 +1,6 @@
 # cenote-api
 
->API server & web client used by cenote
+>API server & web client used by [cenote](https://github.com/AuthEceSoftEng/cenote)
 
 ## Quick Start
 
