@@ -69,7 +69,7 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.14",
+    "mongoose": "^5.4.16",
     "mongoose-auto-increment-reworked": "^1.2.1",
     "mongoose-immutable": "^0.0.2",
     "nodemailer": "^5.1.1",

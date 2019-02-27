@@ -1,18 +1,24 @@
-version: "3.6"
+version: "3"
 services:
-  web:
-    container_name: web
+  app:
+    container_name: cenote-api
     restart: always
     build: .
     ports:
       - "3000:3000"
     links:
       - mongo
+    volumes:
+      - .:/app
     environment:
-      - NODE_ENV=production
       - DATABASE_URL=mongodb://mongo:27017/cenote-db
+      - PORT=3000
       - HOST=0.0.0.0
-    command: npm start
+      - GLOBAL_LIMIT=5000
+      - ZOOKEEPER_SERVERS=83.212.104.172:2181,83.212.96.15:2181,83.212.104.177:2181
+      - KAFKA_TOPIC=cenoteIncoming
+      - COCKROACH_URL=83.212.104.172
+      - COCKROACH_DBNAME=cenote
   mongo:
     container_name: mongo
     image: mongo
