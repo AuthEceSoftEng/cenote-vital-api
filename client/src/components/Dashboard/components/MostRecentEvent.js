@@ -33,7 +33,7 @@ const MostRecentEvents = (props) => {
                             className={`has-text-centered ${
                               prop2.column_name.startsWith('cenote') || prop2.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
                           >
-                            {prop[prop2.column_name] || '-'}
+                            {prop[prop2.column_name] !== null ? prop[prop2.column_name] : '-'}
                           </td>
                         ))
                       }

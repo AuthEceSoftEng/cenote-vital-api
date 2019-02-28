@@ -4,18 +4,32 @@ import { ClipLoader } from 'react-spinners';
 import BootstrapTable from 'react-bootstrap-table-next';
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import swal from '@sweetalert/with-react';
-import { equals } from 'ramda';
+import request from 'superagent';
 
 import Button from '../../Button';
 
 const EventCollection = (props) => {
-  const { properties } = props;
+  const { properties, projectId, eventCollection } = props;
   const [data, updateData] = React.useState(properties);
   let table = null;
   const handleSave = () => {
-    if (equals(data, data.map(el => ({ column_name: el.column_name, type: el.type })))) return;
-    updateData(data.map(el => ({ column_name: el.column_name, type: el.type })));
-    swal('Good job!', 'Changes have been saved!', 'success');
+    if (!data.some(el => el.isUnsaved)) return;
+    const promises = [];
+    data.forEach((column) => {
+      if (column.isUnsaved) {
+        promises.push(request.put(`/api/projects/${projectId}/queries/addColumn`).send({
+          event_collection: eventCollection,
+          name: column.column_name,
+          type: column.type,
+        }));
+      }
+    });
+    Promise.all(promises).then((infos) => {
+      if (infos.every(el => el.body.ok)) {
+        updateData(data.map(el => ({ column_name: el.column_name, type: el.type })));
+        swal('Good job!', 'Changes have been saved!', 'success');
+      }
+    });
   };
   const handleDelete = () => {
     swal({
@@ -24,10 +38,17 @@ const EventCollection = (props) => {
       icon: 'warning',
       buttons: true,
       dangerMode: true,
-    }).then((willDelete) => {
+    }).then(async (willDelete) => {
       if (willDelete) {
-        updateData(data.filter(el => !table.selectionContext.state.selected.includes(el.column_name)));
-        swal('Poof! Your column(s) have been deleted!', { icon: 'success' });
+        const promises = [];
+        table.selectionContext.selected.forEach((columnToDrop) => {
+          promises.push(request.delete(`/api/projects/${projectId}/queries/dropColumn`).send({ event_collection: eventCollection, columnToDrop }));
+        });
+        const infos = await Promise.all(promises);
+        if (infos.every(el => el.body.ok)) {
+          updateData(data.filter(el => !table.selectionContext.selected.includes(el.column_name)));
+          swal('Poof! Your column(s) have been deleted!', { icon: 'success' });
+        }
       } else {
         swal('Your collection is safe!');
       }
@@ -63,7 +84,7 @@ const EventCollection = (props) => {
       editable: (_, row) => row.isUnsaved,
       editor: {
         type: Type.SELECT,
-        options: [{ value: 'float', label: 'float' }, { value: 'text', label: 'text' }, { value: 'timestamp', label: 'timestamp' }],
+        options: [{ value: 'DECIMAL', label: 'DECIMAL' }, { value: 'STRING', label: 'STRING' }, { value: 'TIMESTAMP', label: 'TIMESTAMP' }],
       },
       sort: true,
     }];
@@ -85,7 +106,7 @@ const EventCollection = (props) => {
               rowStyle={rowStyle}
             />
             <div className="is-grouped" role="group">
-              <Button onClick={() => updateData(data.concat({ column_name: '<Property Name>', type: 'text', isUnsaved: true }))} label="+" />
+              <Button onClick={() => updateData(data.concat({ column_name: 'New name...', type: 'STRING', isUnsaved: true }))} label="+" />
               <Button onClick={handleSave} label="Save" type="success" />
               <Button onClick={handleDelete} label="Delete" type="danger" />
             </div>
@@ -97,6 +118,10 @@ const EventCollection = (props) => {
   );
 };
 
-EventCollection.propTypes = { properties: PropTypes.array.isRequired };
+EventCollection.propTypes = {
+  properties: PropTypes.array.isRequired,
+  projectId: PropTypes.string.isRequired,
+  eventCollection: PropTypes.string.isRequired,
+};
 
 export default EventCollection;

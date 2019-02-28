@@ -551,6 +551,28 @@ router.get('/collections', requireAuth, (req, res) => {
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 });
 
+router.put('/addColumn', requireAuth, (req, res) => {
+  const query = `ALTER TABLE ${req.params.PROJECT_ID}_${req.body.event_collection} ADD COLUMN IF NOT EXISTS ${req.body.name} ${req.body.type}`;
+  return client.query(query)
+    .then(() => res.status(202).json({ ok: true }))
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+});
+
+router.delete('/dropColumn', requireAuth, (req, res) => {
+  const query = `ALTER TABLE ${req.params.PROJECT_ID}_${req.body.event_collection} DROP COLUMN IF EXISTS ${req.body.columnToDrop}`;
+  return client.query(query)
+    .then(() => res.status(202).json({ ok: true }))
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+});
+
+router.delete('/dropTable', requireAuth, (req, res) => {
+  const query = `DROP TABLE IF EXISTS ${req.params.PROJECT_ID}_${req.body.event_collection}`;
+  console.log(query);
+  return client.query(query)
+    .then(() => res.status(202).json({ ok: true }))
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+});
+
 router.all('/*', (req, res) => res.status(400).json({ ok: false, results: 'This is not a valid query!' }));
 
 module.exports = router;

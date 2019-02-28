@@ -75,7 +75,7 @@
     "redux-thunk": "^2.3.0",
     "superagent": "^4.1.0",
     "sweetalert": "^2.1.2",
-    "webpack": "^4.29.5",
+    "webpack": "^4.29.6",
     "webpack-bundle-analyzer": "^3.0.4",
     "webpack-dev-middleware": "^3.6.0",
     "webpack-hot-middleware": "^2.24.3"

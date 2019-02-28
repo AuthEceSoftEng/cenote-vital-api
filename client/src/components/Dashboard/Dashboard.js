@@ -174,17 +174,21 @@ export default class Dashboard extends React.Component {
 
   deleteCollection(col) {
     const { collections } = this.state;
+    const { projectId } = this.props;
     swal({
       title: 'Are you sure?',
       text: 'Once deleted, you will not be able to recover data lost!',
       icon: 'warning',
       buttons: true,
       dangerMode: true,
-    }).then((willDelete) => {
+    }).then(async (willDelete) => {
       if (willDelete) {
-        delete collections[col];
-        this.setState({ collections });
-        swal('Poof! Your collection has been deleted!', { icon: 'success' });
+        const info = await request.delete(`/api/projects/${projectId}/queries/dropTable`).send({ event_collection: col });
+        if (info.body.ok) {
+          delete collections[col];
+          this.setState({ collections });
+          swal('Poof! Your collection has been deleted!', { icon: 'success' });
+        }
       } else {
         swal('Your collection is safe!');
       }
@@ -193,6 +197,7 @@ export default class Dashboard extends React.Component {
 
   _getEventCollectionInfo() {
     const { collections, events } = this.state;
+    const { projectId } = this.props;
     const tabList = [];
     const tabPanel = [];
     Object.keys(collections).forEach((col, ind) => {
@@ -205,7 +210,7 @@ export default class Dashboard extends React.Component {
         </Tab>);
       tabPanel.push(
         <TabPanel key={`tabpanel_col_${ind}`}>
-          <EventCollection properties={collections[col]} />
+          <EventCollection properties={collections[col]} projectId={projectId} eventCollection={col} />
           <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
           {
             (events[col] || []).length > 0
