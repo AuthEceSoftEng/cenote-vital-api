@@ -184,11 +184,10 @@ export default class Dashboard extends React.Component {
     }).then(async (willDelete) => {
       if (willDelete) {
         const info = await request.delete(`/api/projects/${projectId}/queries/dropTable`).send({ event_collection: col });
-        if (info.body.ok) {
-          delete collections[col];
-          this.setState({ collections });
-          swal('Poof! Your collection has been deleted!', { icon: 'success' });
-        }
+        if (info.body) return;
+        delete collections[col];
+        this.setState({ collections });
+        swal('Poof! Your collection has been deleted!', { icon: 'success' });
       } else {
         swal('Your collection is safe!');
       }

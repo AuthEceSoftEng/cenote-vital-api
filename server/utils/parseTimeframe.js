@@ -6,7 +6,8 @@ module.exports = (timeframe) => {
   const now = new Date();
   if (isJSON(timeframe)) {
     const time = JSON.parse(timeframe);
-    return `WHERE ${time.start ? `"cenote$timestamp" >= '${time.start}' AND` : ''} "cenote$timestamp" <= '${time.end || now.toISOString()}'`;
+    return `WHERE ${new Date(time.start).toISOString() ? `"cenote$timestamp" >= '${new Date(time.start).toISOString()}' AND` : ''
+    } "cenote$timestamp" <= '${new Date(time.end).toISOString() || now.toISOString()}'`;
   }
   if (!timeframe || typeof timeframe !== 'string' || timeframe.split('_').length !== 3) return `WHERE "cenote$timestamp" <= '${now.toISOString()}'`;
   timeframe = timeframe.split('_');

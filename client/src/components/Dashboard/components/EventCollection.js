@@ -25,10 +25,9 @@ const EventCollection = (props) => {
       }
     });
     Promise.all(promises).then((infos) => {
-      if (infos.every(el => el.body.ok)) {
-        updateData(data.map(el => ({ column_name: el.column_name, type: el.type })));
-        swal('Good job!', 'Changes have been saved!', 'success');
-      }
+      if (infos.some(el => el.body)) return;
+      updateData(data.map(el => ({ column_name: el.column_name, type: el.type })));
+      swal('Good job!', 'Changes have been saved!', 'success');
     });
   };
   const handleDelete = () => {
@@ -45,10 +44,9 @@ const EventCollection = (props) => {
           promises.push(request.delete(`/api/projects/${projectId}/queries/dropColumn`).send({ event_collection: eventCollection, columnToDrop }));
         });
         const infos = await Promise.all(promises);
-        if (infos.every(el => el.body.ok)) {
-          updateData(data.filter(el => !table.selectionContext.selected.includes(el.column_name)));
-          swal('Poof! Your column(s) have been deleted!', { icon: 'success' });
-        }
+        if (infos.some(el => el.body)) return;
+        updateData(data.filter(el => !table.selectionContext.selected.includes(el.column_name)));
+        swal('Poof! Your column(s) have been deleted!', { icon: 'success' });
       } else {
         swal('Your collection is safe!');
       }

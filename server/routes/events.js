@@ -93,7 +93,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   return (async () => {
     for (const dato of payload) {
       const { data, timestamp } = dato;
-      if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = timestamp;
+      if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = new Date(timestamp).toISOString();
       cenote.id = uuid();
       try {
         await producer.send(process.env.KAFKA_TOPIC, JSON.stringify({ data, cenote }));

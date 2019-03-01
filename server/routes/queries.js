@@ -50,8 +50,8 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      if (interval) results = groupByInterval(answer, interval, 'count');
       results = parseNumbers(results);
+      if (interval) results = groupByInterval(answer, interval, 'count');
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -111,8 +111,8 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      if (interval) results = groupByInterval(answer, interval, 'minimum', target_property);
       results = parseNumbers(results);
+      if (interval) results = groupByInterval(results, interval, 'minimum', target_property);
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -163,8 +163,8 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      if (interval) results = groupByInterval(answer, interval, 'maximum', target_property);
       results = parseNumbers(results);
+      if (interval) results = groupByInterval(results, interval, 'maximum', target_property);
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -215,8 +215,8 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      if (interval) results = groupByInterval(answer, interval, 'sum', target_property);
       results = parseNumbers(results);
+      if (interval) results = groupByInterval(results, interval, 'sum', target_property);
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -267,8 +267,8 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      if (interval) results = groupByInterval(answer, interval, 'average', target_property);
       results = parseNumbers(results);
+      if (interval) results = groupByInterval(results, interval, 'average', target_property);
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -358,10 +358,9 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
     .then(({ rows: answer }) => {
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = [];
-      results.push({ [req.query.isMedian ? 'median' : 'percentile']: percentle(answer.map(el => el[target_property]), percentile) });
-      if (interval) results = groupByInterval(answer, interval, 'percentile', target_property, percentile);
-      if (!interval && group_by) results = groupBy(answer, group_by, 'percentile', target_property, percentile);
-      results = parseNumbers(results);
+      results.push({ [req.query.isMedian ? 'median' : 'percentile']: percentle(parseNumbers(answer).map(el => el[target_property]), percentile) });
+      if (interval) results = groupByInterval(results, interval, 'percentile', target_property, percentile);
+      if (!interval && group_by) results = groupBy(results, group_by, 'percentile', target_property, percentile);
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -414,9 +413,8 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
     return client.query(query)
       .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
-        let results = answer;
-        if (interval) results = groupByInterval(answer, interval, 'count_unique', target_property);
-        results = parseNumbers(results);
+        let results = parseNumbers(answer);
+        if (interval) results = groupByInterval(results, interval, 'count_unique', target_property);
         res.json({ ok: true, results });
       })
       .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -470,9 +468,8 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
     return client.query(query)
       .then(({ rows: answer }) => {
         filters.forEach(filter => answer = applyFilter(filter, answer));
-        let results = answer;
-        if (interval) results = groupByInterval(answer, interval, 'select_unique', target_property);
-        results = parseNumbers(results);
+        let results = parseNumbers(answer);
+        if (interval) results = groupByInterval(results, interval, 'select_unique', target_property);
         res.json({ ok: true, results });
       })
       .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -527,9 +524,8 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
     req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
   return client.query(query)
     .then(({ rows: answer }) => {
-      let results = answer;
+      let results = parseNumbers(answer);
       filters.forEach(filter => results = applyFilter(filter, results));
-      results = parseNumbers(results);
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
@@ -554,22 +550,28 @@ router.get('/collections', requireAuth, (req, res) => {
 router.put('/addColumn', requireAuth, (req, res) => {
   const query = `ALTER TABLE ${req.params.PROJECT_ID}_${req.body.event_collection} ADD COLUMN IF NOT EXISTS ${req.body.name} ${req.body.type}`;
   return client.query(query)
-    .then(() => res.status(202).json({ ok: true }))
+    .then(() => res.status(204).json({ ok: true }))
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 });
 
 router.delete('/dropColumn', requireAuth, (req, res) => {
   const query = `ALTER TABLE ${req.params.PROJECT_ID}_${req.body.event_collection} DROP COLUMN IF EXISTS ${req.body.columnToDrop}`;
   return client.query(query)
-    .then(() => res.status(202).json({ ok: true }))
+    .then(() => res.status(204).json({ ok: true }))
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 });
 
 router.delete('/dropTable', requireAuth, (req, res) => {
   const query = `DROP TABLE IF EXISTS ${req.params.PROJECT_ID}_${req.body.event_collection}`;
-  console.log(query);
   return client.query(query)
     .then(() => res.status(202).json({ ok: true }))
+    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+});
+
+router.delete('/testCleanup', (req, res) => {
+  const query = `DROP TABLE IF EXISTS ${req.params.PROJECT_ID}_test`;
+  return client.query(query)
+    .then(() => res.status(204).json({ ok: true }))
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
 });
 
