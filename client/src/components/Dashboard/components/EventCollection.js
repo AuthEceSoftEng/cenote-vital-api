@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ClipLoader } from 'react-spinners';
 import BootstrapTable from 'react-bootstrap-table-next';
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
-import swal from '@sweetalert/with-react';
+import Swal from 'sweetalert2';
 import request from 'superagent';
 
 import Button from '../../Button';
@@ -14,41 +14,67 @@ const EventCollection = (props) => {
   let table = null;
   const handleSave = () => {
     if (!data.some(el => el.isUnsaved)) return;
-    const promises = [];
-    data.forEach((column) => {
-      if (column.isUnsaved) {
-        promises.push(request.put(`/api/projects/${projectId}/queries/addColumn`).send({
-          event_collection: eventCollection,
-          name: column.column_name,
-          type: column.type,
-        }));
-      }
-    });
-    Promise.all(promises).then((infos) => {
-      if (infos.some(el => el.body)) return;
+    Swal.fire({
+      title: 'Are you sure?',
+      type: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Yes!',
+      cancelButtonText: 'No, cancel!',
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
+        Swal.showLoading();
+        const promises = [];
+        data.forEach((column) => {
+          if (column.isUnsaved) {
+            promises.push(request.put(`/api/projects/${projectId}/queries/addColumn`).send({
+              event_collection: eventCollection,
+              name: column.column_name,
+              type: column.type,
+            }));
+          }
+        });
+        return Promise.all(promises).then(infos => infos).catch(error => Swal.showValidationMessage(`Request failed: ${error}`));
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    }).then((result) => {
+      if (result.value.some(el => el.body)) return;
       updateData(data.map(el => ({ column_name: el.column_name, type: el.type })));
-      swal('Good job!', 'Changes have been saved!', 'success');
+      Swal.fire({
+        title: 'Changes have been saved!!',
+        text: 'Refresh the page to view the updated table(s).',
+        type: 'success',
+        confirmButtonText: 'Nice!',
+      });
     });
   };
   const handleDelete = () => {
-    swal({
+    Swal.fire({
       title: 'Are you sure?',
       text: 'Once deleted, you will not be able to recover data lost!',
-      icon: 'warning',
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
         const promises = [];
         table.selectionContext.selected.forEach((columnToDrop) => {
           promises.push(request.delete(`/api/projects/${projectId}/queries/dropColumn`).send({ event_collection: eventCollection, columnToDrop }));
         });
-        const infos = await Promise.all(promises);
-        if (infos.some(el => el.body)) return;
+        return Promise.all(promises).then(infos => infos).catch(error => Swal.showValidationMessage(`Request failed: ${error}`));
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    }).then((result) => {
+      if (result.value.every(el => el.ok)) {
         updateData(data.filter(el => !table.selectionContext.selected.includes(el.column_name)));
-        swal('Poof! Your column(s) have been deleted!', { icon: 'success' });
-      } else {
-        swal('Your collection is safe!');
+        Swal.fire({
+          title: 'Poof!',
+          text: 'Your column(s) have been deleted! Refresh the page to view the updated table(s)!',
+          type: 'success',
+          confirmButtonText: 'Nice!',
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Cancelled', 'Your column(s) are safe :)', 'error');
       }
     });
   };

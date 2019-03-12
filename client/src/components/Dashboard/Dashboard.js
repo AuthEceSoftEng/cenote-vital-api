@@ -5,7 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import request from 'superagent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import swal from '@sweetalert/with-react';
+import Swal from 'sweetalert2';
 
 import 'react-tabs/style/react-tabs.css';
 
@@ -175,21 +175,29 @@ export default class Dashboard extends React.Component {
   deleteCollection(col) {
     const { collections } = this.state;
     const { projectId } = this.props;
-    swal({
+    Swal.fire({
       title: 'Are you sure?',
       text: 'Once deleted, you will not be able to recover data lost!',
-      icon: 'warning',
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
-        const info = await request.delete(`/api/projects/${projectId}/queries/dropTable`).send({ event_collection: col });
-        if (info.body) return;
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+      showLoaderOnConfirm: true,
+      preConfirm: () => request.delete(`/api/projects/${projectId}/queries/dropTable`).send({ event_collection: col })
+        .then(info => info).catch(error => Swal.showValidationMessage(`Request failed: ${error}`)),
+      allowOutsideClick: () => !Swal.isLoading(),
+    }).then((result) => {
+      if (result.value.body) {
         delete collections[col];
         this.setState({ collections });
-        swal('Poof! Your collection has been deleted!', { icon: 'success' });
-      } else {
-        swal('Your collection is safe!');
+        Swal.fire({
+          title: 'Poof!',
+          text: 'Your collection has been deleted! Refresh the page to view the updated table(s).',
+          type: 'success',
+          confirmButtonText: 'Nice!',
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Cancelled', 'Your collection is safe :)', 'error');
       }
     });
   }

@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { pick, identity, isEmpty } from 'ramda';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSync } from '@fortawesome/free-solid-svg-icons';
 
 import { attemptGetOrganization, attemptUpdateOrganization } from '../../actions/organization';
 import { validateName } from '../../utils/validation';
@@ -19,7 +17,6 @@ class ProfileSettings extends React.Component {
       profilePic: PropTypes.string,
       organizationId: PropTypes.string,
     }).isRequired,
-    attemptGetOrganization: PropTypes.func.isRequired,
     attemptUpdateOrganization: PropTypes.func.isRequired,
   };
 
@@ -39,20 +36,6 @@ class ProfileSettings extends React.Component {
     };
   }
 
-  resetState = () => {
-    const { organization } = this.props;
-    this.setState({
-      firstName: organization.firstName || '',
-      lastName: organization.lastName || '',
-      bio: organization.bio || '',
-      profilePic: organization.profilePic || '',
-      firstNameEdited: false,
-      lastNameEdited: false,
-      bioEdited: false,
-      profilePicEdited: false,
-    });
-  }
-
   updateFirstName = (e) => {
     if (validateName(e.target.value)) {
       this.setState({ firstName: e.target.value, firstNameEdited: true });
@@ -68,11 +51,6 @@ class ProfileSettings extends React.Component {
   updateBio = e => this.setState({ bio: e.target.value, bioEdited: true })
 
   updateProfilePic = e => this.setState({ profilePic: e.target.value, profilePicEdited: true })
-
-  refresh = () => {
-    const { attemptGetOrganization: attemptgetOrganization } = this.props;
-    attemptgetOrganization().then(this.resetState).catch(identity);
-  }
 
   save = () => {
     const { firstNameEdited, lastNameEdited, profilePicEdited, bioEdited, firstName, lastName, profilePic, bio } = this.state;
@@ -108,9 +86,6 @@ class ProfileSettings extends React.Component {
     return (
       <div className="profile-settings">
         <Box className="general-profile">
-          <span className="icon is-medium is-pulled-right" role="button" tabIndex={0} onClick={this.refresh} onKeyPress={this.refresh}>
-            <FontAwesomeIcon icon={faSync} size="lg" />
-          </span>
           <h3 className="title is-3">General</h3>
           <hr className="separator" />
           <div className="columns">

@@ -1,6 +1,6 @@
 {
   "title": "cenote API",
-  "url": "http://snf-843202.vm.okeanos.grnet.gr:3000/api",
+  "url": "/api",
   "template": {
     "forceLanguage": "en",
     "withCompare": false,
@@ -14,7 +14,7 @@
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-03-01T16:10:18.614Z",
+    "time": "2019-03-12T10:45:19.089Z",
     "url": "http://apidocjs.com",
     "version": "0.17.7"
   }

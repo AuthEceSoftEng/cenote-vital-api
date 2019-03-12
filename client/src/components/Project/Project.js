@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faBan, faPencilAlt, faSave } from '@fortawesome/free-solid-svg-icons';
-import swal from '@sweetalert/with-react';
+import Swal from 'sweetalert2';
 
 export default function Project(props) {
   const {
@@ -12,18 +12,19 @@ export default function Project(props) {
   } = props;
 
   const openModal = () => {
-    swal({
+    Swal.fire({
       title: 'Are you sure?',
       text: 'Once deleted, you will not be able to recover data lost!',
-      icon: 'warning',
-      buttons: true,
-      dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    }).then((result) => {
+      if (result.value) {
         deleteProject();
-        swal('Poof! Your project has been deleted!', { icon: 'success' });
-      } else {
-        swal('Your project is safe!');
+        Swal.fire('Poof!', 'Your project has been deleted!', 'success');
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Cancelled', 'Your column(s) are safe :)', 'error');
       }
     });
   };
