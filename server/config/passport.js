@@ -1,4 +1,4 @@
-require('dotenv').load();
+require('dotenv').config();
 const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongodb-session')(session);
@@ -17,7 +17,7 @@ module.exports = (app) => {
     }),
     genid: () => uuid.v4(),
     cookie: { secure: false },
-    secret: 'cenote-secret',
+    secret: process.env.COOKIE_SECRET || 'cenote-secret',
     resave: false,
     saveUninitialized: false,
   };

@@ -15,10 +15,12 @@ services:
       - PORT=3000
       - HOST=0.0.0.0
       - GLOBAL_LIMIT=5000
-      - ZOOKEEPER_SERVERS=83.212.104.172:2181,83.212.96.15:2181,83.212.104.177:2181
+      - KAFKA_SERVERS=83.212.104.172:9092,83.212.96.15:9092,83.212.104.177:9092
       - KAFKA_TOPIC=cenoteIncoming
       - COCKROACH_URL=83.212.104.172
+      - COCKROACH_PORT=30068
       - COCKROACH_DBNAME=cenote
+      - COOKIE_SECRET=cenote-secret
   mongo:
     container_name: mongo
     image: mongo

@@ -5,6 +5,7 @@
 ## Quick Start
 
 * Install [gcc](https://gcc.gnu.org/)
+* Install [librdkafka-dev](https://github.com/edenhill/librdkafka)
 
 * Install dependencies:
 

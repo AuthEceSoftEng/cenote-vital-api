@@ -1,4 +1,4 @@
-require('dotenv').load();
+require('dotenv').config();
 const chalk = require('chalk');
 const express = require('express');
 const path = require('path');
