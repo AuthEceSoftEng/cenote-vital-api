@@ -1,13 +1,13 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 const express = require('express');
-const { NProducer } = require('sinek');
+const { Producer } = require('sinek');
 const uuid = require('uuid/v4');
 
 const { Project } = require('../models');
 
 const router = express.Router({ mergeParams: true });
-const config = { noptions: { 'metadata.broker.list': process.env.KAFKA_SERVERS } };
-const producer = new NProducer(config);
+const config = { zkConStr: process.env.ZOOKEEPER_SERVERS };
+const producer = new Producer(config, [process.env.KAFKA_TOPIC], 15);
 producer.on('error', console.error);
 producer.connect();
 

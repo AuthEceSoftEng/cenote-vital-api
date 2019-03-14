@@ -68,7 +68,7 @@
     "passport-local": "^1.0.0",
     "pg": "^7.8.2",
     "ramda": "^0.26.1",
-    "sinek": "^6.27.2",
+    "sinek": "~6.26.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
