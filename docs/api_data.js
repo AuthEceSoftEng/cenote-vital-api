@@ -21,7 +21,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "EVENT_COLLECTION",
-            "description": "<p>The event collection name.</p>"
+            "description": "<p>The event collection name.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
@@ -35,7 +35,7 @@ define({ "api": [
             "type": "Object/Object[]",
             "optional": false,
             "field": "payload",
-            "description": "<p>Event data.</p>"
+            "description": "<p>Event data.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties will be flattened using '$' as separator.</p>"
           }
         ]
       },
@@ -95,6 +95,18 @@ define({ "api": [
             "optional": false,
             "field": "NoDataSentError",
             "description": "<p>No data sent.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "InvalidCollectionNameError",
+            "description": "<p>Wrong collection name used.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "InvalidPropertyNameError",
+            "description": "<p>Wrong property name used.</p>"
           }
         ]
       },
@@ -117,6 +129,16 @@ define({ "api": [
         {
           "title": "NoDataSentError:",
           "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"NoDataSentError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "InvalidCollectionNameError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"InvalidCollectionNameError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "InvalidPropertyNameError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"InvalidPropertyNameError\"\n}",
           "type": "json"
         }
       ]
@@ -1211,14 +1233,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -1382,7 +1404,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
@@ -1535,14 +1557,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -1695,14 +1717,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": true,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -1855,14 +1877,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -2026,14 +2048,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -2197,14 +2219,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -2368,14 +2390,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -2547,14 +2569,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -2707,14 +2729,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "event_collection",
-            "description": "<p>Event collection.</p>"
+            "description": "<p>Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a letter and can contain only lowercase letters and numbers.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "target_property",
-            "description": "<p>Desired Event collection's property.</p>"
+            "description": "<p>Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",

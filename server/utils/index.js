@@ -7,4 +7,6 @@ module.exports = {
   parseTimeframe: require('./parseTimeframe'),
   percentile: require('./percentile'),
   parseNumbers: require('./parseNumbers'),
+  flattenJSON: require('./flattenJSON'),
+  isObject: require('./isObject'),
 };

@@ -16,7 +16,8 @@ client.connect(err => err && console.error(err));
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -47,6 +48,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(*)`} FROM ${req.params.PROJECT_ID}_${event_collection
   } ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+  console.log(query);
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
@@ -73,8 +75,11 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -125,8 +130,11 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -177,8 +185,11 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -229,8 +240,11 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -281,8 +295,11 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -318,8 +335,11 @@ router.get('/median', canAccessForCollection, (req, res) => {
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Number{0-100}} percentile Desired percentile.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
@@ -373,8 +393,11 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -427,8 +450,11 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} target_property Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
@@ -482,8 +508,11 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readkey/masterKey Key for authorized read.
-* @apiParam {String} event_collection Event collection.
-* @apiParam {String} [target_property] Desired Event collection's property.
+* @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
+* @apiParam {String} [target_property] Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
+* '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.

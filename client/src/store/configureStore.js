@@ -1,14 +1,14 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunk from 'redux-thunk';
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import rootReducer from '../reducers';
 
-export const history = createHistory();
+export const history = createBrowserHistory();
 
 const persistedReducer = persistReducer({ key: 'root', storage }, rootReducer(history));
 

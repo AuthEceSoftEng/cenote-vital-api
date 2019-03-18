@@ -192,7 +192,7 @@ export default class Dashboard extends React.Component {
         this.setState({ collections });
         Swal.fire({
           title: 'Poof!',
-          text: 'Your collection has been deleted! Refresh the page to view the updated table(s).',
+          text: 'Your collection has been deleted!',
           type: 'success',
           confirmButtonText: 'Nice!',
         });

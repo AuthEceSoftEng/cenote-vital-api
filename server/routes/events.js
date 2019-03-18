@@ -1,14 +1,15 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 const express = require('express');
-const { Producer } = require('sinek');
+const { NProducer } = require('sinek');
 const uuid = require('uuid/v4');
 
 const { Project } = require('../models');
+const { flattenJSON, isObject } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
-const config = { zkConStr: process.env.ZOOKEEPER_SERVERS };
-const producer = new Producer(config, [process.env.KAFKA_TOPIC], 15);
-producer.on('error', console.error);
+const config = { noptions: { 'metadata.broker.list': process.env.KAFKA_SERVERS } };
+const producer = new NProducer(config);
+producer.on('error', error => error.message !== 'broker transport failure' && console.error(error));
 producer.connect();
 
 /**
@@ -48,14 +49,35 @@ producer.connect();
 *     }
 */
 /**
+* @apiDefine InvalidCollectionNameError
+* @apiError InvalidCollectionNameError Wrong collection name used.
+* @apiErrorExample {json} InvalidCollectionNameError:
+*     HTTP/1.1 400 Bad Request
+*     {
+*       "error": "InvalidCollectionNameError"
+*     }
+*/
+/**
+* @apiDefine InvalidPropertyNameError
+* @apiError InvalidPropertyNameError Wrong property name used.
+* @apiErrorExample {json} InvalidPropertyNameError:
+*     HTTP/1.1 400 Bad Request
+*     {
+*       "error": "InvalidPropertyNameError"
+*     }
+*/
+/**
 * @api {post} /projects/:PROJECT_ID/events/:EVENT_COLLECTION?writeKey=:WRITE_KEY&MASTER_KEY=:MASTER_KEY Record events
 * @apiVersion 0.1.0
 * @apiName RecordEvents
 * @apiGroup Events
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} EVENT_COLLECTION The event collection name.
+* @apiParam {String} EVENT_COLLECTION The event collection name.<br/><strong><u>Note:</u></strong> Event collection names must start with a
+* letter and can contain only lowercase letters and numbers.
 * @apiParam {String} WRITE_KEY/MASTER_KEY Key for authorized write.
-* @apiParam {Object/Object[]} payload Event data.
+* @apiParam {Object/Object[]} payload Event data.<br/><strong><u>Note:</u></strong> Property names must start with a
+* letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties will be flattened using
+* '$' as separator.
 * @apiParamExample {json} payload Example:
 *"payload": [{
 *   "data": {
@@ -75,14 +97,28 @@ producer.connect();
 * @apiUse NoCredentialsSentError
 * @apiUse KeyNotAuthorizedError
 * @apiUse NoDataSentError
+* @apiUse InvalidCollectionNameError
+* @apiUse InvalidPropertyNameError
 */
 router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
+  if (!/^[a-z]+[a-z0-9]*$/g.test(req.params.EVENT_COLLECTION)) {
+    return res.status(400).json({
+      message: 'Event collection names must start with a letter and can contain only lowercase letters and numbers.',
+      eror: 'InvalidCollectionNameError',
+    });
+  }
+  let { payload } = req.body;
+  if (!payload) return res.status(400).json({ error: 'NoDataSentError' });
+  if (Object.keys(flattenJSON(payload)).some(propertyName => propertyName.split('💩').some(el => !/^[a-z]+[a-z0-9]*$/g.test(el)))) {
+    return res.status(400).json({
+      message: 'Property names must start with a letter and can contain only lowercase letters and numbers.',
+      eror: 'InvalidPropertyNameError',
+    });
+  }
   if (err2 || !project) return res.status(404).json({ error: 'ProjectNotFoundError' });
   const { writeKey, masterKey } = req.query;
   if (!writeKey && !masterKey) return res.status(403).json({ error: 'NoCredentialsSentError' });
   if (!(writeKey === project.writeKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'KeyNotAuthorizedError' });
-  let { payload } = req.body;
-  if (!payload) return res.status(400).json({ error: 'NoDataSentError' });
   const cenote = {
     created_at: Date.now(),
     id: uuid(),
@@ -93,6 +129,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   return (async () => {
     for (const dato of payload) {
       const { data, timestamp } = dato;
+      if (!data || !isObject(data)) return res.status(400).json({ error: 'NoDataSentError' });
       if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = new Date(timestamp).toISOString();
       cenote.id = uuid();
       try {
@@ -102,7 +139,8 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
         allDataResponses.push({ message: 'An error occurred.', error });
       }
     }
-  })().then(() => res.status(202).json(allDataResponses));
+    return res.status(202).json(allDataResponses);
+  })();
 }));
 
 module.exports = router;

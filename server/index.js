@@ -37,7 +37,7 @@ if (cluster.isMaster) {
   for (let i = 0; i < numCPUs; i += 1) cluster.fork();
   if (process.env.NODE_ENV !== 'test') console.log(chalk.bold.yellow(`>>> Live at http://${host}:${port}`));
   cluster.on('exit', (worker) => {
-    console.log(`Worker: ${worker.pid} died. Trying to restart it...`);
+    console.log(`Worker: ${worker.id} died. Trying to restart it...`);
     cluster.fork();
   });
 } else {
