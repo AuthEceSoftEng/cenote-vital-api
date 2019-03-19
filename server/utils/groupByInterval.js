@@ -3,6 +3,9 @@ const moment = require('moment');
 const percentile = require('./percentile');
 
 module.exports = (items, interval, type, target = '', p = 100) => {
+  if (!['minutely', 'hourly', 'daily', 'weekly', 'monthly', 'yearly'].includes(interval)) {
+    throw Object({ message: '`interval` must be one of `minutely`, `hourly`, `daily`, `weekly`, `monthly`, `yearly`' });
+  }
   const results = [];
   const grouped = {};
   items.forEach((value) => {

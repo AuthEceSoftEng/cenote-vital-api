@@ -35,7 +35,7 @@ const port = process.env.PORT || 3000;
 const host = process.env.HOST || 'localhost';
 if (cluster.isMaster) {
   for (let i = 0; i < numCPUs; i += 1) cluster.fork();
-  if (process.env.NODE_ENV !== 'test') console.log(chalk.bold.yellow(`>>> Live at http://${host}:${port}`));
+  if (process.env.NODE_ENV !== 'test') console.log(chalk.bold.blueBright(`>>> Live at http://${host}:${port}`));
   cluster.on('exit', (worker) => {
     console.log(`Worker: ${worker.id} died. Trying to restart it...`);
     cluster.fork();

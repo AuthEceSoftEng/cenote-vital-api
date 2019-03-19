@@ -139,7 +139,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
         allDataResponses.push({ message: 'An error occurred.', error });
       }
     }
-    return res.status(202).json(allDataResponses);
+    return allDataResponses.every(el => el.message = 'Event sent.') ? res.status(202).json(allDataResponses) : res.status(500).json(allDataResponses);
   })();
 }));
 

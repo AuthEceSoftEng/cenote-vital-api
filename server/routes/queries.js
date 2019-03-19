@@ -48,7 +48,6 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
   const filterQuery = getFilterQuery(filters);
   const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(*)`} FROM ${req.params.PROJECT_ID}_${event_collection
   } ${timeframeQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
-  console.log(query);
   return client.query(query)
     .then(({ rows: answer }) => {
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
@@ -378,9 +377,17 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
     .then(({ rows: answer }) => {
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = [];
-      results.push({ [req.query.isMedian ? 'median' : 'percentile']: percentle(parseNumbers(answer).map(el => el[target_property]), percentile) });
-      if (interval) results = groupByInterval(results, interval, 'percentile', target_property, percentile);
-      if (!interval && group_by) results = groupBy(results, group_by, 'percentile', target_property, percentile);
+      if (!interval && !group_by) {
+        results.push({ [req.query.isMedian ? 'median' : 'percentile']: percentle(parseNumbers(answer).map(el => el[target_property]), percentile) });
+      } else if (!interval && group_by) {
+        if (!Object.keys(answer[0]).includes(group_by)) throw Object({ message: `column "${group_by}" does not exist` });
+        results = groupBy(answer, group_by, 'percentile', target_property, percentile).map((el) => {
+          delete Object.assign(el, { [req.query.isMedian ? 'median' : 'percentile']: el.result }).result;
+          return el;
+        });
+      } else if (interval) {
+        results = groupByInterval(answer, interval, 'percentile', target_property, percentile);
+      }
       res.json({ ok: true, results });
     })
     .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
