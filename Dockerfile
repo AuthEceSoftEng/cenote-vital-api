@@ -16,6 +16,6 @@ COPY server/ ./server
 RUN npm run docs
 COPY docs/ ./docs
 
-
+USER node
 EXPOSE 3000
 CMD [ "npm", "start" ]
