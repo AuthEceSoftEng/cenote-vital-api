@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const compression = require('compression');
+const morgan = require('morgan');
 
 const routes = require('./routes');
 const configPassport = require('./config/passport');
@@ -22,9 +23,10 @@ mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-d
 
 const app = express();
 
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 app.use(compression());
 app.use(express.static(path.resolve(__dirname, '../dist/')));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.locals.GLOBAL_LIMIT = process.env.GLOBAL_LIMIT || 5000;
 configPassport(app);

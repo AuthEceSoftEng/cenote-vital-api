@@ -104,7 +104,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   if (!/^[a-z]+[a-z0-9]*$/g.test(req.params.EVENT_COLLECTION)) {
     return res.status(400).json({
       message: 'Event collection names must start with a letter and can contain only lowercase letters and numbers.',
-      eror: 'InvalidCollectionNameError',
+      error: 'InvalidCollectionNameError',
     });
   }
   let { payload } = req.body;
@@ -112,7 +112,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   if (Object.keys(flattenJSON(payload)).some(propertyName => propertyName.split('💩').some(el => !/^[a-z]+[a-z0-9]*$/g.test(el)))) {
     return res.status(400).json({
       message: 'Property names must start with a letter and can contain only lowercase letters and numbers.',
-      eror: 'InvalidPropertyNameError',
+      error: 'InvalidPropertyNameError',
     });
   }
   if (err2 || !project) return res.status(404).json({ error: 'ProjectNotFoundError' });

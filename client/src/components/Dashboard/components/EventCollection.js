@@ -108,7 +108,12 @@ const EventCollection = (props) => {
       editable: (_, row) => row.isUnsaved,
       editor: {
         type: Type.SELECT,
-        options: [{ value: 'DECIMAL', label: 'DECIMAL' }, { value: 'STRING', label: 'STRING' }, { value: 'TIMESTAMP', label: 'TIMESTAMP' }],
+        options: [
+          { value: 'DECIMAL', label: 'DECIMAL' },
+          { value: 'STRING', label: 'STRING' },
+          { value: 'BOOL', label: 'BOOL' },
+          { value: 'TIMESTAMP', label: 'TIMESTAMP' },
+        ],
       },
       sort: true,
     }];
