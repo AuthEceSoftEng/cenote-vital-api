@@ -1,6 +1,6 @@
 define({
   "title": "cenote API",
-  "url": "/api",
+  "url": "https://cenote.sidero.services/api",
   "template": {
     "forceLanguage": "en",
     "withCompare": false,
@@ -14,7 +14,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-03-18T12:45:05.820Z",
+    "time": "2019-04-10T14:15:24.113Z",
     "url": "http://apidocjs.com",
     "version": "0.17.7"
   }

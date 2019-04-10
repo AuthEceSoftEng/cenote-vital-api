@@ -1258,6 +1258,26 @@
           },
           {
             "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Number",
             "optional": true,
             "field": "latest",
@@ -1408,6 +1428,26 @@
           },
           {
             "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Object[]",
             "optional": true,
             "field": "filters",
@@ -1506,6 +1546,12 @@
             "optional": false,
             "field": "ProjectNotFoundError",
             "description": "<p>The id of the Project was not found.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "TargetNotProvidedError",
+            "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
           }
         ]
       },
@@ -1523,6 +1569,11 @@
         {
           "title": "ProjectNotFoundError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"ProjectNotFoundError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "TargetNotProvidedError:",
+          "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
           "type": "json"
         }
       ]
@@ -1579,6 +1630,26 @@
             "optional": true,
             "field": "group_by",
             "description": "<p>Group by a property.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -1728,17 +1799,30 @@
           },
           {
             "group": "Parameter",
-            "type": "Object[]",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
             "optional": true,
-            "field": "filters",
-            "description": "<p>Apply custom filters.</p>"
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": true,
-            "field": "group_by",
-            "description": "<p>Group by a property.</p>"
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object[]",
+            "optional": true,
+            "field": "filters",
+            "description": "<p>Apply custom filters.</p>"
           },
           {
             "group": "Parameter",
@@ -1747,32 +1831,6 @@
             "field": "latest",
             "defaultValue": "5000",
             "description": "<p>Limit events taken into account.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "allowedValues": [
-              "minutely",
-              "hourly",
-              "daily",
-              "weekly",
-              "monthly",
-              "yearly"
-            ],
-            "optional": true,
-            "field": "interval",
-            "description": "<p>Group by a time interval.</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object/String",
-            "allowedValues": [
-              "\"{'start':ISOString, 'end':ISOString}\"",
-              "\"[this|previous]_[n]_[seconds|minutes|days|...]\""
-            ],
-            "optional": true,
-            "field": "timeframe",
-            "description": "<p>Specify a timeframe.</p>"
           }
         ]
       }
@@ -1826,6 +1884,12 @@
             "optional": false,
             "field": "ProjectNotFoundError",
             "description": "<p>The id of the Project was not found.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "TargetNotProvidedError",
+            "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
           }
         ]
       },
@@ -1843,6 +1907,11 @@
         {
           "title": "ProjectNotFoundError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"ProjectNotFoundError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "TargetNotProvidedError:",
+          "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
           "type": "json"
         }
       ]
@@ -1899,6 +1968,26 @@
             "optional": true,
             "field": "group_by",
             "description": "<p>Group by a property.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -2073,6 +2162,26 @@
           },
           {
             "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Number",
             "optional": true,
             "field": "latest",
@@ -2241,6 +2350,26 @@
             "optional": true,
             "field": "group_by",
             "description": "<p>Group by a property.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",
@@ -2423,6 +2552,26 @@
           },
           {
             "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Number",
             "optional": true,
             "field": "latest",
@@ -2594,6 +2743,26 @@
           },
           {
             "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Number",
             "optional": true,
             "field": "latest",
@@ -2751,6 +2920,26 @@
             "optional": true,
             "field": "group_by",
             "description": "<p>Group by a property.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "'include'",
+              "'exclude'",
+              "'only'"
+            ],
+            "optional": true,
+            "field": "outliers",
+            "defaultValue": "include",
+            "description": "<p>Toggle inclusion/exclusion of outlier values. Must provide <code>outliers_in</code>, if used.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "outliers_in",
+            "description": "<p>Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using '$' as separator.</p>"
           },
           {
             "group": "Parameter",

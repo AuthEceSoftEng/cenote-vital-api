@@ -9,4 +9,5 @@ module.exports = {
   parseNumbers: require('./parseNumbers'),
   flattenJSON: require('./flattenJSON'),
   isObject: require('./isObject'),
+  getRemoveOutliersQuery: require('./getRemoveOutliersQuery'),
 };
