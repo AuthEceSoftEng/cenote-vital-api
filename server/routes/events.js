@@ -7,8 +7,8 @@ const { Project } = require('../models');
 const { flattenJSON, isObject } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
-const config = { noptions: { 'metadata.broker.list': process.env.KAFKA_SERVERS } };
-const producer = new NProducer(config);
+const config = { noptions: { 'metadata.broker.list': process.env.KAFKA_SERVERS, 'socket.keepalive.enable': true } };
+const producer = new NProducer(config, null, 'auto');
 producer.on('error', error => error.message !== 'broker transport failure' && console.error(error));
 producer.connect();
 
@@ -134,12 +134,13 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
       cenote.id = uuid();
       try {
         await producer.send(process.env.KAFKA_TOPIC, JSON.stringify({ data, cenote }));
-        allDataResponses.push({ message: 'Event sent.' });
+        allDataResponses.push({ message: 'Events sent.' });
       } catch (error) {
         allDataResponses.push({ message: 'An error occurred.', error });
       }
     }
-    return allDataResponses.every(el => el.message = 'Event sent.') ? res.status(202).json(allDataResponses) : res.status(500).json(allDataResponses);
+    if (allDataResponses.every(el => el.message = 'Event sent.')) return res.status(202).json({ message: 'Events sent.' });
+    return res.status(500).json(allDataResponses);
   })();
 }));
 

@@ -23,7 +23,7 @@ mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-d
 
 const app = express();
 
-if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+app.use(morgan('dev'));
 app.use(compression());
 app.use(express.static(path.resolve(__dirname, '../dist/')));
 app.use(bodyParser.json({ limit: '50mb' }));
