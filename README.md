@@ -2,6 +2,8 @@
 
 >API server & web client used by [cenote](https://github.com/AuthEceSoftEng/cenote)
 
+[![Travis](https://img.shields.io/travis/com/AuthEceSoftEng/cenote-api.svg?style=flat-square&logo=travis&label=)](https://travis-ci.com/AuthEceSoftEng/cenote) [![license](https://img.shields.io/github/license/AuthEceSoftEng/cenote-api.svg?style=flat-square)](./LICENSE)
+
 ## Quick Start
 
 * Install [gcc](https://gcc.gnu.org/)
@@ -10,14 +12,14 @@
 * Install dependencies:
 
 ```bash
- $ npm i
- ```
+$ npm i
+```
 
 * Start mongo deamon:
 
 ```bash
- $ mongod
- ```
+$ mongod
+```
 
 ### Development
 
@@ -38,12 +40,9 @@ $ docker-compose build
 $ docker-compose up
 ```
 
-#### Other Commands
+#### Test
 
 ```bash
-npm run clean
-npm run test
-npm run test:verbose
-npm run lint
-npm run lint:fix
+$ npm run lint
+$ npm run test
 ```

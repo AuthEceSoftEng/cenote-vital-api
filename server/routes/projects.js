@@ -3,7 +3,6 @@ const express = require('express');
 const { requireAuth } = require('./middleware');
 const { Project } = require('../models');
 const queries = require('./queries');
-const events = require('./events');
 const keys = require('./keys');
 const alter = require('./alter');
 
@@ -49,8 +48,8 @@ router.delete('/', requireAuth, (req, res) => {
 });
 
 router.use('/:PROJECT_ID/queries', queries);
-router.use('/:PROJECT_ID/events', events);
 router.use('/:PROJECT_ID/keys', keys);
 router.use('/:PROJECT_ID/alter', alter);
+if (process.env.NODE_ENV !== 'test') router.use('/:PROJECT_ID/events', require('./events'));
 
 module.exports = router;

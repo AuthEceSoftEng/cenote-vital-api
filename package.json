@@ -26,7 +26,9 @@
     "lint:client": "npm run lint --prefix=\"./client\"",
     "lint:server": "eslint server/**/*.js --fix",
     "start": "node server",
-    "test:server": "jest server"
+    "test:server": "jest server --forceExit",
+    "test:client": "npm test --prefix=\"./client\"",
+    "test": "concurrently \"npm run test:server\" \"npm run test:client\""
   },
   "husky": {
     "hooks": {

@@ -23,7 +23,7 @@ mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-d
 
 const app = express();
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'test') app.use(morgan('dev', { skip(req) { return req.originalUrl.includes('/docs/'); } }));
 app.use(compression());
 app.use(express.static(path.resolve(__dirname, '../dist/')));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -37,7 +37,7 @@ const port = process.env.PORT || 3000;
 const host = process.env.HOST || 'localhost';
 if (cluster.isMaster) {
   for (let i = 0; i < numCPUs; i += 1) cluster.fork();
-  if (process.env.NODE_ENV !== 'test') console.log(chalk.bold.blueBright(`>>> Live at http://${host}:${port}`));
+  if (process.env.NODE_ENV !== 'test') console.log(chalk.bold.cyan(`>>> Live at http://${host}:${port}`));
   cluster.on('exit', (worker) => {
     console.log(`Worker: ${worker.id} died. Trying to restart it...`);
     cluster.fork();
@@ -45,3 +45,5 @@ if (cluster.isMaster) {
 } else {
   app.listen(port, host);
 }
+
+module.exports = app;

@@ -1,14 +1,18 @@
-const express = require('express');
-const request = require('supertest');
-const routes = require('../routes');
+require('dotenv').config();
+const request = require('supertest')(require('..'));
 
 describe('The Server', () => {
-  const app = express();
-  app.use('/', routes);
+  test('serves as an example endpoint', async (done) => {
+    const response = await request.get('/works');
+    expect(response.statusCode).toBe(200);
+    expect(response.text).toContain('It does!');
+    done();
+  });
 
-  test('serves as an example endpoint', () => request(app).get('/works')
-    .expect(200).expect(response => expect(response.text).toContain('It does!')));
-
-  test('returns HTML on an unknown endpoint', () => request(app).get('/*')
-    .expect(response => expect(response.header['content-type']).toBe('text/plain; charset=utf-8')));
+  test('serves docs', async (done) => {
+    const response = await request.get('/docs');
+    expect(response.statusCode).toBe(301);
+    expect(response.header['content-type'].toLowerCase()).toBe('text/html; charset=utf-8');
+    done();
+  });
 });
