@@ -6,7 +6,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import App from './App';
 
-// eslint-disable-next-line
+// eslint-disable-next-line react/prefer-stateless-function
 export default class Root extends Component {
   render() {
     const { store, history, persistor } = this.props;

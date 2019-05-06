@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop, no-restricted-syntax */
 const express = require('express');
 const { Pool } = require('pg');
 const asyncRedis = require('async-redis');

@@ -1,16 +1,14 @@
-/* eslint-disable no-restricted-syntax, no-await-in-loop */
 const express = require('express');
-const { NProducer } = require('sinek');
+const { KafkaClient, Producer } = require('kafka-node');
 const uuid = require('uuid/v4');
 
 const { Project } = require('../models');
 const { flattenJSON, isObject } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
-const config = { noptions: { 'metadata.broker.list': process.env.KAFKA_SERVERS, 'socket.keepalive.enable': true } };
-const producer = new NProducer(config, null, 'auto');
-producer.on('error', error => error.message !== 'broker transport failure' && console.error(error));
-producer.connect();
+
+const producer = new Producer(new KafkaClient({ kafkaHost: process.env.KAFKA_SERVERS }), { requireAcks: 0, partitionerType: 2 });
+producer.on('error', error => console.error(error));
 
 /**
  * @apiDefine ProjectNotFoundError
@@ -125,23 +123,17 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
     url: `/projects/${req.params.PROJECT_ID}/events/${req.params.EVENT_COLLECTION.replace(/-/g, '').toLowerCase()}`,
   };
   if (!Array.isArray(payload)) payload = [payload];
-  const allDataResponses = [];
-  return (async () => {
-    for (const dato of payload) {
-      const { data, timestamp } = dato;
-      if (!data || !isObject(data)) return res.status(400).json({ error: 'NoDataSentError' });
-      if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = new Date(timestamp).toISOString();
-      cenote.id = uuid();
-      try {
-        await producer.send(process.env.KAFKA_TOPIC, JSON.stringify({ data, cenote }));
-        allDataResponses.push({ message: 'Events sent.' });
-      } catch (error) {
-        allDataResponses.push({ message: 'An error occurred.', error });
-      }
-    }
-    if (allDataResponses.every(el => el.message = 'Event sent.')) return res.status(202).json({ message: 'Events sent.' });
-    return res.status(500).json(allDataResponses);
-  })();
+  for (let i = 0; i < payload.length; i += 1) {
+    const { data, timestamp } = payload[i];
+    if (!data || !isObject(data)) return res.status(400).json({ error: 'NoDataSentError' });
+    if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = new Date(timestamp).toISOString();
+    cenote.id = uuid();
+    payload[i].cenote = { ...cenote };
+  }
+  return producer.send([{ topic: process.env.KAFKA_TOPIC, messages: [JSON.stringify(payload)] }], (err) => {
+    if (err) return res.status(500).json({ message: err.message });
+    return res.status(202).json({ message: 'Events sent.' });
+  });
 }));
 
 module.exports = router;

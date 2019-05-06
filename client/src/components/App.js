@@ -11,9 +11,8 @@ import { WelcomePage, RegisterPage, LoginPage, NotFoundPage, ProjectPage, Recove
 import Navigation from './Navigation';
 import Footer from './Footer';
 
-// eslint-disable-next-line
+// eslint-disable-next-line react/prefer-stateless-function
 class App extends React.Component {
-
   static propTypes = {
     location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
     alerts: PropTypes.array.isRequired,

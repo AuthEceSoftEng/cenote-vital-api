@@ -9,7 +9,6 @@ module.exports = (data) => {
       if (l === 0) result[prop] = [];
     } else {
       let isEmpty = true;
-      // eslint-disable-next-line no-restricted-syntax
       for (const p of Object.keys(cur)) {
         isEmpty = false;
         recurse(cur[p], prop ? `${prop}💩${p}` : p);

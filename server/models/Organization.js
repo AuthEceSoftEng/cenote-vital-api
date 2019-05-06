@@ -9,8 +9,7 @@ const pid = () => `pid${uuid().replace(/-/g, '')}`;
 
 
 const organizationSchema = new mongoose.Schema({
-  // eslint-disable-next-line object-curly-newline
-  username: { type: String, lowercase: true, required: true, unique: true, trim: true },
+  username: { type: String, lowercase: true, required: true, unique: true, trim: true }, // eslint-disable-line object-curly-newline
   password: { type: String, required: true },
   organizationId: { type: String, default: pid, immutable: true },
   email: { type: String, required: true, trim: true },

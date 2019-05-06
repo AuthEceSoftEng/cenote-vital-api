@@ -13,8 +13,6 @@ router.use('/api/projects', projects);
 router.use('/api/organizations', organizations);
 
 router.get('/works', (req, res) => res.send('<h1 align="center">It does!</h1>'));
-const loaderioFile = 'loaderio-0800db20af497b7c2c1dbc00194195f8.txt';
-router.get(`/${loaderioFile}`, (req, res) => res.sendFile(path.join(__dirname, `../../${loaderioFile}`)));
 
 const docs = path.join(__dirname, '../../docs');
 router.use('/docs', express.static(docs));

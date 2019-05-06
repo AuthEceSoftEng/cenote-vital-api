@@ -10,8 +10,7 @@ const projectSchema = new mongoose.Schema({
   title: { type: String, lowercase: true, trim: true },
   createdAt: { type: Date, default: Date.now, immutable: true },
   updatedAt: { type: Date },
-  // eslint-disable-next-line object-curly-newline
-  projectId: { type: String, default: pid, immutable: true, unique: true, trim: true },
+  projectId: { type: String, default: pid, immutable: true, unique: true, trim: true }, // eslint-disable-line object-curly-newline
   readKeys: { type: Array, default: [uuid()] },
   writeKeys: { type: Array, default: [uuid()] },
   masterKeys: { type: Array, default: [uuid()] },
