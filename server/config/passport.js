@@ -13,7 +13,7 @@ module.exports = (app) => {
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
       collection: 'sessions',
-      uri: process.env.DATABASE_URL,
+      uri: process.env.DATABASE_STORE,
     }),
     genid: () => uuid.v4(),
     cookie: { secure: false },

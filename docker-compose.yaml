@@ -12,6 +12,7 @@ services:
       - .:/app
     environment:
       - DATABASE_URL=mongodb://mongo:27017/cenote-db
+      - DATABASE_STORE=mongodb://mongo:27017/cenote-db
       - PORT=3000
       - HOST=0.0.0.0
       - GLOBAL_LIMIT=5000
@@ -19,7 +20,7 @@ services:
       - KAFKA_TOPIC=cenoteIncoming
       - COCKROACH_URL=155.207.19.234
       - COCKROACH_PORT=30591
-      - REDIS_URL=	83.212.96.15
+      - REDIS_URL=83.212.96.15
       - REDIS_PORT=6379
       - COCKROACH_DBNAME=cenote
       - COOKIE_SECRET=cenote-secret

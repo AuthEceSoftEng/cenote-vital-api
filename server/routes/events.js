@@ -98,7 +98,7 @@ producer.on('error', error => console.error(error));
 * @apiUse InvalidCollectionNameError
 * @apiUse InvalidPropertyNameError
 */
-router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, (err2, project) => {
+router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }, {}, { lean: true }, async (err2, project) => {
   if (!/^[a-z]+[a-z0-9]*$/g.test(req.params.EVENT_COLLECTION)) {
     return res.status(400).json({
       message: 'Event collection names must start with a letter and can contain only lowercase letters and numbers.',
@@ -130,10 +130,19 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
     cenote.id = uuid();
     payload[i].cenote = { ...cenote };
   }
-  return producer.send([{ topic: process.env.KAFKA_TOPIC, messages: [JSON.stringify(payload)] }], (err) => {
-    if (err) return res.status(500).json({ message: err.message });
-    return res.status(202).json({ message: 'Events sent.' });
-  });
+  try {
+    const NUM_OF_SLICES = parseInt(process.env.NUM_OF_SLICES, 10) || 2000;
+    for (let i = 0; i < payload.length; i += NUM_OF_SLICES) {
+      const slicedPayload = payload.slice(i, Math.min(i + NUM_OF_SLICES, payload.length));
+      await new Promise((cool, notCool) => producer.send([{
+        topic: process.env.KAFKA_TOPIC,
+        messages: [JSON.stringify(slicedPayload)],
+      }], err => (err ? notCool(err) : cool())));
+    }
+    return res.status(202).json({ message: 'Events sent!' });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 }));
 
 module.exports = router;

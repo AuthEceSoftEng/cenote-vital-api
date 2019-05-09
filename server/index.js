@@ -19,7 +19,14 @@ const mongooseOptions = {
   reconnectTries: 30,
   reconnectInterval: 500,
 };
-mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-db', mongooseOptions).catch(err => console.error(err.message));
+
+if (process.env.DATABASE_URL.includes('authSource')) {
+  mongooseOptions.user = process.env.DATABASE_USER;
+  mongooseOptions.pass = process.env.DATABASE_PASS;
+}
+
+const db = `${process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-db'}`;
+mongoose.connect(db, mongooseOptions).catch(err => console.error(err.message));
 
 const app = express();
 
