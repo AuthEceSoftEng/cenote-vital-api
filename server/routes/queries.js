@@ -631,7 +631,7 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
       const filterQuery = getFilterQuery(filters);
       const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} ARRAY_AGG(DISTINCT ${target_property}) AS ${target_property}`
       } FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${removeOutliersQuery} ${filterQuery} ${!interval && group_by
-        ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+        ? `GROUP BY ${group_by}` : ''} ORDER BY "cenote$timestamp" DESC LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       let { rows: answer } = await client.query(query);
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = parseNumbers(answer);
@@ -660,6 +660,7 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
 * @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object/String="{'start':ISOString, 'end':ISOString}", "[this|previous]_[n]_[seconds|minutes|days|...]"} [timeframe] Specify a timeframe.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
 * @apiSuccess {Boolean} ok If the query succeded.
 * @apiSuccess {Array} results Query result.
@@ -703,7 +704,7 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
       const query = `SELECT ${target_property ? `"${target_property}"` : '*'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
-      } ${removeOutliersQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+      } ${removeOutliersQuery} ${filterQuery} ORDER BY "cenote$timestamp" DESC LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = parseNumbers(answer);
       filters.forEach(filter => results = applyFilter(filter, results));

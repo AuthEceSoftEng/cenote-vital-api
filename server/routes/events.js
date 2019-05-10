@@ -126,7 +126,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   for (let i = 0; i < payload.length; i += 1) {
     const { data, timestamp } = payload[i];
     if (!data || !isObject(data)) return res.status(400).json({ error: 'NoDataSentError' });
-    if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = new Date(timestamp).toISOString();
+    if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = new Date(timestamp * 1000).toISOString();
     cenote.id = uuid();
     payload[i].cenote = { ...cenote };
   }
