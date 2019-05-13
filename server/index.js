@@ -1,7 +1,6 @@
 require('dotenv').config();
 const chalk = require('chalk');
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cluster = require('cluster');
@@ -32,7 +31,6 @@ const app = express();
 
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev', { skip(req) { return req.originalUrl.includes('/docs/'); } }));
 app.use(compression());
-app.use(express.static(path.resolve(__dirname, '../dist/')));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.locals.GLOBAL_LIMIT = process.env.GLOBAL_LIMIT || 5000;

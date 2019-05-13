@@ -14,26 +14,6 @@ class OrganizationDropdown extends Component {
     attemptLogout: PropTypes.func.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    this.props = props;
-  }
-
-  componentDidMount() {
-    window.addEventListener('click', this.dropdownListener);
-    window.addEventListener('touchend', this.dropdownListener);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('click', this.dropdownListener);
-    window.removeEventListener('touchend', this.dropdownListener);
-  }
-
-  dropdownListener = () => {
-    const { closeDropdown } = this.props;
-    return this.dropdown && closeDropdown();
-  }
-
   logout = () => {
     const { closeDropdown, attemptLogout: attemptlogout } = this.props;
     closeDropdown();

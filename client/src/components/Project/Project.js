@@ -54,7 +54,7 @@ export default function Project(props) {
             )}
           </div>
 
-          <nav className="level is-mobile">
+          <nav className="level">
             <div className="level-left">
               {updated && (
                 <small>

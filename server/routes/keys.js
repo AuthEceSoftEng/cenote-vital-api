@@ -151,7 +151,7 @@ router.post('/regenerate', requireAuth, (req, res) => Project.findOne({ projectI
 * @apiSuccessExample {json} Success-Response:
 *     HTTP/1.1 200 SUCCESS
 *     {
-*       "message": "Key successfully regenerated!"
+*       "message": "Key successfully generated!"
 *     }
 * @apiUse ProjectNotFoundError
 * @apiUse NoDataSentError

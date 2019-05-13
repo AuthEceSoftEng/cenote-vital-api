@@ -193,7 +193,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"message\": \"Key successfully regenerated!\"\n}",
+          "content": "HTTP/1.1 200 SUCCESS\n{\n  \"message\": \"Key successfully generated!\"\n}",
           "type": "json"
         }
       ]
@@ -1245,6 +1245,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -1368,6 +1371,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -1390,6 +1399,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -1449,6 +1463,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -1552,6 +1569,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -1574,6 +1597,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -1620,6 +1648,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -1737,6 +1768,12 @@ define({ "api": [
             "optional": false,
             "field": "ProjectNotFoundError",
             "description": "<p>The id of the Project was not found.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -1754,6 +1791,11 @@ define({ "api": [
         {
           "title": "ProjectNotFoundError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"ProjectNotFoundError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -1820,9 +1862,23 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object/String",
+            "allowedValues": [
+              "\"{'start':ISOString, 'end':ISOString}\"",
+              "\"[this|previous]_[n]_[seconds|minutes|days|...]\""
+            ],
+            "optional": true,
+            "field": "timeframe",
+            "description": "<p>Specify a timeframe.</p>"
           },
           {
             "group": "Parameter",
@@ -1890,6 +1946,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -1912,6 +1974,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -1958,6 +2025,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -2081,6 +2151,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -2103,6 +2179,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -2149,6 +2230,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -2272,6 +2356,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -2294,6 +2384,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -2340,6 +2435,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -2463,6 +2561,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -2485,6 +2589,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -2539,6 +2648,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -2662,6 +2774,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -2684,6 +2802,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -2730,6 +2853,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -2847,6 +2973,12 @@ define({ "api": [
             "optional": false,
             "field": "ProjectNotFoundError",
             "description": "<p>The id of the Project was not found.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -2864,6 +2996,11 @@ define({ "api": [
         {
           "title": "ProjectNotFoundError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"ProjectNotFoundError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]
@@ -2910,6 +3047,9 @@ define({ "api": [
           {
             "group": "Parameter",
             "type": "Object[]",
+            "allowedValues": [
+              "\"[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]\""
+            ],
             "optional": true,
             "field": "filters",
             "description": "<p>Apply custom filters.</p>"
@@ -3033,6 +3173,12 @@ define({ "api": [
             "optional": false,
             "field": "TargetNotProvidedError",
             "description": "<p>The <code>target_property</code> parameter must be provided.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "optional": false,
+            "field": "BadQueryError",
+            "description": "<p>The query can't be executed</p>"
           }
         ]
       },
@@ -3055,6 +3201,11 @@ define({ "api": [
         {
           "title": "TargetNotProvidedError:",
           "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"TargetNotProvidedError\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "BadQueryError:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"results\": \"BadQueryError\",\n  \"message\": \"<The error that occured>\"\n}",
           "type": "json"
         }
       ]

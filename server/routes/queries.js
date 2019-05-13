@@ -28,6 +28,16 @@ const r = asyncRedis.createClient({ host: process.env.REDIS_URL, port: process.e
 r.on('error', err => console.error(`Redis error: ${err}`));
 
 /**
+ * @apiDefine BadQueryError
+ * @apiError BadQueryError The query can't be executed
+ * @apiErrorExample {json} BadQueryError:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "results": "BadQueryError",
+ *       "message": "<The error that occured>"
+ *     }
+ */
+/**
  * @apiDefine TargetNotProvidedError
  * @apiError TargetNotProvidedError The `target_property` parameter must be provided.
  * @apiErrorExample {json} TargetNotProvidedError:
@@ -50,7 +60,8 @@ r.on('error', err => console.error(`Redis error: ${err}`));
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
 * @apiParam {String=minutely,hourly,daily,weekly,monthly,yearly} [interval] Group by a time interval.
@@ -71,6 +82,7 @@ r.on('error', err => console.error(`Redis error: ${err}`));
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -97,7 +109,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
       if (interval) results = groupByInterval(answer, interval, 'count');
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -113,7 +125,8 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -139,6 +152,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -166,7 +180,7 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
       if (interval) results = groupByInterval(results, interval, 'minimum', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -182,7 +196,8 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -208,6 +223,7 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -235,7 +251,7 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
       if (interval) results = groupByInterval(results, interval, 'maximum', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -251,7 +267,8 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -277,6 +294,7 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -304,7 +322,7 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
       if (interval) results = groupByInterval(results, interval, 'sum', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -320,7 +338,8 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -346,6 +365,7 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -373,7 +393,7 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
       if (interval) results = groupByInterval(results, interval, 'average', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -389,7 +409,8 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -415,6 +436,7 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/median', canAccessForCollection, (req, res) => {
   req.url = '/percentile';
@@ -435,7 +457,8 @@ router.get('/median', canAccessForCollection, (req, res) => {
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
 * @apiParam {Number{0-100}} percentile Desired percentile.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -461,6 +484,7 @@ router.get('/median', canAccessForCollection, (req, res) => {
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -501,7 +525,7 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
       }
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -517,7 +541,8 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -542,6 +567,7 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
 * @apiUse NoCredentialsSentError
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
+* @apiUse BadQueryError
 */
 router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -569,7 +595,7 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
       if (interval) results = groupByInterval(results, interval, 'count_unique', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -585,7 +611,8 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
 * @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
@@ -611,6 +638,7 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
 * @apiUse NoCredentialsSentError
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
+* @apiUse BadQueryError
 */
 router.get('/select_unique', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -638,7 +666,7 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
       if (interval) results = groupByInterval(results, interval, 'select_unique', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -659,7 +687,8 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Object[]} [filters] Apply custom filters.
+* @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
+* Apply custom filters.
 * @apiParam {Object/String="{'start':ISOString, 'end':ISOString}", "[this|previous]_[n]_[seconds|minutes|days|...]"} [timeframe] Specify a timeframe.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
 * @apiSuccess {Boolean} ok If the query succeded.
@@ -686,6 +715,7 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
 * @apiUse KeyNotAuthorizedError
 * @apiUse ProjectNotFoundError
 * @apiUse TargetNotProvidedError
+* @apiUse BadQueryError
 */
 router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne({ projectId: req.params.PROJECT_ID }).lean()
   .exec(async (err2, project) => {
@@ -710,7 +740,7 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
       filters.forEach(filter => results = applyFilter(filter, results));
       return res.json({ ok: true, results });
     } catch (error) {
-      return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+      return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
     }
   }));
 
@@ -727,14 +757,14 @@ router.get('/collections', requireAuth, (req, res) => {
       });
       res.json(results);
     })
-    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'BadQueryError', message: err3.message }));
 });
 
 router.put('/addColumn', requireAuth, (req, res) => {
   const query = `ALTER TABLE ${req.params.PROJECT_ID}_${req.body.event_collection} ADD COLUMN IF NOT EXISTS "${req.body.name}" ${req.body.type}`;
   return client.query(query)
     .then(() => res.status(204).json({ ok: true }))
-    .catch(err3 => res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: err3.message }));
+    .catch(err3 => res.status(400).json({ ok: false, results: 'BadQueryError', message: err3.message }));
 });
 
 router.delete('/dropColumn', requireAuth, async (req, res) => {
@@ -745,7 +775,7 @@ router.delete('/dropColumn', requireAuth, async (req, res) => {
     await r.del(redisKey);
     return res.status(202).json({ ok: true });
   } catch (error) {
-    return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+    return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
   }
 });
 
@@ -762,7 +792,7 @@ router.delete('/dropTable', requireAuth, async (req, res) => {
     await client.query(query);
     return res.status(202).json({ ok: true });
   } catch (error) {
-    return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+    return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
   }
 });
 
@@ -779,7 +809,7 @@ router.delete('/testCleanup', async (req, res) => {
     await client.query(query);
     return res.status(204).json({ ok: true });
   } catch (error) {
-    return res.status(400).json({ ok: false, results: 'Can\'t execute query!', err: error.message });
+    return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
   }
 });
 

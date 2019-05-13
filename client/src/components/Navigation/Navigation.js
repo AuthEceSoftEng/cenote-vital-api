@@ -16,14 +16,12 @@ export default function Navigation(props) {
   const projectsItemClasses = classNames({
     'navbar-item': true,
     'is-tab': true,
-    'is-hidden-mobile': true,
     'is-active': isProjects,
   });
 
   const settingsItemClasses = classNames({
     'navbar-item': true,
     'is-tab': true,
-    'is-hidden-mobile': true,
     'is-active': isSettings,
   });
 

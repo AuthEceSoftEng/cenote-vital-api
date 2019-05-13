@@ -18,8 +18,8 @@ const docs = path.join(__dirname, '../../docs');
 router.use('/docs', express.static(docs));
 router.get('/docs/*', (req, res) => res.sendFile('index.html', { root: docs }));
 
-const root = path.join(__dirname, '../../client/dist');
-router.use(express.static(root));
-router.get('/*', (req, res) => res.sendFile('index.html', { root }));
+const client = path.join(__dirname, '../../client/dist');
+router.use(express.static(client));
+router.get('/*', (req, res) => res.sendFile('index.html', { root: client }));
 
 module.exports = router;
