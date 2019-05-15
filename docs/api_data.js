@@ -42,7 +42,7 @@ define({ "api": [
       "examples": [
         {
           "title": "payload Example:",
-          "content": "\"payload\": [{\n  \"data\": {\n      \"current\": 7.5,\n      \"voltage\": 10000,\n      \"note\": \"That's weird.\"\n  },\n  \"timestamp\": 1549622362\n}]",
+          "content": "{\n  \"payload\": [{\n    \"data\": {\n      \"current\": 7.5,\n      \"voltage\": 10000,\n      \"note\": \"That's weird.\"\n    },\n    \"timestamp\": 1549622362\n  }]\n}",
           "type": "json"
         }
       ]

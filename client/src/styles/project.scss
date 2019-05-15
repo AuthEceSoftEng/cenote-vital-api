@@ -22,6 +22,11 @@ $lime500: #cddc39;
   padding: 1em;
 }
 
+.field-label {
+  text-align: center;
+  flex-basis: unset;
+}
+
 .widget {
   width: 20em;
   height: 20em;

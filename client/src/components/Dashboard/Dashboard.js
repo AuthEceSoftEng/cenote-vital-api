@@ -5,11 +5,10 @@ import request from 'superagent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
-
-import 'react-tabs/style/react-tabs.css';
+import ReactTable from 'react-table';
 
 import { handleSuccess, handleError } from '../../api/helpers';
-import { EventCollection, MostRecentEvent } from './components';
+import { EventCollection, Analytics } from './components';
 import { getEventCollections, getRecentEvents } from './utils';
 import { Button } from '..';
 
@@ -53,7 +52,7 @@ export default class Dashboard extends React.Component {
       const events = {};
       const promises = [];
       Object.keys(collections).forEach((col) => {
-        promises.push(getRecentEvents(projectId, col, readKeys[0], collections[col]).then(evts => events[col] = evts));
+        promises.push(getRecentEvents(projectId, col, readKeys[0], 5).then(evts => events[col] = evts));
       });
       Promise.all(promises).then(() => this._isMounted && this.setState({ events }));
     });
@@ -218,11 +217,27 @@ export default class Dashboard extends React.Component {
         <TabPanel key={`tabpanel_col_${ind}`}>
           <EventCollection properties={collections[col]} projectId={projectId} eventCollection={col} />
           <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
-          {
-            (events[col] || []).length > 0
-              ? <MostRecentEvent properties={collections[col]} events={events[col] || []} />
-              : <div><p>None yet. Send some events!</p></div>
-          }
+          {events[col] ? (
+            <ReactTable
+              showPageSizeOptions={false}
+              showPagination={false}
+              defaultPageSize={5}
+              data={events[col] || []}
+              columns={collections[col].map(el => ({
+                Header: el.column_name,
+                accessor: el.column_name,
+                minWidth: 200,
+                Cell: props => (
+                  <span className={`has-text-centered ${
+                    el.column_name.startsWith('cenote') || el.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
+                  >
+                    {props.value}
+                  </span>
+                ),
+              }))}
+              className="-striped -highlight"
+            />
+          ) : null}
         </TabPanel>);
     });
     if (tabList.length === 0) return (<div><p>None yet. Send some events!</p></div>);
@@ -235,7 +250,7 @@ export default class Dashboard extends React.Component {
   }
 
   render() {
-    const { readKeys, title, writeKeys, masterKeys, editRead, editWrite, editMaster } = this.state;
+    const { readKeys, title, writeKeys, masterKeys, editRead, editWrite, editMaster, collections } = this.state;
     const { projectId } = this.props;
     return (
       <div>
@@ -243,10 +258,14 @@ export default class Dashboard extends React.Component {
         <Tabs forceRenderTabPanel defaultIndex={0} defaultFocus>
           <TabList>
             <Tab>Event Collections</Tab>
+            <Tab>Review Events</Tab>
             <Tab>Project Information</Tab>
           </TabList>
           <TabPanel>
             {this._getEventCollectionInfo()}
+          </TabPanel>
+          <TabPanel>
+            <Analytics collections={collections} projectId={projectId} readKey={readKeys[0]} />
           </TabPanel>
           <TabPanel>
             <Tabs forceRenderTabPanel>
