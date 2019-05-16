@@ -19,7 +19,9 @@ const router = express.Router();
 * @apiName GetProjects
 * @apiGroup Organization
 * @apiParam {String} ORG_NAME Organization's name
-* @apiHeader {String} orgKey Organization's unique ID.
+* @apiHeader {String} Authorization Organization's unique ID.
+* @apiHeaderExample {json} Header Example:
+* { "Authorization": "234534jklsd2" }
 * @apiSuccess {Array} projects Projects found.
 * @apiSuccessExample {json} Success-Response:
 *     HTTP/1.1 200 SUCCESS
@@ -51,7 +53,10 @@ router.get('/:ORG_NAME/projects', (req, res) => {
 * @apiGroup Organization
 * @apiParam {String} ORG_NAME Organization's name
 * @apiParam {String} title New project's name
-* @apiHeader {String} orgKey Organization's unique ID.
+* @apiHeader {String} Authorization Organization's unique ID.
+* @apiHeader {String} Content-Type="application/json"
+* @apiHeaderExample {json} Header Example:
+* { "Content-Type": "application/json", "Authorization": "234534jklsd2" }
 * @apiParamExample {json} body Example:
 *{
 *   "title": "eeris"
@@ -96,7 +101,9 @@ router.post('/:ORG_NAME/projects', (req, res) => {
 * @apiGroup Organization
 * @apiParam {String} ORG_NAME Organization's name
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiHeader {String} orgKey Organization's unique ID.
+* @apiHeader {String} Authorization Organization's unique ID.
+* @apiHeaderExample {json} Header Example:
+* { "Authorization": "234534jklsd2" }
 * @apiSuccess {String} project Project info.
 * @apiSuccessExample {json} Success-Response:
 *     HTTP/1.1 200 SUCCESS
@@ -134,7 +141,9 @@ router.get('/:ORG_NAME/projects/:PROJECT_ID', (req, res) => {
 *       "title": (...),
 *       "organizationId": (...),
 *     }
-* @apiHeader {String} orgKey Organization's unique ID.
+* @apiHeader {String} Authorization Organization's unique ID.
+* @apiHeaderExample {json} Header Example:
+* { "Authorization": "234534jklsd2" }
 * @apiSuccess {String} message Success Message.
 * @apiSuccess {String} project Project info.
 * @apiSuccessExample {json} Success-Response:
@@ -169,7 +178,9 @@ router.put('/:ORG_NAME/projects/:PROJECT_ID', (req, res) => {
 * @apiGroup Organization
 * @apiParam {String} ORG_NAME Organization's name
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiHeader {String} orgKey Organization's unique ID.
+* @apiHeader {String} Authorization Organization's unique ID.
+* @apiHeaderExample {json} Header Example:
+* { "Authorization": "234534jklsd2" }
 * @apiSuccess {String} message Success Message.
 * @apiSuccess {String} project Project info.
 * @apiSuccessExample {json} Success-Response:

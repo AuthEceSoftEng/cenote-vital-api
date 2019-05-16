@@ -71,6 +71,9 @@ router.get('/:KEY', (req, res) => Project.findOne({ projectId: req.params.PROJEC
 * @apiGroup Keys
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readKey/writeKey/masterKey The key to regenerate
+* @apiHeader {String} Content-Type="application/json"
+* @apiHeaderExample {json} Header Example:
+* { "Content-Type": "application/json" }
 * @apiParamExample {json} body Example:
 *{
 *   "readKey": "249c8ba8-68c8"
@@ -143,6 +146,9 @@ router.post('/regenerate', requireAuth, (req, res) => Project.findOne({ projectI
 * @apiGroup Keys
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} readKey/writeKey/masterKey The new key
+* @apiHeader {String} Content-Type="application/json"
+* @apiHeaderExample {json} Header Example:
+* { "Content-Type": "application/json" }
 * @apiParamExample {json} body Example:
 *{
 *   "readKey": "249c8ba8-68c8"

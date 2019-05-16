@@ -6,6 +6,27 @@ define({ "api": [
     "version": "0.1.0",
     "name": "RecordEvents",
     "group": "Events",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Content-Type\": \"application/json\" }",
+          "type": "json"
+        }
+      ]
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -42,7 +63,7 @@ define({ "api": [
       "examples": [
         {
           "title": "payload Example:",
-          "content": "{\n  \"payload\": [{\n    \"data\": {\n      \"current\": 7.5,\n      \"voltage\": 10000,\n      \"note\": \"That's weird.\"\n    },\n    \"timestamp\": 1549622362\n  }]\n}",
+          "content": "{\"payload\": [{\"data\": {\"current\": 7.5,\"voltage\": 10000,\"note\": \"That's weird.\"},\"timestamp\": 1549622362}]}",
           "type": "json"
         }
       ]
@@ -174,6 +195,27 @@ define({ "api": [
         {
           "title": "body Example:",
           "content": "{\n  \"readKey\": \"249c8ba8-68c8\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Content-Type\": \"application/json\" }",
           "type": "json"
         }
       ]
@@ -530,6 +572,27 @@ define({ "api": [
         }
       ]
     },
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Content-Type\": \"application/json\" }",
+          "type": "json"
+        }
+      ]
+    },
     "success": {
       "fields": {
         "Success 200": [
@@ -642,11 +705,26 @@ define({ "api": [
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "orgKey",
+            "field": "Authorization",
             "description": "<p>Organization's unique ID.</p>"
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "Content-Type",
+            "defaultValue": "application/json",
+            "description": ""
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Content-Type\": \"application/json\", \"Authorization\": \"234534jklsd2\" }",
+          "type": "json"
+        }
+      ]
     },
     "success": {
       "fields": {
@@ -775,11 +853,18 @@ define({ "api": [
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "orgKey",
+            "field": "Authorization",
             "description": "<p>Organization's unique ID.</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Authorization\": \"234534jklsd2\" }",
+          "type": "json"
+        }
+      ]
     },
     "success": {
       "fields": {
@@ -897,11 +982,18 @@ define({ "api": [
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "orgKey",
+            "field": "Authorization",
             "description": "<p>Organization's unique ID.</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Authorization\": \"234534jklsd2\" }",
+          "type": "json"
+        }
+      ]
     },
     "success": {
       "fields": {
@@ -1019,11 +1111,18 @@ define({ "api": [
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "orgKey",
+            "field": "Authorization",
             "description": "<p>Organization's unique ID.</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Authorization\": \"234534jklsd2\" }",
+          "type": "json"
+        }
+      ]
     },
     "success": {
       "fields": {
@@ -1134,11 +1233,18 @@ define({ "api": [
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "orgKey",
+            "field": "Authorization",
             "description": "<p>Organization's unique ID.</p>"
           }
         ]
-      }
+      },
+      "examples": [
+        {
+          "title": "Header Example:",
+          "content": "{ \"Authorization\": \"234534jklsd2\" }",
+          "type": "json"
+        }
+      ]
     },
     "success": {
       "fields": {

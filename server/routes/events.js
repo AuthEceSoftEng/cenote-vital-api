@@ -69,6 +69,9 @@ producer.on('error', error => console.error(error));
 * @apiVersion 0.1.0
 * @apiName RecordEvents
 * @apiGroup Events
+* @apiHeader {String} Content-Type="application/json"
+* @apiHeaderExample {json} Header Example:
+* { "Content-Type": "application/json" }
 * @apiParam {String} PROJECT_ID Project's unique ID.
 * @apiParam {String} EVENT_COLLECTION The event collection name.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
@@ -77,16 +80,7 @@ producer.on('error', error => console.error(error));
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties will be flattened using
 * '$' as separator.
 * @apiParamExample {json} payload Example:
-* {
-*   "payload": [{
-*     "data": {
-*       "current": 7.5,
-*       "voltage": 10000,
-*       "note": "That's weird."
-*     },
-*     "timestamp": 1549622362
-*   }]
-* }
+* {"payload": [{"data": {"current": 7.5,"voltage": 10000,"note": "That's weird."},"timestamp": 1549622362}]}
 * @apiSuccess (Accepted 202) {String} message Success Message.
 * @apiSuccessExample {json} Success-Response:
 *     HTTP/1.1 202 ACCEPTED
