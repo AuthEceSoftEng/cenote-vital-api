@@ -1,9 +1,11 @@
+/* eslint-disable no-bitwise */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import ReactTable from 'react-table';
 import { ClipLoader } from 'react-spinners';
+import * as moment from 'moment';
 
 import { getRecentEvents } from '../utils';
 
@@ -20,6 +22,7 @@ export default class Analytics extends React.Component {
       columns: [],
       selectedCollection: { value: '---', label: '---' },
       selectedColumn: { value: '*', label: '*' },
+      selectedInterval: { value: 'this_year', label: 'this year' },
       tableData: {
         events: null,
         properties: null,
@@ -29,6 +32,7 @@ export default class Analytics extends React.Component {
     this.getEvents = this.getEvents.bind(this);
     this.handleCollectionChange = this.handleCollectionChange.bind(this);
     this.handleColumnChange = this.handleColumnChange.bind(this);
+    this.handleIntervalChange = this.handleIntervalChange.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -36,12 +40,26 @@ export default class Analytics extends React.Component {
   }
 
   getEvents() {
-    const { selectedCollection: { value: collection }, selectedColumn: { value: column }, collections } = this.state;
+    const {
+      selectedCollection: { value: collection },
+      selectedColumn: { value: column },
+      selectedInterval: { value: interval },
+      collections,
+    } = this.state;
     const { projectId, readKey } = this.props;
     if (collection === '---') return;
     this.setState({ loading: true });
     getRecentEvents(projectId, collection, readKey, parseInt(this.input.current.value || 1e3, 10)).then((tableData) => {
-      tableData.events = tableData;
+      tableData.events = tableData.filter((el) => {
+        let filterClause = moment(el.cenote$timestamp).year() === moment().year();
+        if (interval === 'this_year') return filterClause;
+        filterClause &= moment(el.cenote$timestamp).month() === moment().month();
+        if (interval === 'this_month') return filterClause;
+        filterClause &= moment(el.cenote$timestamp).isoWeek() === moment().isoWeek();
+        if (interval === 'this_week') return filterClause;
+        filterClause &= moment(el.cenote$timestamp).dayOfYear() === moment().dayOfYear();
+        return filterClause;
+      });
       tableData.properties = collections[collection];
       if (column !== '*') {
         tableData.events = tableData.events.map(el => Object.keys(el)
@@ -71,9 +89,12 @@ export default class Analytics extends React.Component {
     this.setState({ selectedColumn }, this.getEvents);
   }
 
+  handleIntervalChange = (selectedInterval) => {
+    this.setState({ selectedInterval }, this.getEvents);
+  }
 
   render() {
-    const { collections, selectedCollection, selectedColumn, columns, tableData, loading } = this.state;
+    const { collections, selectedCollection, selectedColumn, columns, tableData, loading, selectedInterval } = this.state;
     const collectionNames = Object.keys(collections);
     return (
       <div>
@@ -97,7 +118,7 @@ export default class Analytics extends React.Component {
           </div>
           <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
             <div className="field-label is-normal">
-              <label className="label">get column:</label>
+              <label className="label">fetch column:</label>
             </div>
             <div className="field-body">
               <div className="field is-normal">
@@ -113,23 +134,6 @@ export default class Analytics extends React.Component {
               </div>
             </div>
           </div>
-          {/* <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
-          <div className="field-label is-normal">
-            <label className="label">From timeframe:</label>
-          </div>
-          <div className="field-body">
-            <div className="field is-normal">
-              <div style={{ width: '15rem', height: '80%' }}>
-                <Select
-                  value={selectedCollection}
-                  onChange={this.handleChange}
-                  options={collectionNames.map(el => ({ value: el, label: el }))}
-                  placeholder="---"
-                />
-              </div>
-            </div>
-          </div>
-        </div> */}
           <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
             <div className="field-label is-normal">
               <label className="label">get latest:</label>
@@ -137,6 +141,29 @@ export default class Analytics extends React.Component {
             <div className="field-body">
               <div className="field is-normal">
                 <input className="input is-small" type="text" placeholder="1000" style={{ height: '100%' }} ref={this.input} />
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
+            <div className="field-label is-normal">
+              <label className="label">only from:</label>
+            </div>
+            <div className="field-body">
+              <div className="field is-normal">
+                <div style={{ width: '15rem', height: '80%' }}>
+                  <Select
+                    value={selectedInterval}
+                    onChange={this.handleIntervalChange}
+                    options={[
+                      { value: 'this_year', label: 'this year' },
+                      { value: 'this_month', label: 'this month' },
+                      { value: 'this_week', label: 'this week' },
+                      { value: 'this_day', label: 'this day' },
+                    ]}
+                    placeholder="this_year"
+                    defaultValue="this_year"
+                  />
+                </div>
               </div>
             </div>
           </div>

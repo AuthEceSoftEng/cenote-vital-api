@@ -258,14 +258,11 @@ export default class Dashboard extends React.Component {
         <Tabs forceRenderTabPanel defaultIndex={0} defaultFocus>
           <TabList>
             <Tab>Event Collections</Tab>
-            <Tab>Review Events</Tab>
             <Tab>Project Information</Tab>
+            <Tab style={{ backgroundColor: '#264184', color: 'white', borderRadius: '5px 5px 0 0' }}>Review Events</Tab>
           </TabList>
           <TabPanel>
             {this._getEventCollectionInfo()}
-          </TabPanel>
-          <TabPanel>
-            <Analytics collections={collections} projectId={projectId} readKey={readKeys[0]} />
           </TabPanel>
           <TabPanel>
             <Tabs forceRenderTabPanel>
@@ -406,6 +403,9 @@ export default class Dashboard extends React.Component {
                 </div>
               </TabPanel>
             </Tabs>
+          </TabPanel>
+          <TabPanel>
+            <Analytics collections={collections} projectId={projectId} readKey={readKeys[0]} />
           </TabPanel>
         </Tabs>
       </div>
