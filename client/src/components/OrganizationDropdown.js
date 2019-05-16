@@ -14,15 +14,33 @@ class OrganizationDropdown extends Component {
     attemptLogout: PropTypes.func.isRequired,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = { open: false };
+    this.close = this.close.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ open: nextProps.open });
+  }
+
   logout = () => {
     const { closeDropdown, attemptLogout: attemptlogout } = this.props;
+    this.setState({ open: false });
     closeDropdown();
     attemptlogout().catch(identity);
   }
 
+  close() {
+    const { closeDropdown } = this.props;
+    this.setState({ open: false });
+    closeDropdown();
+  }
+
 
   render() {
-    const { organization, closeDropdown, open } = this.props;
+    const { organization } = this.props;
+    const { open } = this.state;
 
     return open && (
       <div className="dropdown box sm" ref={(el) => { this.dropdown = el; }}>
@@ -32,10 +50,10 @@ class OrganizationDropdown extends Component {
           </li>
           <hr className="dropdown-separator" />
           <li className="dropdown-item has-text-centered">
-            <Link to="/projects" onClick={closeDropdown}>Project List</Link>
+            <Link to="/projects" onClick={this.close}>Project List</Link>
           </li>
           <li className="dropdown-item has-text-centered">
-            <Link to="/settings" onClick={closeDropdown}>Settings</Link>
+            <Link to="/settings" onClick={this.close}>Settings</Link>
           </li>
           <hr className="dropdown-separator" />
           <li className="dropdown-item">

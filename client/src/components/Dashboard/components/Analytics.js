@@ -1,5 +1,5 @@
 /* eslint-disable no-bitwise */
-/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/label-has-associated-control, no-bitwise */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
@@ -98,72 +98,64 @@ export default class Analytics extends React.Component {
     const collectionNames = Object.keys(collections);
     return (
       <div>
-        <div className="field is-horizontal" style={{ justifyContent: 'center' }}>
-          <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
+        <div className="field is-horizontal" style={{ justifyContent: 'center', alignItems: 'inherit' }}>
+          <div className="field is-horizontal" style={{ flex: 1 }}>
             <div className="field-label is-normal">
               <label className="label">From collection:</label>
             </div>
             <div className="field-body">
-              <div className="field is-normal">
-                <div style={{ width: '15rem', height: '80%' }}>
-                  <Select
-                    value={selectedCollection}
-                    onChange={this.handleCollectionChange}
-                    options={collectionNames.map(el => ({ value: el, label: el }))}
-                    placeholder="---"
-                  />
-                </div>
+              <div style={{ width: '100%', height: '80%' }}>
+                <Select
+                  value={selectedCollection}
+                  onChange={this.handleCollectionChange}
+                  options={collectionNames.map(el => ({ value: el, label: el }))}
+                  placeholder="---"
+                />
               </div>
             </div>
           </div>
-          <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
+          <div className="field is-horizontal" style={{ flex: 1 }}>
             <div className="field-label is-normal">
               <label className="label">fetch column:</label>
             </div>
             <div className="field-body">
-              <div className="field is-normal">
-                <div style={{ width: '15rem', height: '80%' }}>
-                  <Select
-                    value={selectedColumn}
-                    onChange={this.handleColumnChange}
-                    options={[{ value: '*', label: '*' }].concat(columns.map(el => ({ value: el, label: el })))}
-                    placeholder="*"
-                    defaultValue="*"
-                  />
-                </div>
+              <div style={{ width: '100%', height: '80%' }}>
+                <Select
+                  value={selectedColumn}
+                  onChange={this.handleColumnChange}
+                  options={[{ value: '*', label: '*' }].concat(columns.map(el => ({ value: el, label: el })))}
+                  placeholder="*"
+                  defaultValue="*"
+                />
               </div>
             </div>
           </div>
-          <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
+          <div className="field is-horizontal" style={{ flex: 1 }}>
             <div className="field-label is-normal">
               <label className="label">get latest:</label>
             </div>
             <div className="field-body">
-              <div className="field is-normal">
-                <input className="input is-small" type="text" placeholder="1000" style={{ height: '100%' }} ref={this.input} />
-              </div>
+              <input className="input is-small" type="text" placeholder="1000" style={{ height: '100%' }} ref={this.input} />
             </div>
           </div>
-          <div className="field is-horizontal" style={{ marginRight: '1rem' }}>
+          <div className="field is-horizontal" style={{ flex: 1 }}>
             <div className="field-label is-normal">
               <label className="label">only from:</label>
             </div>
-            <div className="field-body">
-              <div className="field is-normal">
-                <div style={{ width: '15rem', height: '80%' }}>
-                  <Select
-                    value={selectedInterval}
-                    onChange={this.handleIntervalChange}
-                    options={[
-                      { value: 'this_year', label: 'this year' },
-                      { value: 'this_month', label: 'this month' },
-                      { value: 'this_week', label: 'this week' },
-                      { value: 'this_day', label: 'this day' },
-                    ]}
-                    placeholder="this_year"
-                    defaultValue="this_year"
-                  />
-                </div>
+            <div className="field-body is-normal">
+              <div style={{ width: '100%', height: '80%' }}>
+                <Select
+                  value={selectedInterval}
+                  onChange={this.handleIntervalChange}
+                  options={[
+                    { value: 'this_year', label: 'this year' },
+                    { value: 'this_month', label: 'this month' },
+                    { value: 'this_week', label: 'this week' },
+                    { value: 'this_day', label: 'this day' },
+                  ]}
+                  placeholder="this_year"
+                  defaultValue="this_year"
+                />
               </div>
             </div>
           </div>

@@ -29,7 +29,7 @@ export default class NavigationContainer extends Component {
 
   closeDropdown = () => {
     const { opening } = this.state;
-    return opening ? this.setState({ opening: false }) : this.setState({ dropdownOpen: false });
+    return opening ? this.setState({ opening: false, dropdownOpen: false }) : this.setState({ dropdownOpen: false });
   }
 
   render() {
