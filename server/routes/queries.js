@@ -171,7 +171,7 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MIN(${target_property})`} FROM ${req.params.PROJECT_ID
+      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MIN("${target_property}")`} FROM ${req.params.PROJECT_ID
       }_${event_collection} ${timeframeQuery} ${removeOutliersQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
@@ -242,7 +242,7 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MAX(${target_property})`} FROM ${req.params.PROJECT_ID
+      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} MAX("${target_property}")`} FROM ${req.params.PROJECT_ID
       }_${event_collection} ${timeframeQuery} ${removeOutliersQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
@@ -313,7 +313,7 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} SUM(${target_property})`} FROM ${req.params.PROJECT_ID
+      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} SUM("${target_property}")`} FROM ${req.params.PROJECT_ID
       }_${event_collection} ${timeframeQuery} ${removeOutliersQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
@@ -384,7 +384,7 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} AVG(${target_property})`} FROM ${req.params.PROJECT_ID
+      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} AVG("${target_property}")`} FROM ${req.params.PROJECT_ID
       }_${event_collection} ${timeframeQuery} ${removeOutliersQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
@@ -504,7 +504,7 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${group_by || interval ? '*' : target_property} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
+      const query = `SELECT ${group_by || interval ? '*' : '"target_property"'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
       } ${removeOutliersQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       let { rows: answer } = await client.query(query);
       filters.forEach(filter => answer = applyFilter(filter, answer));
@@ -586,7 +586,7 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(DISTINCT ${target_property})`} FROM ${req.params.PROJECT_ID
+      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} COUNT(DISTINCT "${target_property}")`} FROM ${req.params.PROJECT_ID
       }_${event_collection} ${timeframeQuery} ${removeOutliersQuery} ${filterQuery} ${!interval && group_by ? `GROUP BY ${group_by}` : ''} LIMIT ${
         latest || req.app.locals.GLOBAL_LIMIT}`;
       let { rows: answer } = await client.query(query);
@@ -657,9 +657,9 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} ARRAY_AGG(DISTINCT ${target_property}) AS ${target_property}`
+      const query = `SELECT ${interval ? '*' : `${group_by ? `${group_by},` : ''} ARRAY_AGG(DISTINCT "${target_property}") AS "${target_property}"`
       } FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery} ${removeOutliersQuery} ${filterQuery} ${!interval && group_by
-        ? `GROUP BY ${group_by}` : ''} ORDER BY "cenote$timestamp" DESC LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
+        ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       let { rows: answer } = await client.query(query);
       filters.forEach(filter => answer = applyFilter(filter, answer));
       let results = parseNumbers(answer);
