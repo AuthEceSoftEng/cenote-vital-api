@@ -5,10 +5,9 @@ import request from 'superagent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
-import ReactTable from 'react-table';
 
 import { handleSuccess, handleError } from '../../api/helpers';
-import { EventCollection, Analytics } from './components';
+import { EventCollection, Analytics, DraggableTable } from './components';
 import { getEventCollections, getRecentEvents } from './utils';
 import { Button } from '..';
 
@@ -218,7 +217,7 @@ export default class Dashboard extends React.Component {
           <EventCollection properties={collections[col]} projectId={projectId} eventCollection={col} />
           <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
           {events[col] ? (
-            <ReactTable
+            <DraggableTable
               showPageSizeOptions={false}
               showPagination={false}
               defaultPageSize={5}

@@ -1,13 +1,12 @@
-/* eslint-disable no-bitwise */
 /* eslint-disable jsx-a11y/label-has-associated-control, no-bitwise */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
-import ReactTable from 'react-table';
 import { ClipLoader } from 'react-spinners';
 import * as moment from 'moment';
 
 import { getRecentEvents } from '../utils';
+import { DraggableTable } from '.';
 
 export default class Analytics extends React.Component {
   static propTypes = { collections: PropTypes.object, readKey: PropTypes.string.isRequired, projectId: PropTypes.string.isRequired }
@@ -21,7 +20,7 @@ export default class Analytics extends React.Component {
       loading: false,
       columns: [],
       selectedCollection: { value: '---', label: '---' },
-      selectedColumn: { value: '*', label: '*' },
+      selectedColumns: [],
       selectedInterval: { value: 'this_year', label: 'this year' },
       tableData: {
         events: null,
@@ -42,7 +41,7 @@ export default class Analytics extends React.Component {
   getEvents() {
     const {
       selectedCollection: { value: collection },
-      selectedColumn: { value: column },
+      selectedColumns,
       selectedInterval: { value: interval },
       collections,
     } = this.state;
@@ -61,14 +60,15 @@ export default class Analytics extends React.Component {
         return filterClause;
       });
       tableData.properties = collections[collection];
-      if (column !== '*') {
+      if (selectedColumns.length > 0) {
+        const columns = selectedColumns.map(el => el.value);
         tableData.events = tableData.events.map(el => Object.keys(el)
-          .filter(key => key === column)
+          .filter(key => columns.includes(key))
           .reduce((obj, key) => {
             obj[key] = el[key];
             return obj;
           }, {}));
-        tableData.properties = tableData.properties.filter(el => el.column_name === column);
+        tableData.properties = tableData.properties.filter(el => columns.includes(el.column_name));
       }
       this.setState({ tableData, loading: false });
     });
@@ -80,13 +80,13 @@ export default class Analytics extends React.Component {
     this.setState({
       columns,
       selectedCollection,
-      selectedColumn: { value: '*', label: '*' },
+      selectedColumns: [],
       tableData: { events: [], properties: [] },
     }, this.getEvents);
   }
 
-  handleColumnChange = (selectedColumn) => {
-    this.setState({ selectedColumn }, this.getEvents);
+  handleColumnChange = (selectedColumns) => {
+    this.setState({ selectedColumns }, this.getEvents);
   }
 
   handleIntervalChange = (selectedInterval) => {
@@ -94,7 +94,7 @@ export default class Analytics extends React.Component {
   }
 
   render() {
-    const { collections, selectedCollection, selectedColumn, columns, tableData, loading, selectedInterval } = this.state;
+    const { collections, selectedCollection, selectedColumns, columns, tableData, loading, selectedInterval } = this.state;
     const collectionNames = Object.keys(collections);
     return (
       <div>
@@ -121,11 +121,11 @@ export default class Analytics extends React.Component {
             <div className="field-body">
               <div style={{ width: '100%', height: '80%' }}>
                 <Select
-                  value={selectedColumn}
-                  onChange={this.handleColumnChange}
-                  options={[{ value: '*', label: '*' }].concat(columns.map(el => ({ value: el, label: el })))}
-                  placeholder="*"
-                  defaultValue="*"
+                  isMulti
+                  value={selectedColumns}
+                  onChange={e => this.handleColumnChange(e)}
+                  options={columns.map(el => ({ value: el, label: el }))}
+                  defaultValue={[]}
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ export default class Analytics extends React.Component {
               <label className="label">get latest:</label>
             </div>
             <div className="field-body">
-              <input className="input is-small" type="text" placeholder="1000" style={{ height: '100%' }} ref={this.input} />
+              <input className="input is-normal" type="text" placeholder="1000" style={{ minHeight: '2.7rem' }} ref={this.input} />
             </div>
           </div>
           <div className="field is-horizontal" style={{ flex: 1 }}>
@@ -164,7 +164,7 @@ export default class Analytics extends React.Component {
           </div>
         </div>
         {tableData.events && !loading ? (
-          <ReactTable
+          <DraggableTable
             showPageSizeOptions={false}
             filterable
             defaultPageSize={15}

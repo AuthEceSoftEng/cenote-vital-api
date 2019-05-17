@@ -76,7 +76,7 @@
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
     "superagent": "^5.0.5",
-    "sweetalert2": "^8.11.0",
+    "sweetalert2": "^8.11.1",
     "webpack": "^4.31.0",
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-dev-middleware": "^3.7.0",
