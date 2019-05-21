@@ -504,7 +504,7 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${group_by || interval ? '*' : '"target_property"'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
+      const query = `SELECT ${group_by || interval ? '*' : `"${target_property}"`} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
       } ${removeOutliersQuery} ${filterQuery} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       let { rows: answer } = await client.query(query);
       filters.forEach(filter => answer = applyFilter(filter, answer));
