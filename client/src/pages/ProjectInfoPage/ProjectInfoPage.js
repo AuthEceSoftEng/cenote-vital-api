@@ -28,6 +28,8 @@ class ProjectInfoPage extends React.Component {
       <div className="home-page section">
         <Dashboard
           projectId={project.projectId}
+          collaborators={project.collaborators}
+          owner={project.owner}
           title={project.title}
           readKeys={project.readKeys}
           writeKeys={project.writeKeys}

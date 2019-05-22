@@ -22,9 +22,10 @@ const mongooseOptions = {
 if (process.env.DATABASE_URL.includes('authSource')) {
   mongooseOptions.user = process.env.DATABASE_USER;
   mongooseOptions.pass = process.env.DATABASE_PASS;
+  mongooseOptions.auth = { authSource: process.env.DATABASE_AUTH_DB };
 }
 
-const db = `${process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-db'}`;
+const db = `${(process.env.DATABASE_URL || 'mongodb://localhost:27017/cenote-db').split('?')[0]}`;
 mongoose.connect(db, mongooseOptions).catch(err => console.error(err.message));
 
 const app = express();

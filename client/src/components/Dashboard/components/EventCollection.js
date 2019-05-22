@@ -48,6 +48,7 @@ const EventCollection = (props) => {
     });
   };
   const handleDelete = () => {
+    if (!(table && table.selectionContext.selected.length)) return;
     Swal.fire({
       title: 'Are you sure?',
       text: 'Once deleted, you will not be able to recover data lost!',
@@ -101,7 +102,7 @@ const EventCollection = (props) => {
     },
     {
       dataField: 'type',
-      text: 'Property Price',
+      text: 'Property Type',
       align: 'center',
       headerAlign: 'center',
       classes: (_, row) => (row.column_name.startsWith('cenote') || row.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'),

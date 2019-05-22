@@ -6,6 +6,8 @@ import { ClipLoader } from 'react-spinners';
 import * as moment from 'moment';
 import DatePicker from 'react-datepicker';
 import mem from 'mem';
+import DownloadLink from 'react-download-link';
+import { parse } from 'json2csv';
 
 import { getRecentEvents } from '../utils';
 import { DraggableTable } from '.';
@@ -40,6 +42,7 @@ export default class Analytics extends React.Component {
     this.handleIntervalChange = this.handleIntervalChange.bind(this);
     this.handleCustomStartDateChange = this.handleCustomStartDateChange.bind(this);
     this.handleCustomEndDateChange = this.handleCustomEndDateChange.bind(this);
+    this.downloadData = this.downloadData.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -115,8 +118,14 @@ export default class Analytics extends React.Component {
     this.setState({ endDate }, this.getEvents);
   }
 
+  downloadData() {
+    const { tableData: { events: data } } = this.state;
+    return parse(data);
+  }
+
   render() {
     const { collections, selectedCollection, selectedColumns, columns, tableData, loading, selectedInterval, startDate, endDate } = this.state;
+    const { projectId } = this.props;
     const collectionNames = Object.keys(collections);
     return (
       <div>
@@ -157,7 +166,7 @@ export default class Analytics extends React.Component {
               <label className="label">get latest:</label>
             </div>
             <div className="field-body">
-              <input className="input is-normal" type="text" placeholder="1000" style={{ minHeight: '2.7rem' }} ref={this.input} />
+              <input className="input is-normal" type="text" placeholder="2000" style={{ minHeight: '2.7rem' }} ref={this.input} />
             </div>
           </div>
           <div className="field is-horizontal" style={{ flex: 1 }}>
@@ -183,7 +192,31 @@ export default class Analytics extends React.Component {
             </div>
           </div>
           <div className="control" style={{ marginLeft: '1rem' }}>
-            <button type="submit" className="button is-info" onClick={this.getEvents}>Refresh!</button>
+            <button
+              type="submit"
+              className="button is-info"
+              onClick={() => {
+                mem.clear(getRecentEventsAndCache);
+                this.getEvents();
+              }}
+            >
+              Refresh!
+            </button>
+          </div>
+          <div className="control" style={{ marginLeft: '1rem' }}>
+            {
+              selectedCollection.value !== '---' && (
+              <DownloadLink
+                className="button is-primary"
+                filename={`${projectId}_${selectedCollection.value}_${selectedColumns.length
+                  ? selectedColumns.map(el => el.value).join(',') : 'all'}.csv`}
+                exportFile={this.downloadData}
+                tagName="button"
+                label="Export to CSV!"
+                style={{}}
+              />
+              )
+            }
           </div>
         </div>
         {

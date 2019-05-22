@@ -7,6 +7,7 @@ const pid = () => `pid${uuid().replace(/-/g, '').slice(0, 11)}`;
 
 const projectSchema = new mongoose.Schema({
   organization: { type: mongoose.Schema.ObjectId, ref: 'Organization', required: true },
+  collaborators: [{ type: mongoose.Schema.ObjectId, ref: 'Organization' }],
   title: { type: String, lowercase: true, trim: true },
   createdAt: { type: Date, default: Date.now, immutable: true },
   updatedAt: { type: Date },

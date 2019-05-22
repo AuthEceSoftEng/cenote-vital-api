@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import ReactTable from 'react-table';
 
 import { handleSuccess, handleError } from '../../api/helpers';
-import { EventCollection, Analytics } from './components';
+import { EventCollection, Analytics, Collaborators } from './components';
 import { getEventCollections, getRecentEvents } from './utils';
 import { Button } from '..';
 
@@ -16,6 +16,7 @@ import { Button } from '..';
 export default class Dashboard extends React.Component {
   static propTypes = {
     projectId: PropTypes.string.isRequired,
+    collaborators: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     readKeys: PropTypes.array.isRequired,
     writeKeys: PropTypes.array.isRequired,
@@ -23,11 +24,14 @@ export default class Dashboard extends React.Component {
     updateProjectReadKey: PropTypes.func.isRequired,
     updateProjectWriteKey: PropTypes.func.isRequired,
     updateProjectMasterKey: PropTypes.func.isRequired,
+    owner: PropTypes.string.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.state = {
+      collaborators: props.collaborators,
+      owner: props.owner,
       readKeys: props.readKeys,
       writeKeys: props.writeKeys,
       title: props.title,
@@ -40,6 +44,7 @@ export default class Dashboard extends React.Component {
     };
     this._isMounted = false;
     this.deleteCollection = this.deleteCollection.bind(this);
+    this.setCollaborators = this.setCollaborators.bind(this);
   }
 
   componentDidMount() {
@@ -60,6 +65,10 @@ export default class Dashboard extends React.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
+  }
+
+  setCollaborators(collaborators) {
+    this.setState({ collaborators });
   }
 
   updateProjectReadKey = () => {
@@ -250,7 +259,7 @@ export default class Dashboard extends React.Component {
   }
 
   render() {
-    const { readKeys, title, writeKeys, masterKeys, editRead, editWrite, editMaster, collections } = this.state;
+    const { readKeys, title, writeKeys, masterKeys, editRead, editWrite, editMaster, collections, collaborators, owner } = this.state;
     const { projectId } = this.props;
     return (
       <div>
@@ -269,6 +278,7 @@ export default class Dashboard extends React.Component {
               <TabList>
                 <Tab>Project</Tab>
                 <Tab>Keys</Tab>
+                <Tab>Collaborators</Tab>
               </TabList>
               <TabPanel>
                 <div className="container is-fluid">
@@ -277,12 +287,14 @@ export default class Dashboard extends React.Component {
                       <tr>
                         <th className="has-text-centered">Project Name</th>
                         <th className="has-text-centered">Project ID</th>
+                        <th className="has-text-centered">Project Owner</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         <th className="has-text-centered has-text-danger">{title}</th>
                         <td className="has-text-centered has-text-grey">{projectId}</td>
+                        <td className="has-text-centered has-text-primary">{owner}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -401,6 +413,9 @@ export default class Dashboard extends React.Component {
                     </tbody>
                   </table>
                 </div>
+              </TabPanel>
+              <TabPanel>
+                <Collaborators projectId={projectId} collaborators={collaborators} setCollaborators={this.setCollaborators} />
               </TabPanel>
             </Tabs>
           </TabPanel>
