@@ -166,6 +166,43 @@ define({ "api": [
     }
   },
   {
+    "type": "get",
+    "url": "/projects/:PROJECT_ID/queries/sum?event_collection=measurements&group_by=current&filters=[{\"property_name\":\"voltage\",\"operator\":\"ne\",\"property_value\":241}]&outliers=exclude&outliers_in=current&timeframe={\"start\":\"2019-05-10T00:00:00.0Z\",\"end\":\"2019-05-10T13:10:03.0Z\"}&readKey=:READ_KEY&target_property=voltage",
+    "title": "Sum",
+    "version": "0.1.0",
+    "name": "Example",
+    "group": "Example",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "ok",
+            "description": "<p>If the query succeded.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array",
+            "optional": false,
+            "field": "results",
+            "description": "<p>Query result.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "{\"ok\": true, \"results\": [{\"current\": 21.5,\"sum\": 9850},{\"current\": 8.5,\"sum\": 9500},{\"current\": 7.5,\"sum\": 10000},{\"current\": 9.25,\"sum\": 10025}]}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "server/routes/queries.js",
+    "groupTitle": "Example"
+  },
+  {
     "type": "post",
     "url": "/projects/:PROJECT_ID/keys/",
     "title": "Create a new key",

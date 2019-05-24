@@ -36,6 +36,7 @@ class AddProject extends React.Component {
       addProject(title);
       this.setState({ title: '' });
     }
+    window.location.reload();
   }
 
   render() {

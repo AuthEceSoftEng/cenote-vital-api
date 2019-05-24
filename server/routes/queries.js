@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const express = require('express');
 const { Pool } = require('pg');
 const asyncRedis = require('async-redis');
@@ -814,5 +815,16 @@ router.delete('/testCleanup', async (req, res) => {
 });
 
 router.all('/*', (req, res) => res.status(400).json({ ok: false, results: 'This is not a valid query!' }));
+
+/**
+* @api {get} /projects/:PROJECT_ID/queries/sum?event_collection=measurements&group_by=current&filters=[{"property_name":"voltage","operator":"ne","property_value":241}]&outliers=exclude&outliers_in=current&timeframe={"start":"2019-05-10T00:00:00.0Z","end":"2019-05-10T13:10:03.0Z"}&readKey=:READ_KEY&target_property=voltage Sum
+* @apiVersion 0.1.0
+* @apiName Example
+* @apiGroup Example
+* @apiSuccess {Boolean} ok If the query succeded.
+* @apiSuccess {Array} results Query result.
+* @apiSuccessExample {json} Success-Response:
+* {"ok": true, "results": [{"current": 21.5,"sum": 9850},{"current": 8.5,"sum": 9500},{"current": 7.5,"sum": 10000},{"current": 9.25,"sum": 10025}]}
+*/
 
 module.exports = router;

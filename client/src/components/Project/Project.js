@@ -8,25 +8,29 @@ import Swal from 'sweetalert2';
 export default function Project(props) {
   const {
     edit, title, currentTitle, updated, createdMessage, updatedMessage, openProjectInfo, updateTitle, updateProjectTitle,
-    editProject, cancelEdit, deleteProject,
+    editProject, cancelEdit, deleteProject, owner, currentUser,
   } = props;
 
-  const openModal = () => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Once deleted, you will not be able to recover data lost!',
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!',
-    }).then((result) => {
-      if (result.value) {
-        deleteProject();
-        Swal.fire('Poof!', 'Your project has been deleted!', 'success');
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire('Cancelled', 'Your column(s) are safe :)', 'error');
-      }
-    });
+  const openModal = (ownr, curUser) => {
+    if (ownr === curUser) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Once deleted, you will not be able to recover data lost!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+      }).then((result) => {
+        if (result.value) {
+          deleteProject();
+          Swal.fire('Poof!', 'Your project has been deleted!', 'success');
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire('Cancelled', 'Your project(s) are safe :)', 'error');
+        }
+      });
+    } else {
+      Swal.fire('Cancelled', 'You are not the owner of this project!', 'error');
+    }
   };
 
   return (
@@ -49,7 +53,7 @@ export default function Project(props) {
               </form>
             ) : (
               <p>
-                {title}
+                {`${title}${owner ? ` [${owner}]` : ''}`}
               </p>
             )}
           </div>
@@ -77,17 +81,23 @@ export default function Project(props) {
                 >
                   <FontAwesomeIcon icon={faSave} size="lg" />
                 </span>
-              ) : (
-                <span className="icon space-right" role="button" tabIndex={0} onClick={editProject} onKeyPress={editProject}>
-                  <FontAwesomeIcon icon={faPencilAlt} size="lg" />
-                </span>
+              ) : (owner === currentUser) && (
+              <span className="icon space-right" role="button" tabIndex={0} onClick={editProject} onKeyPress={editProject}>
+                <FontAwesomeIcon icon={faPencilAlt} size="lg" />
+              </span>
               )}
               {edit ? (
                 <span className="icon" role="button" tabIndex={-1} onClick={cancelEdit} onKeyPress={cancelEdit}>
                   <FontAwesomeIcon icon={faBan} size="lg" />
                 </span>
-              ) : (
-                <span className="icon" role="button" tabIndex={-1} onClick={openModal} onKeyPress={cancelEdit}>
+              ) : (owner === currentUser) && (
+                <span
+                  className="icon"
+                  role="button"
+                  tabIndex={-1}
+                  onClick={() => openModal(owner, currentUser)}
+                  onKeyPress={() => openModal(owner, currentUser)}
+                >
                   <FontAwesomeIcon icon={faTrashAlt} size="lg" />
                 </span>
               )}
@@ -104,6 +114,8 @@ Project.propTypes = {
   updated: PropTypes.bool.isRequired,
 
   title: PropTypes.string.isRequired,
+  owner: PropTypes.string.isRequired,
+  currentUser: PropTypes.string.isRequired,
   currentTitle: PropTypes.string.isRequired,
   createdMessage: PropTypes.string.isRequired,
   updatedMessage: PropTypes.string.isRequired,

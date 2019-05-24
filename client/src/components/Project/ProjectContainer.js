@@ -8,11 +8,13 @@ export default class ProjectContainer extends Component {
   static propTypes = {
     projectId: PropTypes.string,
     title: PropTypes.string.isRequired,
+    owner: PropTypes.string.isRequired,
     createdAt: PropTypes.string,
     updatedAt: PropTypes.string,
     openProjectInfo: PropTypes.func.isRequired,
     updateProjectTitle: PropTypes.func.isRequired,
     deleteProject: PropTypes.func.isRequired,
+    organization: PropTypes.object.isRequired,
   };
 
   static defaultProps = { updatedAt: undefined, projectId: '', createdAt: '' };
@@ -75,7 +77,7 @@ export default class ProjectContainer extends Component {
   }
 
   render() {
-    const { updatedAt, title } = this.props;
+    const { updatedAt, title, owner, organization: { username } } = this.props;
     const { edit, confirm, createdMessage, updatedMessage, title: currentTitle } = this.state;
     return (
       <Project
@@ -84,6 +86,8 @@ export default class ProjectContainer extends Component {
         updated={!!updatedAt}
         currentTitle={currentTitle}
         title={title}
+        owner={owner}
+        currentUser={username}
         createdMessage={createdMessage}
         updatedMessage={updatedMessage}
         openProjectInfo={this.openProjectInfo}

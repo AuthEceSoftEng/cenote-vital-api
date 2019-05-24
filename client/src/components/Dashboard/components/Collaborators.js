@@ -37,9 +37,10 @@ const Collaborators = (props) => {
         setCollaborators(data);
         Swal.fire({
           title: 'Changes have been saved!!',
-          text: 'Refresh the page to view the updated table(s).',
+          text: 'The page will refresh to the updated table(s).',
           type: 'success',
           confirmButtonText: 'Nice!',
+          onAfterClose: () => window.location.reload(),
         });
       }
     });
@@ -66,9 +67,10 @@ const Collaborators = (props) => {
         setCollaborators(data);
         Swal.fire({
           title: 'Poof!',
-          text: 'Collaborator(s) have been deleted! Refresh the page to view the updated table(s)!',
+          text: 'Collaborator(s) have been deleted! The page will refresh to the updated table(s)!',
           type: 'success',
           confirmButtonText: 'Nice!',
+          onAfterClose: () => window.location.reload(),
         });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire('Cancelled', 'Your collaborator(s) are safe :)', 'error');
