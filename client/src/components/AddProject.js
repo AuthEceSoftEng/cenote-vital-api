@@ -44,13 +44,19 @@ class AddProject extends React.Component {
     return (
       <div className="add-project columns">
         <div className="is-8">
-          <input className="input" type="text" value={title} onChange={this.updateTitle} />
+          <input
+            className="input"
+            type="text"
+            value={title}
+            onChange={this.updateTitle}
+            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+          />
         </div>
         <div className="is-2">
           <Button
-            style={{ width: '100%' }}
+            style={{ width: '100%', borderTopLeftRadius: 0, borderBottomLeftRadius: 0, backgroundColor: '#264184' }}
             onClick={this.addProject}
-            label="Add"
+            label="+Add"
             type="success"
           />
         </div>

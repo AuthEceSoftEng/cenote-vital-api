@@ -130,7 +130,7 @@ export default class Analytics extends React.Component {
     return (
       <div>
         <div className="field is-horizontal" style={{ justifyContent: 'center', alignItems: 'inherit' }}>
-          <div className="field is-horizontal" style={{ flex: 1 }}>
+          <div className="field is-horizontal" style={{ flex: 1, alignItems: 'center' }}>
             <div className="field-label is-normal">
               <label className="label">From collection:</label>
             </div>
@@ -145,7 +145,7 @@ export default class Analytics extends React.Component {
               </div>
             </div>
           </div>
-          <div className="field is-horizontal" style={{ flex: 1 }}>
+          <div className="field is-horizontal" style={{ flex: 1, alignItems: 'center' }}>
             <div className="field-label is-normal">
               <label className="label">fetch column:</label>
             </div>
@@ -161,7 +161,7 @@ export default class Analytics extends React.Component {
               </div>
             </div>
           </div>
-          <div className="field is-horizontal" style={{ flex: 1 }}>
+          <div className="field is-horizontal" style={{ flex: 1, alignItems: 'center' }}>
             <div className="field-label is-normal">
               <label className="label">get latest:</label>
             </div>
@@ -169,7 +169,7 @@ export default class Analytics extends React.Component {
               <input className="input is-normal" type="text" placeholder="2000" style={{ minHeight: '2.7rem' }} ref={this.input} />
             </div>
           </div>
-          <div className="field is-horizontal" style={{ flex: 1 }}>
+          <div className="field is-horizontal" style={{ flex: 1, alignItems: 'center' }}>
             <div className="field-label is-normal">
               <label className="label">only from:</label>
             </div>
@@ -199,8 +199,9 @@ export default class Analytics extends React.Component {
                 mem.clear(getRecentEventsAndCache);
                 this.getEvents();
               }}
+              style={{ backgroundColor: '#264184', color: 'white', border: '2px solid #11183a', borderRadius: '5px' }}
             >
-              Refresh!
+            Refresh!
             </button>
           </div>
           <div className="control" style={{ marginLeft: '1rem' }}>

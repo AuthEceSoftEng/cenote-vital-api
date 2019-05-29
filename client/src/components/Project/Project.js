@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 
 export default function Project(props) {
   const {
-    edit, title, currentTitle, updated, createdMessage, updatedMessage, openProjectInfo, updateTitle, updateProjectTitle,
+    edit, title, currentTitle, createdMessage, openProjectInfo, updateTitle, updateProjectTitle,
     editProject, cancelEdit, deleteProject, owner, currentUser,
   } = props;
 
@@ -34,91 +34,93 @@ export default function Project(props) {
   };
 
   return (
-    <li className="project box">
-      <article className="media">
-        <div className="media-content">
-          <div className="content">
-            <p>
-              <small>
-                {`created ${createdMessage}`}
-              </small>
-            </p>
-            {edit ? (
-              <form onSubmit={(evt) => {
-                updateProjectTitle();
-                evt.preventDefault();
-              }}
-              >
-                <input className="input" type="text" value={currentTitle} onChange={updateTitle} ref={inpt => inpt && inpt.focus()} />
-              </form>
-            ) : (
+    <li
+      className="project box"
+      style={{
+        borderRadius: '1rem',
+        padding: '0',
+        height: '10rem',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <div style={{ backgroundColor: '#264184', color: 'white', borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}>
+        <article className="media">
+          <div className="media-content">
+            <div className="content" style={{ padding: '0.2rem' }}>
+              {edit ? (
+                <form onSubmit={(evt) => {
+                  updateProjectTitle();
+                  evt.preventDefault();
+                }}
+                >
+                  <input className="input" type="text" value={currentTitle} onChange={updateTitle} ref={inpt => inpt && inpt.focus()} />
+                </form>
+              ) : (
+                <p style={{ marginBottom: '0', fontSize: '1.4rem', fontWeight: 'bold' }}>
+                  {`${title}${owner ? ` (${owner})` : ''}`}
+                </p>
+              )}
               <p>
-                {`${title}${owner ? ` [${owner}]` : ''}`}
+                <small>{`created ${createdMessage}`}</small>
               </p>
+            </div>
+          </div>
+        </article>
+      </div>
+      <div style={{ marginTop: 'auto' }}>
+        <nav className="level" style={{ paddingBottom: '0.4rem', paddingRight: '0.4rem' }}>
+          <div className="level-left" />
+          <div className="level-right">
+            <span className="icon space-right" role="button" tabIndex={0} onClick={openProjectInfo} onKeyPress={openProjectInfo}>
+              <FontAwesomeIcon icon={faFolderOpen} color="orange" size="lg" style={{ color: '#264184' }} />
+            </span>
+            {edit ? (
+              <span
+                className="icon
+                space-right"
+                role="button"
+                tabIndex={0}
+                onClick={updateProjectTitle}
+                onKeyPress={updateProjectTitle}
+              >
+                <FontAwesomeIcon icon={faSave} size="lg" style={{ color: '#264184' }} />
+              </span>
+            ) : (owner === currentUser) && (
+            <span className="icon space-right" role="button" tabIndex={0} onClick={editProject} onKeyPress={editProject}>
+              <FontAwesomeIcon icon={faPencilAlt} size="lg" style={{ color: '#264184' }} />
+            </span>
+            )}
+            {edit ? (
+              <span className="icon" role="button" tabIndex={-1} onClick={cancelEdit} onKeyPress={cancelEdit}>
+                <FontAwesomeIcon icon={faBan} size="lg" style={{ color: '#264184' }} />
+              </span>
+            ) : (owner === currentUser) && (
+            <span
+              className="icon"
+              role="button"
+              tabIndex={-1}
+              onClick={() => openModal(owner, currentUser)}
+              onKeyPress={() => openModal(owner, currentUser)}
+            >
+              <FontAwesomeIcon icon={faTrashAlt} size="lg" style={{ color: '#264184' }} />
+            </span>
             )}
           </div>
-
-          <nav className="level">
-            <div className="level-left">
-              {updated && (
-                <small>
-                  {`edited ${updatedMessage}`}
-                </small>
-              )}
-            </div>
-            <div className="level-right">
-              <span className="icon space-right" role="button" tabIndex={0} onClick={openProjectInfo} onKeyPress={openProjectInfo}>
-                <FontAwesomeIcon icon={faFolderOpen} color="orange" size="lg" />
-              </span>
-              {edit ? (
-                <span
-                  className="icon
-                space-right"
-                  role="button"
-                  tabIndex={0}
-                  onClick={updateProjectTitle}
-                  onKeyPress={updateProjectTitle}
-                >
-                  <FontAwesomeIcon icon={faSave} size="lg" />
-                </span>
-              ) : (owner === currentUser) && (
-              <span className="icon space-right" role="button" tabIndex={0} onClick={editProject} onKeyPress={editProject}>
-                <FontAwesomeIcon icon={faPencilAlt} size="lg" />
-              </span>
-              )}
-              {edit ? (
-                <span className="icon" role="button" tabIndex={-1} onClick={cancelEdit} onKeyPress={cancelEdit}>
-                  <FontAwesomeIcon icon={faBan} size="lg" />
-                </span>
-              ) : (owner === currentUser) && (
-                <span
-                  className="icon"
-                  role="button"
-                  tabIndex={-1}
-                  onClick={() => openModal(owner, currentUser)}
-                  onKeyPress={() => openModal(owner, currentUser)}
-                >
-                  <FontAwesomeIcon icon={faTrashAlt} size="lg" />
-                </span>
-              )}
-            </div>
-          </nav>
-        </div>
-      </article>
+        </nav>
+      </div>
     </li>
   );
 }
 
 Project.propTypes = {
   edit: PropTypes.bool.isRequired,
-  updated: PropTypes.bool.isRequired,
 
   title: PropTypes.string.isRequired,
   owner: PropTypes.string.isRequired,
   currentUser: PropTypes.string.isRequired,
   currentTitle: PropTypes.string.isRequired,
   createdMessage: PropTypes.string.isRequired,
-  updatedMessage: PropTypes.string.isRequired,
 
   openProjectInfo: PropTypes.func.isRequired,
   updateTitle: PropTypes.func.isRequired,

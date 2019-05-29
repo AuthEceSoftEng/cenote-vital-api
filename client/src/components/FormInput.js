@@ -20,21 +20,33 @@ export default function FormInput(props) {
 
   return (
     <div className={fieldClasses}>
-      <p className={controlClasses}>
+      <p className={controlClasses} style={{ borderRadius: '15px' }}>
         <input
           className="input"
           type={type}
           placeholder={placeholder}
           onChange={onChange}
           value={value}
+          style={{
+            borderTopRightRadius: '.5rem',
+            borderBottomRightRadius: '.5rem',
+            borderColor: '#264184',
+            borderWidth: '1px',
+            paddingLeft: '3rem',
+            fontSize: '1.3rem',
+            color: '#264184',
+          }}
         />
         {leftIcon && (
-          <span className="icon is-small is-left">
+          <span
+            className="icon is-left"
+            style={{ backgroundColor: '#264184', borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem', height: '2.9rem' }}
+          >
             <FontAwesomeIcon icon={leftIcon} />
           </span>
         )}
         {rightIcon && (
-          <span className="icon is-small is-right">
+          <span className="icon is-right">
             <FontAwesomeIcon icon={rightIcon} />
           </span>
         )}

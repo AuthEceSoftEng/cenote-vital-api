@@ -57,7 +57,15 @@ class OrganizationDropdown extends Component {
           </li>
           <hr className="dropdown-separator" />
           <li className="dropdown-item">
-            <button className="button is-danger" onClick={this.logout} type="button" onKeyPress={this.logout}>Logout</button>
+            <button
+              className="button"
+              onClick={this.logout}
+              type="button"
+              onKeyPress={this.logout}
+              style={{ backgroundColor: '#264184', color: 'white' }}
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>

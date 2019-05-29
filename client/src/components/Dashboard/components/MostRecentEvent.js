@@ -9,7 +9,11 @@ const MostRecentEvents = (props) => {
       {
         Object.keys(events).length
           ? (
-            <table className="table has-text-centered" align="center">
+            <table
+              className="table has-text-centered"
+              align="center"
+              style={{ borderCollapse: 'collapse', borderRadius: '1rem', overflow: 'hidden' }}
+            >
               <thead>
                 <tr>
                   <th className="has-text-centered"><abbr title="Serial Number">No.</abbr></th>

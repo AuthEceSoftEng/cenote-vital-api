@@ -219,11 +219,12 @@ export default class Dashboard extends React.Component {
         <Tab key={`tab_col_${ind}`}>
           {col}
           <span className="icon" role="button" tabIndex={-1} onKeyPress={() => this.deleteCollection(col)} onClick={() => this.deleteCollection(col)}>
-            <FontAwesomeIcon icon={faTrashAlt} size="sm" color="red" />
+            <FontAwesomeIcon icon={faTrashAlt} size="sm" />
           </span>
         </Tab>);
       tabPanel.push(
         <TabPanel key={`tabpanel_col_${ind}`}>
+          <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
           <EventCollection properties={collections[col]} projectId={projectId} eventCollection={col} />
           <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
           {events[col] ? (
@@ -264,11 +265,12 @@ export default class Dashboard extends React.Component {
     return (
       <div>
         <h1 className="title is-1">{title}</h1>
+        <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
         <Tabs forceRenderTabPanel defaultIndex={0} defaultFocus>
           <TabList>
             <Tab>Event Collections</Tab>
             <Tab>Project Information</Tab>
-            <Tab style={{ backgroundColor: '#264184', color: 'white', borderRadius: '5px 5px 0 0' }}>Review Events</Tab>
+            <Tab style={{ backgroundColor: '#264184', color: 'white' }}>Review Events</Tab>
           </TabList>
           <TabPanel>
             {this._getEventCollectionInfo()}
@@ -281,13 +283,18 @@ export default class Dashboard extends React.Component {
                 <Tab>Collaborators</Tab>
               </TabList>
               <TabPanel>
+                <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
                 <div className="container is-fluid">
-                  <table className="table has-text-centered" align="center">
+                  <table
+                    className="table has-text-centered"
+                    align="center"
+                    style={{ borderCollapse: 'collapse', borderRadius: '1rem', overflow: 'hidden' }}
+                  >
                     <thead>
-                      <tr>
-                        <th className="has-text-centered">Project Name</th>
-                        <th className="has-text-centered">Project ID</th>
-                        <th className="has-text-centered">Project Owner</th>
+                      <tr style={{ backgroundColor: '#11183a' }}>
+                        <th className="has-text-centered" style={{ color: 'white' }}>Project Name</th>
+                        <th className="has-text-centered" style={{ color: 'white' }}>Project ID</th>
+                        <th className="has-text-centered" style={{ color: 'white' }}>Project Owner</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -301,20 +308,25 @@ export default class Dashboard extends React.Component {
                 </div>
               </TabPanel>
               <TabPanel>
+                <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
                 <div className="container is-fluid">
-                  <table className="table has-text-centered" align="center">
+                  <table
+                    className="table has-text-centered"
+                    align="center"
+                    style={{ borderCollapse: 'collapse', borderRadius: '1rem', overflow: 'hidden' }}
+                  >
                     <thead>
-                      <tr>
-                        <th className="has-text-centered is-vcentered">Key</th>
-                        <th className="has-text-centered">Value</th>
-                        <th className="has-text-centered">Options</th>
+                      <tr style={{ backgroundColor: '#11183a' }}>
+                        <th className="has-text-centered is-vcentered" style={{ color: 'white' }}>Key</th>
+                        <th className="has-text-centered" style={{ color: 'white' }}>Value</th>
+                        <th className="has-text-centered" style={{ color: 'white' }}>Options</th>
                       </tr>
                     </thead>
                     <tbody>
                       {
                         readKeys.map((key, ind) => (
                           <tr key={`rowread${ind}`}>
-                            <th className="has-text-centered has-text-primary">Read key</th>
+                            <th className="has-text-centered" style={{ color: '#264184', verticalAlign: 'middle' }}>Read key</th>
                             {editRead[ind]
                               ? (
                                 <td className="has-text-centered has-text-grey">
@@ -327,7 +339,7 @@ export default class Dashboard extends React.Component {
                                   />
                                 </td>
                               )
-                              : (<td className="has-text-centered has-text-grey">{key}</td>)}
+                              : (<td className="has-text-centered has-text-grey" style={{ verticalAlign: 'middle' }}>{key}</td>)}
                             {editRead[ind]
                               ? (
                                 <td>
@@ -347,7 +359,7 @@ export default class Dashboard extends React.Component {
                       {
                         writeKeys.map((key, ind) => (
                           <tr key={`rowwrite${ind}`}>
-                            <th className="has-text-centered has-text-link">Write key</th>
+                            <th className="has-text-centered" style={{ color: '#264184', verticalAlign: 'middle' }}>Write key</th>
                             {editWrite[ind]
                               ? (
                                 <td className="has-text-centered has-text-grey">
@@ -360,7 +372,7 @@ export default class Dashboard extends React.Component {
                                   />
                                 </td>
                               )
-                              : (<td className="has-text-centered has-text-grey">{key}</td>)}
+                              : (<td className="has-text-centered has-text-grey" style={{ verticalAlign: 'middle' }}>{key}</td>)}
                             {editWrite[ind]
                               ? (
                                 <td>
@@ -380,7 +392,7 @@ export default class Dashboard extends React.Component {
                       {
                         masterKeys.map((key, ind) => (
                           <tr key={`rowmaster${ind}`}>
-                            <th className="has-text-centered has-text-danger">Master key</th>
+                            <th className="has-text-centered" style={{ color: '#264184', verticalAlign: 'middle' }}>Master key</th>
                             {editMaster[ind]
                               ? (
                                 <td className="has-text-centered has-text-grey">
@@ -393,7 +405,7 @@ export default class Dashboard extends React.Component {
                                   />
                                 </td>
                               )
-                              : (<td className="has-text-centered has-text-grey">{key}</td>)}
+                              : (<td className="has-text-centered has-text-grey" style={{ verticalAlign: 'middle' }}>{key}</td>)}
                             {editMaster[ind]
                               ? (
                                 <td>
@@ -415,11 +427,13 @@ export default class Dashboard extends React.Component {
                 </div>
               </TabPanel>
               <TabPanel>
+                <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
                 <Collaborators projectId={projectId} collaborators={collaborators} setCollaborators={this.setCollaborators} />
               </TabPanel>
             </Tabs>
           </TabPanel>
           <TabPanel>
+            <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
             <Analytics collections={collections} projectId={projectId} readKey={readKeys[0]} />
           </TabPanel>
         </Tabs>

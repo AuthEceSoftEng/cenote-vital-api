@@ -11,7 +11,7 @@ const Box = (props) => {
   });
 
   return (
-    <div className={boxClasses}>
+    <div className={boxClasses} style={{ textAlign: 'center' }}>
       {children}
     </div>
   );

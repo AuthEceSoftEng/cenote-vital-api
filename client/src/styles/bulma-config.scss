@@ -3,3 +3,19 @@ $navbar-box-shadow-size:  0 2px 3px ;
 $navbar-box-shadow-color: rgba(10, 10, 10, .1);
 
 @import '../../node_modules/bulma/bulma.sass';
+
+
+.is-danger  {
+  background-color: #264184 !important;
+  color: white !important;
+}
+
+.is-primary {
+  background-color: #264184 !important;
+  color: white !important;
+}
+
+.is-success {
+  background-color: #264184 !important;
+  color: white !important;
+}

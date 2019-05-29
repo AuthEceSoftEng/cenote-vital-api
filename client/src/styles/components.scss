@@ -65,6 +65,30 @@ ul {
   color: #61DAFB;
 }
 
-.icon {
-  margin: 6px 10px 6px 0;
+.react-tabs {
+  line-height: 1;
+}
+
+.react-tabs__tab-list {
+  border-bottom: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.react-tabs__tab {
+  border: 2px solid #11183a;
+  border-radius: 5px;
+  margin: .5%;
+  line-height: 1;
+}
+
+.react-tabs__tab--selected {
+  background-color: #11183a;
+  color: white;
+}
+
+input::placeholder {
+  color: black !important;
+  font-size: 1.1rem !important;
+  opacity: 1;
 }

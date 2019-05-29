@@ -56,7 +56,7 @@ const Button = (props) => {
 
   return (
     <button
-      style={style}
+      style={{ ...style, backgroundColor: '#264184' }}
       type="button"
       className={buttonClasses}
       onClick={onClick}

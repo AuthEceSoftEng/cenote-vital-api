@@ -58,16 +58,17 @@ class LoginPage extends React.Component {
   updatePassword = password => this.setState({ password })
 
   render() {
-    const { remember, username, password } = this.state;
+    const { username, password } = this.state;
 
     return (
       <Box className="login">
-        <h3 className="title is-3">Login</h3>
-        <hr className="separator" />
-        <p className="has-space-below">
-          {'Not Registered Yet? '}
-          <Link to="/register">Create an account</Link>
-        </p>
+        <img
+          className="profile-img logo"
+          src={require('../../assets/images/logo_login.png')}
+          alt="cenote"
+          style={{ width: '15rem', alignSelf: 'center' }}
+        />
+        <h2 className="title is-2 has-text-centered" style={{ color: '#264184' }}>Welcome to cenote&apos;s Dashboard</h2>
         <FormInput
           onChange={e => this.updateUsername(e.target.value)}
           placeholder="Username"
@@ -81,15 +82,51 @@ class LoginPage extends React.Component {
           leftIcon={faLock}
           type="password"
         />
-        <p className="has-space-below">
-          <Link to="/recovery">Forgot your password?</Link>
+        <p className="control is-clearfix has-text-centered" style={{ margin: '.5rem', width: '100%' }}>
+          <button
+            type="button"
+            className="button"
+            onClick={this.login}
+            style={{
+              backgroundColor: '#264184',
+              color: 'white',
+              fontWeight: 'bold',
+              width: '75%',
+              fontSize: '1.2rem',
+            }}
+          >
+            Login
+          </button>
         </p>
-        <hr className="separator" />
-        <p className="control is-clearfix">
-          <button type="button" className="button is-primary is-pulled-right" onClick={this.login}>Login</button>
-          <input type="checkbox" onChange={this.rememberMe} checked={remember} />
-          {' '}
-          {'Remember me'}
+        <p align="center">
+          {'Forgot password?  '}
+          <Link to="/recovery" style={{ color: '#264184' }}>Click here!</Link>
+        </p>
+        <hr style={{
+          backgroundColor: '#11183a',
+          height: '1px',
+          margin: '.5rem',
+        }}
+        />
+        <p align="center">Not registered Yet?</p>
+        <p className="control is-clearfix has-text-centered" style={{ margin: '.5rem', width: '100%' }}>
+          <Link to="/register">
+            <button
+              type="button"
+              className="button"
+              style={{
+                borderWidth: '1px',
+                borderColor: '#264184',
+                color: '#264184',
+                fontWeight: 'bold',
+                width: '75%',
+                fontSize: '1.2rem',
+              }}
+            >
+              Sign Up!
+            </button>
+          </Link>
+
         </p>
       </Box>
     );

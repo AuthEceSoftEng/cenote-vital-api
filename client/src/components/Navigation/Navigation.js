@@ -30,19 +30,13 @@ export default function Navigation(props) {
       <div className="container fluid">
         <div className="navbar-brand">
           <Link to={auth ? '/projects' : '/'} className="navbar-item" aria-label="main navigation">
-            <img className="profile-img logo" src={require('../../assets/images/logo.png')} alt="cenote" />
+            <img
+              src={require('../../assets/images/logo.png')}
+              alt="cenote"
+              style={{ width: '12rem', maxHeight: '12rem' }}
+            />
           </Link>
           <div className="navbar-brand-right">
-            {!auth && (
-              <Link to="/login" className="navbar-item is-hidden-desktop">
-                <Button label="Login" type="primary" />
-              </Link>
-            )}
-            {!auth && (
-              <Link to="/register" className="navbar-item is-hidden-desktop">
-                <Button label="Sign Up" type="secondary" />
-              </Link>
-            )}
             {auth && (
               <button
                 className="navbar-item is-hoverable is-hidden-desktop button"
@@ -73,7 +67,7 @@ export default function Navigation(props) {
                 <h6 className="title is-6">Settings</h6>
               </Link>
               <Link to="/docs" target="_blank" className="navbar-item">
-                <Button label="Docs" className="title is-6" style={{ backgroundColor: '#101737' }} />
+                <Button label="Docs" className="title is-6" style={{ backgroundColor: '#264184', color: 'white' }} />
               </Link>
             </div>
 
@@ -98,16 +92,8 @@ export default function Navigation(props) {
         ) : (
           <div className="navbar-menu">
             <Link to="/docs" target="_blank" className="navbar-item">
-              <Button label="Docs" style={{ backgroundColor: '#101737' }} />
+              <Button label="Docs" className="title is-6" style={{ backgroundColor: '#264184', color: 'white' }} />
             </Link>
-            <div className="navbar-end">
-              <Link to="/login" className="navbar-item">
-                <Button label="Login" type="primary" />
-              </Link>
-              <Link to="/register" className="navbar-item">
-                <Button label="Sign Up" type="secondary" />
-              </Link>
-            </div>
           </div>
         )}
         <OrganizationDropdown open={organizationDropdownOpen} closeDropdown={closeOrganizationDropdown} />
