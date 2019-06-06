@@ -279,7 +279,9 @@ export default class Analytics extends React.Component {
                 <span className={`has-text-centered ${
                   el.column_name.startsWith('cenote') || el.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
                 >
-                  {props.value}
+                  {['cenote$created_at', 'cenote$timestamp'].includes(el.column_name)
+                    ? moment(props.value).utc().format('H:mm:ss A, DD/MM/YYYY')
+                    : props.value}
                 </span>
               ),
             }))}

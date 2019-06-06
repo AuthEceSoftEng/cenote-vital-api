@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import ReactTable from 'react-table';
+import * as moment from 'moment';
 
 import { handleSuccess, handleError } from '../../api/helpers';
 import { EventCollection, Analytics, Collaborators } from './components';
@@ -241,7 +242,9 @@ export default class Dashboard extends React.Component {
                   <span className={`has-text-centered ${
                     el.column_name.startsWith('cenote') || el.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
                   >
-                    {props.value}
+                    {['cenote$created_at', 'cenote$timestamp'].includes(el.column_name)
+                      ? moment(props.value).utc().format('H:mm:ss A, DD/MM/YYYY')
+                      : props.value}
                   </span>
                 ),
               }))}
