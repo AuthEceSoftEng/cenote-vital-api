@@ -1404,7 +1404,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -1585,7 +1585,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -1807,7 +1807,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -1984,7 +1984,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -2030,6 +2030,18 @@
             "field": "latest",
             "defaultValue": "5000",
             "description": "<p>Limit events taken into account.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "allowedValues": [
+              "true",
+              "false"
+            ],
+            "optional": true,
+            "field": "concat_results",
+            "defaultValue": "false",
+            "description": "<p>Transforms <code>results</code> array of objects to an object of arrays.<br/><strong><u>Note: </u></strong> If object keys are not identical, resulting arrays may differ in size.</p>"
           }
         ]
       }
@@ -2184,7 +2196,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -2389,7 +2401,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -2594,7 +2606,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -2807,7 +2819,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -3012,7 +3024,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",
@@ -3206,7 +3218,7 @@
           },
           {
             "group": "Parameter",
-            "type": "Boolean",
+            "type": "String",
             "allowedValues": [
               "'include'",
               "'exclude'",

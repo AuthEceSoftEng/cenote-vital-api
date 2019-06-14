@@ -14,6 +14,7 @@ const {
   groupByInterval,
   percentile: percentle,
   getRemoveOutliersQuery,
+  toObjectOfArrays,
 } = require('../utils');
 
 const router = express.Router({ mergeParams: true });
@@ -58,7 +59,7 @@ r.on('error', err => console.error(`Redis error: ${err}`));
 * @apiParam {String} readkey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -130,7 +131,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -200,7 +201,7 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -270,7 +271,7 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -340,7 +341,7 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -410,7 +411,7 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -458,7 +459,7 @@ router.get('/median', canAccessForCollection, (req, res) => {
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -542,7 +543,7 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -612,7 +613,7 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
 * @apiParam {Object[]="[{'property_name':'A column name','operator': 'eq'|'gt'|'gte'|'lt'|'lte'|'ne','property_value':'Some value'},...]"} [filters]
 * Apply custom filters.
 * @apiParam {String} [group_by] Group by a property.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -680,7 +681,7 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
 * @apiParam {String} [target_property] Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
 * '$' as separator.
-* @apiParam {Boolean='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
+* @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
 * Must provide `outliers_in`, if used.
 * @apiParam {String} [outliers_in] Desired property for outlier detection.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties are flattened using
@@ -689,6 +690,8 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
 * Apply custom filters.
 * @apiParam {Object/String="{'start':ISOString, 'end':ISOString}", "[this|previous]_[n]_[seconds|minutes|days|...]"} [timeframe] Specify a timeframe.
 * @apiParam {Number} [latest=5000] Limit events taken into account.
+* @apiParam {Boolean=true,false} [concat_results=false] Transforms `results` array of objects to an object of arrays.<br/><strong><u>Note: </u></strong>
+* If object keys are not identical, resulting arrays may differ in size.
 * @apiSuccess {Boolean} ok If the query succeded.
 * @apiSuccess {Array} results Query result.
 * @apiSuccessExample {json} Success-Response:
@@ -719,7 +722,8 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
   .exec(async (err2, project) => {
     try {
       if (err2 || !project) return res.status(404).json({ ok: false, results: 'ProjectNotFoundError', err: err2 });
-      const { readKey, masterKey, event_collection, target_property, latest, outliers, outliers_in } = req.query;
+      const { readKey, masterKey, event_collection, target_property: targetProp, latest, outliers, outliers_in, concat_results } = req.query;
+      const target_property = targetProp.split(',').map(el => `"${el}"`);
       if (!(readKey === project.readKey || masterKey === project.masterKey)) {
         return res.status(401).json({ ok: false, results: 'KeyNotAuthorizedError' });
       }
@@ -731,11 +735,12 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${target_property ? `"${target_property}"` : '*'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
+      const query = `SELECT ${target_property ? `${target_property}` : '*'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
       } ${removeOutliersQuery} ${filterQuery} ORDER BY "cenote$timestamp" DESC LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = answer;
       filters.forEach(filter => results = applyFilter(filter, results));
+      if (concat_results) results = toObjectOfArrays(results);
       return res.json({ ok: true, results });
     } catch (error) {
       return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });

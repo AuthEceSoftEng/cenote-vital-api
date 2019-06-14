@@ -9,4 +9,5 @@ module.exports = {
   flattenJSON: require('./flattenJSON'),
   isObject: require('./isObject'),
   getRemoveOutliersQuery: require('./getRemoveOutliersQuery'),
+  toObjectOfArrays: require('./toObjectOfArrays'),
 };
