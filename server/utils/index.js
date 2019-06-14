@@ -6,7 +6,6 @@ module.exports = {
   isJSON: require('./isJSON'),
   parseTimeframe: require('./parseTimeframe'),
   percentile: require('./percentile'),
-  parseNumbers: require('./parseNumbers'),
   flattenJSON: require('./flattenJSON'),
   isObject: require('./isObject'),
   getRemoveOutliersQuery: require('./getRemoveOutliersQuery'),

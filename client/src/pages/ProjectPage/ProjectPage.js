@@ -32,7 +32,7 @@ class ProjectPageContainer extends React.Component {
             <AddProject />
           </div>
         </div>
-        <div className="columns">
+        <div className="columns" style={{ marginBottom: '3rem' }}>
           <div className="column is-2" />
           <div className="column is-8 text-center">
             <ProjectList />

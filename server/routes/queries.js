@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 const express = require('express');
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
 const asyncRedis = require('async-redis');
 
 const { Project } = require('../models');
@@ -12,7 +12,6 @@ const {
   groupBy,
   getFilterQuery,
   groupByInterval,
-  parseNumbers,
   percentile: percentle,
   getRemoveOutliersQuery,
 } = require('../utils');
@@ -25,6 +24,9 @@ const client = new Pool({
   port: process.env.COCKROACH_PORT || 26257,
 });
 client.connect(err => err && console.error(err));
+types.setTypeParser(20, val => parseInt(val, 10)); // 20 -> int8 (for count, min, etc)
+types.setTypeParser(1700, val => parseInt(val, 10)); // 1700 -> numeric
+types.setTypeParser(1114, val => new Date(val).getTime()); // 1114 -> timestamp
 const r = asyncRedis.createClient({ host: process.env.REDIS_URL, port: process.env.REDIS_PORT || 6379, password: process.env.REDIS_PASSWORD });
 r.on('error', err => console.error(`Redis error: ${err}`));
 
@@ -106,8 +108,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
         || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      results = parseNumbers(results);
-      if (interval) results = groupByInterval(answer, interval, 'count');
+      if (interval) results = groupByInterval(results, interval, 'count');
       return res.json({ ok: true, results });
     } catch (error) {
       return res.status(400).json({ ok: false, results: 'BadQueryError', message: error.message });
@@ -177,7 +178,6 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      results = parseNumbers(results);
       if (interval) results = groupByInterval(results, interval, 'minimum', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
@@ -248,7 +248,6 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      results = parseNumbers(results);
       if (interval) results = groupByInterval(results, interval, 'maximum', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
@@ -319,7 +318,6 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      results = parseNumbers(results);
       if (interval) results = groupByInterval(results, interval, 'sum', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
@@ -390,7 +388,6 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
         latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = JSON.parse(JSON.stringify(answer).replace(/system\.\w*\(|\)/g, ''));
-      results = parseNumbers(results);
       if (interval) results = groupByInterval(results, interval, 'average', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
@@ -512,7 +509,7 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
       let results = [];
       if (!interval && !group_by) {
         results.push({
-          [req.query.isMedian ? 'median' : 'percentile']: percentle(parseNumbers(answer).map(el => el[target_property]),
+          [req.query.isMedian ? 'median' : 'percentile']: percentle(answer.map(el => el[target_property]),
             percentile),
         });
       } else if (!interval && group_by) {
@@ -592,7 +589,7 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
         latest || req.app.locals.GLOBAL_LIMIT}`;
       let { rows: answer } = await client.query(query);
       filters.forEach(filter => answer = applyFilter(filter, answer));
-      let results = parseNumbers(answer);
+      let results = answer;
       if (interval) results = groupByInterval(results, interval, 'count_unique', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
@@ -663,7 +660,7 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
         ? `GROUP BY ${group_by}` : ''} LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       let { rows: answer } = await client.query(query);
       filters.forEach(filter => answer = applyFilter(filter, answer));
-      let results = parseNumbers(answer);
+      let results = answer;
       if (interval) results = groupByInterval(results, interval, 'select_unique', target_property);
       return res.json({ ok: true, results });
     } catch (error) {
@@ -737,7 +734,7 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
       const query = `SELECT ${target_property ? `"${target_property}"` : '*'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
       } ${removeOutliersQuery} ${filterQuery} ORDER BY "cenote$timestamp" DESC LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
-      let results = parseNumbers(answer);
+      let results = answer;
       filters.forEach(filter => results = applyFilter(filter, results));
       return res.json({ ok: true, results });
     } catch (error) {
