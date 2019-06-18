@@ -4,12 +4,17 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import Swal from 'sweetalert2';
 import request from 'superagent';
+import { push } from 'connected-react-router';
 
 import Button from '../../Button';
 
 const Collaborators = (props) => {
   let table = null;
   const { projectId, collaborators, setCollaborators } = props;
+  if (!collaborators) {
+    localStorage.removeItem('persist:root');
+    return push('/');
+  }
   const [data, updateData] = React.useState(collaborators.map(el => ({ collaboratorName: el })));
   React.useEffect(() => {
     request.get(`/api/projects/${projectId}/collaborators`).then(result => updateData(JSON.parse(result.text).collaborators

@@ -11,11 +11,22 @@ import { RegisterPage, LoginPage, NotFoundPage, ProjectPage, RecoveryPage, Setti
 import Navigation from './Navigation';
 import Footer from './Footer';
 
-// eslint-disable-next-line react/prefer-stateless-function
 class App extends React.Component {
   static propTypes = {
     location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
     alerts: PropTypes.array.isRequired,
+  }
+
+  componentDidMount() {
+    window.addEventListener('beforeunload', this._handleWindowClose);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this._handleWindowClose);
+  }
+
+  _handleWindowClose() {
+    localStorage.clear();
   }
 
   render() {

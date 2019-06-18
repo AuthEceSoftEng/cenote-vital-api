@@ -17,7 +17,13 @@ export const removeProject = projectId => ({ type: types.REMOVE_PROJECT, project
 export const attemptGetProjects = () => dispatch => getProjects().then((data) => {
   dispatch(setProjects(data.projects));
   return data.projects;
-}).catch(handleError(dispatch));
+}).catch((err) => {
+  if (!err.req._query || err.req._query.length === 0) {
+    localStorage.removeItem('persist:root');
+    return push('/');
+  }
+  return handleError(dispatch);
+});
 
 export const attemptAddProject = title => dispatch => postProject({ title }).then((data) => {
   dispatch(addProject(data.project));

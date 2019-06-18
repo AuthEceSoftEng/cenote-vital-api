@@ -722,8 +722,7 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
   .exec(async (err2, project) => {
     try {
       if (err2 || !project) return res.status(404).json({ ok: false, results: 'ProjectNotFoundError', err: err2 });
-      const { readKey, masterKey, event_collection, target_property: targetProp, latest, outliers, outliers_in, concat_results } = req.query;
-      const target_property = targetProp.split(',').map(el => `"${el}"`);
+      const { readKey, masterKey, event_collection, target_property, latest, outliers, outliers_in, concat_results } = req.query;
       if (!(readKey === project.readKey || masterKey === project.masterKey)) {
         return res.status(401).json({ ok: false, results: 'KeyNotAuthorizedError' });
       }
@@ -735,7 +734,7 @@ router.get('/extraction', canAccessForCollection, (req, res) => Project.findOne(
       const filters = isJSON(req.query.filters) ? JSON.parse(req.query.filters) : [];
       const timeframeQuery = parseTimeframe(req.query.timeframe);
       const filterQuery = getFilterQuery(filters);
-      const query = `SELECT ${target_property ? `${target_property}` : '*'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
+      const query = `SELECT ${target_property ? `${target_property.split(',').map(el => `"${el}"`)}` : '*'} FROM ${req.params.PROJECT_ID}_${event_collection} ${timeframeQuery
       } ${removeOutliersQuery} ${filterQuery} ORDER BY "cenote$timestamp" DESC LIMIT ${latest || req.app.locals.GLOBAL_LIMIT}`;
       const { rows: answer } = await client.query(query);
       let results = answer;
