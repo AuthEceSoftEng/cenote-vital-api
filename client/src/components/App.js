@@ -5,7 +5,6 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
 import Notifications from 'react-notification-system-redux';
 import { pick } from 'ramda';
-
 import { RegisterPage, LoginPage, NotFoundPage, ProjectPage, RecoveryPage, SettingsPage, ProjectInfoPage,
   ResetPage } from '../pages';
 import Navigation from './Navigation';
@@ -18,15 +17,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('beforeunload', this._handleWindowClose);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('beforeunload', this._handleWindowClose);
-  }
-
-  _handleWindowClose() {
-    localStorage.clear();
+    if (!document.cookie) document.cookie = "cenote='yo'";
   }
 
   render() {
