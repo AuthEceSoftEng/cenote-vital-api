@@ -25,8 +25,8 @@ const client = new Pool({
   port: process.env.COCKROACH_PORT || 26257,
 });
 client.connect(err => err && console.error(err));
-types.setTypeParser(20, val => parseInt(val, 10)); // 20 -> int8 (for count, min, etc)
-types.setTypeParser(1700, val => parseInt(val, 10)); // 1700 -> numeric
+types.setTypeParser(20, val => parseFloat(val, 10)); // 20 -> int8 (for count, min, etc)
+types.setTypeParser(1700, val => parseFloat(val, 10)); // 1700 -> numeric
 types.setTypeParser(1114, val => new Date(val).getTime()); // 1114 -> timestamp
 const r = asyncRedis.createClient({ host: process.env.REDIS_URL, port: process.env.REDIS_PORT || 6379, password: process.env.REDIS_PASSWORD });
 r.on('error', err => console.error(`Redis error: ${err}`));

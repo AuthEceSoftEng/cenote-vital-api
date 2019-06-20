@@ -1,6 +1,8 @@
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import RobotstxtPlugin from 'robotstxt-webpack-plugin';
+
 import path from 'path';
 
 const GLOBALS = {
@@ -10,7 +12,6 @@ const GLOBALS = {
 
 export default {
   resolve: { extensions: ['*', '.js', '.jsx', '.json'] },
-  devtool: 'source-map',
   entry: path.resolve(__dirname, 'src/index'),
   target: 'web',
   mode: 'production',
@@ -22,6 +23,7 @@ export default {
   plugins: [
     new webpack.DefinePlugin(GLOBALS),
     new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
+    new RobotstxtPlugin(),
     new HtmlWebpackPlugin({
       template: 'src/index.ejs',
       favicon: 'src/favicon.ico',
