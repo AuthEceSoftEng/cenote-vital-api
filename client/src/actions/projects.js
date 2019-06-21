@@ -1,5 +1,6 @@
 import { push } from 'connected-react-router';
 import Notifications from 'react-notification-system-redux';
+import * as localForage from 'localforage';
 
 import { getProjects, postProject, getProject, putProject, deleteProject } from '../api/projects';
 import { handleError } from './helpers';
@@ -18,10 +19,7 @@ export const attemptGetProjects = () => dispatch => getProjects().then((data) =>
   dispatch(setProjects(data.projects));
   return data.projects;
 }).catch((err) => {
-  if (!err.req._query || err.req._query.length === 0) {
-    localStorage.removeItem('persist:root');
-    return push('/');
-  }
+  if (!err.req._query || err.req._query.length === 0) return localForage.removeItem('persist:root').then(() => push('/'));
   return handleError(dispatch);
 });
 

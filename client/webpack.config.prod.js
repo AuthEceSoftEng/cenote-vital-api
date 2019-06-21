@@ -1,9 +1,11 @@
+import path from 'path';
+
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import RobotstxtPlugin from 'robotstxt-webpack-plugin';
-
-import path from 'path';
+import PurgecssPlugin from 'purgecss-webpack-plugin';
+import glob from 'glob';
 
 const GLOBALS = {
   'process.env.NODE_ENV': JSON.stringify('production'),
@@ -20,9 +22,58 @@ export default {
     publicPath: '/',
     filename: '[name].[contenthash].js',
   },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules|\.redux\.js$/,
+        use: ['babel-loader'],
+      },
+      {
+        test: /\.eot(\?v=\d+.\d+.\d+)?$/,
+        use: [{ loader: 'url-loader', options: { name: '[name].[ext]' } }],
+      },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: [{ loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff', name: '[name].[ext]' } }],
+      },
+      {
+        test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/,
+        use: [{ loader: 'url-loader', options: { limit: 10000, mimetype: 'application/octet-stream', name: '[name].[ext]' } }],
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{ loader: 'url-loader', options: { limit: 10000, mimetype: 'image/svg+xml', name: '[name].[ext]' } }],
+      },
+      {
+        test: /\.(jpe?g|png|gif|ico)$/,
+        use: [{ loader: 'file-loader', options: { name: '[name].[ext]' } }],
+      },
+      {
+        test: /(\.css|\.scss|\.sass)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader' },
+          { loader: 'postcss-loader', options: { plugins: () => [require('cssnano'), require('autoprefixer')] } },
+          { loader: 'sass-loader', options: { includePaths: [path.resolve(__dirname, 'src', 'scss')] } },
+        ],
+      },
+    ],
+  },
   plugins: [
     new webpack.DefinePlugin(GLOBALS),
-    new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
     new RobotstxtPlugin(),
     new HtmlWebpackPlugin({
       template: 'src/index.ejs',
@@ -42,97 +93,7 @@ export default {
       inject: true,
       trackJSToken: '',
     }),
-
+    new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
+    new PurgecssPlugin({ paths: glob.sync(`${path.join(__dirname, 'src')}/**/*`, { nodir: true }) }),
   ],
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        exclude: /node_modules|\.redux\.js$/,
-        use: ['babel-loader'],
-      },
-      {
-        test: /\.eot(\?v=\d+.\d+.\d+)?$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: { name: '[name].[ext]' },
-          },
-        ],
-      },
-      {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 10000,
-              mimetype: 'application/font-woff',
-              name: '[name].[ext]',
-            },
-          },
-        ],
-      },
-      {
-        test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 10000,
-              mimetype: 'application/octet-stream',
-              name: '[name].[ext]',
-            },
-          },
-        ],
-      },
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 10000,
-              mimetype: 'image/svg+xml',
-              name: '[name].[ext]',
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(jpe?g|png|gif|ico)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: { name: '[name].[ext]' },
-          },
-        ],
-      },
-      {
-        test: /(\.css|\.scss|\.sass)$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: { sourceMap: true },
-          }, {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [
-                require('cssnano'),
-                require('autoprefixer'),
-              ],
-              sourceMap: true,
-            },
-          }, {
-            loader: 'sass-loader',
-            options: {
-              includePaths: [path.resolve(__dirname, 'src', 'scss')],
-              sourceMap: true,
-            },
-          },
-        ],
-      },
-    ],
-  },
 };

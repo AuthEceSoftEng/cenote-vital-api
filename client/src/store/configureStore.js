@@ -4,7 +4,8 @@ import thunk from 'redux-thunk';
 import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 import { persistStore, persistReducer, createTransform } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import * as storage from 'localforage';
+
 import rootReducer from '../reducers';
 
 export const history = createBrowserHistory();
@@ -12,7 +13,7 @@ export const history = createBrowserHistory();
 const transform = createTransform(
   undefined,
   (state) => {
-    if (document.cookie === "cenote='yo'") return state;
+    if (document.cookie === 'cenote=yo') return state;
     return undefined;
   },
   { key: ['root'] },

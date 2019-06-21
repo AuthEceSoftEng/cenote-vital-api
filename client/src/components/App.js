@@ -17,7 +17,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    if (!document.cookie) document.cookie = "cenote='yo'";
+    if (!document.cookie) document.cookie = 'cenote=yo';
   }
 
   render() {

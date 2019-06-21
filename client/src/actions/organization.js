@@ -1,6 +1,7 @@
 import { push } from 'connected-react-router';
 import { snakeToCamelCase } from 'json-style-converter/es5';
 import Notifications from 'react-notification-system-redux';
+import * as localForage from 'localforage';
 
 import { postRegister, postLogin, postLogout } from '../api/auth';
 import { getOrganization,
@@ -65,14 +66,14 @@ export const attemptUpdateOrganization = updatedOrganization => dispatch => putO
   })
   .catch(handleError(dispatch));
 
-export const attemptUpdateUsername = usernameInfo => dispatch => putOrganizationUsername(usernameInfo)
-  .then((data) => {
-    if (localStorage.getItem('username')) localStorage.setItem('username', usernameInfo.newUsername);
-    dispatch(logout());
-    dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
-    return data;
-  })
-  .catch(handleError(dispatch));
+export const attemptUpdateUsername = usernameInfo => dispatch => putOrganizationUsername(usernameInfo).then((data) => {
+  localForage.getItem('username').then((username) => {
+    if (username) localForage.setItem('username', usernameInfo.newUsername);
+  });
+  dispatch(logout());
+  dispatch(Notifications.success({ title: 'Success!', message: data.message, position: 'tr', autoDismiss: 3 }));
+  return data;
+}).catch(handleError(dispatch));
 
 export const attemptUpdateEmail = emailInfo => dispatch => putOrganizationEmail(emailInfo)
   .then((data) => {

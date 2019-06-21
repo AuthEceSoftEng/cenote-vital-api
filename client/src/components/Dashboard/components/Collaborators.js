@@ -5,6 +5,7 @@ import cellEditFactory from 'react-bootstrap-table2-editor';
 import Swal from 'sweetalert2';
 import request from 'superagent';
 import { push } from 'connected-react-router';
+import * as localForage from 'localforage';
 
 import Button from '../../Button';
 
@@ -12,8 +13,7 @@ const Collaborators = (props) => {
   let table = null;
   const { projectId, collaborators, setCollaborators } = props;
   if (!collaborators) {
-    localStorage.removeItem('persist:root');
-    return push('/');
+    return localForage.removeItem('persist:root').then(() => push('/'));
   }
   const [data, updateData] = React.useState(collaborators.map(el => ({ collaboratorName: el })));
   React.useEffect(() => {

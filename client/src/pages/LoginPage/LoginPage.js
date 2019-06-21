@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { identity } from 'ramda';
 import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
+import * as localForage from 'localforage';
 
 import { attemptLogin } from '../../actions/organization';
 import { Box, FormInput } from '../../components';
@@ -18,10 +19,11 @@ class LoginPage extends React.Component {
   }
 
   componentWillMount() {
-    const username = localStorage.getItem('username');
-    if (username) {
-      this.setState({ remember: true, username });
-    }
+    localForage.getItem('username').then((username) => {
+      if (username) {
+        this.setState({ remember: true, username });
+      }
+    });
   }
 
   componentDidMount() {
@@ -43,14 +45,13 @@ class LoginPage extends React.Component {
     const { attemptLogin: attemptlogin } = this.props;
     const organizationCredentials = { username, password };
 
-    if (remember) { localStorage.setItem('username', username); }
+    if (remember) localForage.setItem('username', username);
 
     attemptlogin(organizationCredentials).catch(identity);
   }
 
   rememberMe = () => {
-    localStorage.removeItem('username');
-    this.setState(prevState => ({ remember: !prevState.remember }));
+    localForage.removeItem('username').then(() => this.setState(prevState => ({ remember: !prevState.remember })));
   }
 
   updateUsername = username => this.setState({ username })
