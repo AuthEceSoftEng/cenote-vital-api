@@ -4,8 +4,6 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import RobotstxtPlugin from 'robotstxt-webpack-plugin';
-import PurgecssPlugin from 'purgecss-webpack-plugin';
-import glob from 'glob';
 
 const GLOBALS = {
   'process.env.NODE_ENV': JSON.stringify('production'),
@@ -94,6 +92,5 @@ export default {
       trackJSToken: '',
     }),
     new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
-    new PurgecssPlugin({ paths: glob.sync(`${path.join(__dirname, 'src')}/**/*`, { nodir: true }) }),
   ],
 };
