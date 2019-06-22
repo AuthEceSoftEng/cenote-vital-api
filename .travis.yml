@@ -6,3 +6,8 @@ node_js:
 cache: npm
 notifications:
   email: false
+services:
+  - mongodb
+  - redis-server
+before_script:
+  - sleep 15
