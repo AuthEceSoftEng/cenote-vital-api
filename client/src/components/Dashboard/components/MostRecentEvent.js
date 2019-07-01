@@ -38,7 +38,7 @@ const MostRecentEvents = (props) => {
                               prop2.column_name.startsWith('cenote') || prop2.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
                           >
                             {prop[prop2.column_name] !== null ? ['cenote$created_at', 'cenote$timestamp'].includes(prop2.column_name)
-                              ? moment(prop[prop2.column_name]).utc().format('H:mm:ss A, DD/MM/YYYY')
+                              ? moment(prop[prop2.column_name]).format('LTS, DD/MM/YYYY')
                               : prop[prop2.column_name] : '-'}
                           </td>
                         ))

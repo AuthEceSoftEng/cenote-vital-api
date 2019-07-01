@@ -222,7 +222,8 @@ export default class Dashboard extends React.Component {
           <span className="icon" role="button" tabIndex={-1} onKeyPress={() => this.deleteCollection(col)} onClick={() => this.deleteCollection(col)}>
             <FontAwesomeIcon icon={faTrashAlt} size="sm" />
           </span>
-        </Tab>);
+        </Tab>,
+      );
       tabPanel.push(
         <TabPanel key={`tabpanel_col_${ind}`}>
           <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
@@ -243,7 +244,7 @@ export default class Dashboard extends React.Component {
                     el.column_name.startsWith('cenote') || el.column_name.startsWith('uuid') ? 'has-text-danger' : 'has-text-info'}`}
                   >
                     {['cenote$created_at', 'cenote$timestamp'].includes(el.column_name)
-                      ? moment(props.value).utc().format('H:mm:ss A, DD/MM/YYYY')
+                      ? moment(props.value).format('LTS, DD/MM/YYYY')
                       : props.value}
                   </span>
                 ),
@@ -251,7 +252,8 @@ export default class Dashboard extends React.Component {
               className="-striped -highlight"
             />
           ) : null}
-        </TabPanel>);
+        </TabPanel>,
+      );
     });
     if (tabList.length === 0) return (<div><p>None yet. Send some events!</p></div>);
     return (

@@ -8,7 +8,7 @@ import { Clock } from '../../components';
 
 class HomePageContainer extends React.Component {
   static propTypes = {
-    organization: PropTypes.shape({}).isRequired,
+    organization: PropTypes.object.isRequired,
     pushToLogin: PropTypes.func.isRequired,
   }
 

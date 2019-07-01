@@ -1,6 +1,7 @@
 const express = require('express');
 const { KafkaClient, Producer } = require('kafka-node');
 const uuid = require('uuid/v4');
+const moment = require('moment');
 
 const { Project } = require('../models');
 const { flattenJSON, isObject } = require('../utils');
@@ -114,7 +115,7 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   if (!writeKey && !masterKey) return res.status(403).json({ error: 'NoCredentialsSentError' });
   if (!(writeKey === project.writeKey || masterKey === project.masterKey)) return res.status(401).json({ message: 'KeyNotAuthorizedError' });
   const cenote = {
-    created_at: Date.now(),
+    created_at: moment().valueOf(),
     id: uuid(),
     url: `/projects/${req.params.PROJECT_ID}/events/${req.params.EVENT_COLLECTION.replace(/-/g, '').toLowerCase()}`,
   };
@@ -122,7 +123,11 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
   for (let i = 0; i < payload.length; i += 1) {
     const { data, timestamp } = payload[i];
     if (!data || !isObject(data)) return res.status(400).json({ error: 'NoDataSentError' });
-    if (timestamp && Number.isInteger(timestamp) && timestamp <= Date.now()) cenote.timestamp = new Date(timestamp * 1000).toISOString();
+    if (timestamp && moment(timestamp).isValid() && moment(timestamp).isBefore(moment())) {
+      cenote.timestamp = moment(timestamp).toISOString();
+    } else {
+      cenote.timestamp = moment(cenote.created_at).toISOString();
+    }
     cenote.id = uuid();
     payload[i].cenote = { ...cenote };
   }

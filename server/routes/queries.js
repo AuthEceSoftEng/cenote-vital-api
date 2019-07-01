@@ -2,6 +2,7 @@
 const express = require('express');
 const { Pool, types } = require('pg');
 const asyncRedis = require('async-redis');
+const moment = require('moment');
 
 const { Project } = require('../models');
 const { requireAuth, canAccessForCollection } = require('./middleware');
@@ -27,7 +28,7 @@ const client = new Pool({
 client.connect(err => err && console.error(err));
 types.setTypeParser(20, val => parseFloat(val, 10)); // 20 -> int8 (for count, min, etc)
 types.setTypeParser(1700, val => parseFloat(val, 10)); // 1700 -> numeric
-types.setTypeParser(1114, val => new Date(val).getTime()); // 1114 -> timestamp
+types.setTypeParser(1114, val => moment(val).valueOf()); // 1114 -> timestamp
 const r = asyncRedis.createClient({ host: process.env.REDIS_URL, port: process.env.REDIS_PORT || 6379, password: process.env.REDIS_PASSWORD });
 r.on('error', err => console.error(`Redis error: ${err}`));
 
@@ -56,7 +57,7 @@ r.on('error', err => console.error(`Redis error: ${err}`));
 * @apiName QueryCount
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String='include', 'exclude', 'only'} [outliers='include'] Toggle inclusion/exclusion of outlier values.
@@ -122,7 +123,7 @@ router.get('/count', canAccessForCollection, (req, res) => Project.findOne({ pro
 * @apiName QueryMin
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -192,7 +193,7 @@ router.get('/minimum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiName QueryMax
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -262,7 +263,7 @@ router.get('/maximum', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiName QuerySum
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -332,7 +333,7 @@ router.get('/sum', canAccessForCollection, (req, res) => Project.findOne({ proje
 * @apiName QueryAvg
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -402,7 +403,7 @@ router.get('/average', canAccessForCollection, (req, res) => Project.findOne({ p
 * @apiName QueryMedian
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -449,7 +450,7 @@ router.get('/median', canAccessForCollection, (req, res) => {
 * @apiName QueryPercentile
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -534,7 +535,7 @@ router.get('/percentile', canAccessForCollection, (req, res) => Project.findOne(
 * @apiName QueryCountUnique
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -604,7 +605,7 @@ router.get('/count_unique', canAccessForCollection, (req, res) => Project.findOn
 * @apiName QuerySelectUnique
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} target_property Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a
@@ -675,7 +676,7 @@ router.get('/select_unique', canAccessForCollection, (req, res) => Project.findO
 * @apiName QueryExtraction
 * @apiGroup Queries
 * @apiParam {String} PROJECT_ID Project's unique ID.
-* @apiParam {String} readkey/masterKey Key for authorized read.
+* @apiParam {String} readKey/masterKey Key for authorized read.
 * @apiParam {String} event_collection Event collection.<br/><strong><u>Note:</u></strong> Event collection names must start with a
 * letter and can contain only lowercase letters and numbers.
 * @apiParam {String} [target_property] Desired Event collection's property.<br/><strong><u>Note:</u></strong> Property names must start with a

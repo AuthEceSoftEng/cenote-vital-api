@@ -1368,7 +1368,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -1573,7 +1573,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -1771,7 +1771,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -1965,7 +1965,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -2160,7 +2160,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -2365,7 +2365,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -2570,7 +2570,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -2775,7 +2775,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -2988,7 +2988,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
@@ -3182,7 +3182,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "readkey/masterKey",
+            "field": "readKey/masterKey",
             "description": "<p>Key for authorized read.</p>"
           },
           {
