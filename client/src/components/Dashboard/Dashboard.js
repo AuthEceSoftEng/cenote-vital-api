@@ -10,7 +10,7 @@ import * as moment from 'moment';
 
 import { handleSuccess, handleError } from '../../api/helpers';
 import { EventCollection, Analytics, Collaborators } from './components';
-import { getEventCollections, getRecentEvents } from './utils';
+import { getEventCollections, getRecentEvents, getEventCount } from './utils';
 import { Button } from '..';
 
 
@@ -42,6 +42,7 @@ export default class Dashboard extends React.Component {
       editMaster: new Array(props.readKeys.length).fill(false),
       collections: {},
       events: {},
+      eventCounts: {},
     };
     this._isMounted = false;
     this.deleteCollection = this.deleteCollection.bind(this);
@@ -56,11 +57,13 @@ export default class Dashboard extends React.Component {
       if (this._isMounted) this.setState({ collections });
 
       const events = {};
+      const eventCounts = {};
       const promises = [];
       Object.keys(collections).forEach((col) => {
         promises.push(getRecentEvents(projectId, col, readKeys[0], 5).then(evts => events[col] = evts));
+        promises.push(getEventCount(projectId, col, readKeys[0]).then(count => eventCounts[col] = count));
       });
-      Promise.all(promises).then(() => this._isMounted && this.setState({ events }));
+      Promise.all(promises).then(() => this._isMounted && this.setState({ events, eventCounts }));
     });
   }
 
@@ -211,7 +214,7 @@ export default class Dashboard extends React.Component {
   }
 
   _getEventCollectionInfo() {
-    const { collections, events } = this.state;
+    const { collections, events, eventCounts } = this.state;
     const { projectId } = this.props;
     const tabList = [];
     const tabPanel = [];
@@ -224,11 +227,18 @@ export default class Dashboard extends React.Component {
           </span>
         </Tab>,
       );
+      let headerMessage = '';
+      if (!eventCounts[col]) {
+        headerMessage = 'last events...';
+      } else {
+        if (eventCounts[col] > 0) headerMessage = `last ${eventCounts[col]}, of ${eventCounts[col]} events...`;
+        if (eventCounts[col] > 5) headerMessage = `last 5, of ${eventCounts[col]} events...`;
+      }
       tabPanel.push(
         <TabPanel key={`tabpanel_col_${ind}`}>
           <hr style={{ backgroundColor: '#11183a', height: '1px' }} />
           <EventCollection properties={collections[col]} projectId={projectId} eventCollection={col} />
-          <h4 style={{ marginTop: '1%' }} className="title is-4">last 5 events...</h4>
+          <h4 style={{ marginTop: '1%' }} className="title is-4">{headerMessage}</h4>
           {events[col] ? (
             <ReactTable
               showPageSizeOptions={false}
