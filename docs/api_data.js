@@ -56,7 +56,7 @@ define({ "api": [
             "type": "Object/Object[]",
             "optional": false,
             "field": "payload",
-            "description": "<p>Event data.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties will be flattened using '$' as separator.</p>"
+            "description": "<p>Event data.<br/><strong><u>Note:</u></strong> Property names must start with a letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties will be flattened using '$' as separator.<br/><strong><u>WARNING:</u></strong> <code>timestamp</code> is treated as milliseconds!</p>"
           }
         ]
       },

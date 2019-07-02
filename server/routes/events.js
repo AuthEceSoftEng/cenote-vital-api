@@ -79,7 +79,7 @@ producer.on('error', error => console.error(error));
 * @apiParam {String} WRITE_KEY/MASTER_KEY Key for authorized write.
 * @apiParam {Object/Object[]} payload Event data.<br/><strong><u>Note:</u></strong> Property names must start with a
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties will be flattened using
-* '$' as separator.
+* '$' as separator.<br/><strong><u>WARNING:</u></strong> `timestamp` is treated as milliseconds!
 * @apiParamExample {json} payload Example:
 * {"payload": [{"data": {"current": 7.5,"voltage": 10000,"note": "That's weird."},"timestamp": 1549622362}]}
 * @apiSuccess (Accepted 202) {String} message Success Message.
@@ -120,11 +120,13 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
     url: `/projects/${req.params.PROJECT_ID}/events/${req.params.EVENT_COLLECTION.replace(/-/g, '').toLowerCase()}`,
   };
   if (!Array.isArray(payload)) payload = [payload];
+  let shouldShowWarningForTimestamp = false;
   for (let i = 0; i < payload.length; i += 1) {
     const { data, timestamp } = payload[i];
     if (!data || !isObject(data)) return res.status(400).json({ error: 'NoDataSentError' });
     if (timestamp && moment(timestamp).isValid() && moment(timestamp).isBefore(moment())) {
       cenote.timestamp = moment(timestamp).toISOString();
+      if (moment(timestamp).isBefore(moment('2000-01-01'))) shouldShowWarningForTimestamp = true;
     } else {
       cenote.timestamp = moment(cenote.created_at).toISOString();
     }
@@ -140,7 +142,8 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
         messages: [JSON.stringify(slicedPayload)],
       }], err => (err ? notCool(err) : cool())));
     }
-    return res.status(202).json({ message: 'Events sent!' });
+    return res.status(202).json({ message: `Events sent!${shouldShowWarningForTimestamp
+      ? ' HEADS UP: Timestamp(s) appear to be very old. Maybe you accidentally used seconds instead of milliseconds?' : ''}` });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
