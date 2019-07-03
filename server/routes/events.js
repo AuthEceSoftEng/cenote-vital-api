@@ -125,10 +125,10 @@ router.post('/:EVENT_COLLECTION', (req, res) => Project.findOne({ projectId: req
     const { data, timestamp } = payload[i];
     if (!data || !isObject(data)) return res.status(400).json({ error: 'NoDataSentError' });
     if (timestamp && moment(timestamp).isValid() && moment(timestamp).isBefore(moment())) {
-      cenote.timestamp = moment(timestamp).toISOString();
+      cenote.timestamp = moment(timestamp).toISOString(true);
       if (moment(timestamp).isBefore(moment('2000-01-01'))) shouldShowWarningForTimestamp = true;
     } else {
-      cenote.timestamp = moment(cenote.created_at).toISOString();
+      cenote.timestamp = moment(cenote.created_at).toISOString(true);
     }
     cenote.id = uuid();
     payload[i].cenote = { ...cenote };
