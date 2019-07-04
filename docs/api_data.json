@@ -63,7 +63,7 @@
       "examples": [
         {
           "title": "payload Example:",
-          "content": "{\"payload\": [{\"data\": {\"current\": 7.5,\"voltage\": 10000,\"note\": \"That's weird.\"},\"timestamp\": 1549622362}]}",
+          "content": "{\"payload\": [{\"data\": {\"current\": 7.5,\"voltage\": 10000,\"note\": \"That's weird.\"},\"timestamp\": 1549622362926}]}",
           "type": "json"
         }
       ]

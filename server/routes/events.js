@@ -81,7 +81,7 @@ producer.on('error', error => console.error(error));
 * letter and can contain only lowercase letters and numbers.<br/><strong><u>Note:</u></strong> Nested properties will be flattened using
 * '$' as separator.<br/><strong><u>WARNING:</u></strong> `timestamp` is treated as milliseconds!
 * @apiParamExample {json} payload Example:
-* {"payload": [{"data": {"current": 7.5,"voltage": 10000,"note": "That's weird."},"timestamp": 1549622362}]}
+* {"payload": [{"data": {"current": 7.5,"voltage": 10000,"note": "That's weird."},"timestamp": 1549622362926}]}
 * @apiSuccess (Accepted 202) {String} message Success Message.
 * @apiSuccessExample {json} Success-Response:
 *     HTTP/1.1 202 ACCEPTED

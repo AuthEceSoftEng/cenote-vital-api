@@ -7,6 +7,9 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 import ReactTable from 'react-table';
 import * as moment from 'moment';
+import DownloadLink from 'react-download-link';
+import { parse } from 'json2csv';
+import { ClipLoader } from 'react-spinners';
 
 import { handleSuccess, handleError } from '../../api/helpers';
 import { EventCollection, Analytics, Collaborators } from './components';
@@ -43,10 +46,12 @@ export default class Dashboard extends React.Component {
       collections: {},
       events: {},
       eventCounts: {},
+      selectedCollection: 0,
     };
     this._isMounted = false;
     this.deleteCollection = this.deleteCollection.bind(this);
     this.setCollaborators = this.setCollaborators.bind(this);
+    this.downloadData = this.downloadData.bind(this);
   }
 
   componentDidMount() {
@@ -183,6 +188,20 @@ export default class Dashboard extends React.Component {
       });
   }
 
+  async downloadData() {
+    const { projectId } = this.props;
+    const { collections, selectedCollection, readKeys, eventCounts } = this.state;
+    this.setState({ loading: true });
+    const data = await getRecentEvents(
+      projectId,
+      Object.keys(collections)[selectedCollection],
+      readKeys[0],
+      eventCounts[Object.keys(collections)[selectedCollection]],
+    );
+    this.setState({ loading: false });
+    return parse(data);
+  }
+
   deleteCollection(col) {
     const { collections } = this.state;
     const { projectId } = this.props;
@@ -214,7 +233,7 @@ export default class Dashboard extends React.Component {
   }
 
   _getEventCollectionInfo() {
-    const { collections, events, eventCounts } = this.state;
+    const { collections, events, eventCounts, selectedCollection, loading } = this.state;
     const { projectId } = this.props;
     const tabList = [];
     const tabPanel = [];
@@ -267,8 +286,24 @@ export default class Dashboard extends React.Component {
     });
     if (tabList.length === 0) return (<div><p>None yet. Send some events!</p></div>);
     return (
-      <Tabs forceRenderTabPanel>
+      <Tabs forceRenderTabPanel onSelect={ind => this.setState({ selectedCollection: ind })}>
         <TabList>{tabList}</TabList>
+        {
+          eventCounts[Object.keys(collections)[selectedCollection]] && (
+            loading
+              ? <ClipLoader color="#008B8B" />
+              : (
+                <DownloadLink
+                  className="button is-primary"
+                  filename={`${projectId}_${Object.keys(collections)[selectedCollection]}.csv`}
+                  exportFile={this.downloadData}
+                  tagName="button"
+                  label="Export event collection to CSV!"
+                  style={{}}
+                />
+              )
+          )
+        }
         {tabPanel}
       </Tabs>
     );
