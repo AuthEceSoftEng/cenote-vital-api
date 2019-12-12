@@ -14,7 +14,7 @@ const router = express.Router();
  *     }
  */
 /**
-* @api {get} /:ORG_NAME/projects Get all projects of an organization
+* @api {get} /organization/:ORG_NAME/projects Get all projects of an organization
 * @apiVersion 0.1.0
 * @apiName GetProjects
 * @apiGroup Organization
@@ -47,7 +47,7 @@ router.get('/:ORG_NAME/projects', (req, res) => {
 
 
 /**
-* @api {post} /:ORG_NAME/projects Create a new project
+* @api {post} /organization/:ORG_NAME/projects Create a new project
 * @apiVersion 0.1.0
 * @apiName CreateProject
 * @apiGroup Organization
@@ -95,7 +95,7 @@ router.post('/:ORG_NAME/projects', (req, res) => {
 });
 
 /**
-* @api {get} /:ORG_NAME/projects/:PROJECT_ID Get info about a specific project
+* @api {get} /organization/:ORG_NAME/projects/:PROJECT_ID Get info about a specific project
 * @apiVersion 0.1.0
 * @apiName GetProjectInfo
 * @apiGroup Organization
@@ -130,7 +130,7 @@ router.get('/:ORG_NAME/projects/:PROJECT_ID', (req, res) => {
 });
 
 /**
-* @api {put} /:ORG_NAME/projects/:PROJECT_ID Update a specific project
+* @api {put} /organization/:ORG_NAME/projects/:PROJECT_ID Update a specific project
 * @apiVersion 0.1.0
 * @apiName GetProjectInfo
 * @apiGroup Organization
@@ -172,7 +172,7 @@ router.put('/:ORG_NAME/projects/:PROJECT_ID', (req, res) => {
 });
 
 /**
-* @api {delete} /:ORG_NAME/projects/:PROJECT_ID Delete a specific project
+* @api {delete} /organization/:ORG_NAME/projects/:PROJECT_ID Delete a specific project
 * @apiVersion 0.1.0
 * @apiName DeleteProject
 * @apiGroup Organization

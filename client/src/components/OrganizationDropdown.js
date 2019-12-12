@@ -62,7 +62,7 @@ class OrganizationDropdown extends Component {
               onClick={this.logout}
               type="button"
               onKeyPress={this.logout}
-              style={{ backgroundColor: '#264184', color: 'white' }}
+              style={{ backgroundColor: '#93bccf', color: 'white' }}
             >
               Logout
             </button>

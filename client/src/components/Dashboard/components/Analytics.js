@@ -199,7 +199,7 @@ export default class Analytics extends React.Component {
                 mem.clear(getRecentEventsAndCache);
                 this.getEvents();
               }}
-              style={{ backgroundColor: '#264184', color: 'white', border: '2px solid #11183a', borderRadius: '5px' }}
+              style={{ backgroundColor: '#93bccf', color: 'white', border: '2px solid #263855', borderRadius: '5px' }}
             >
             Refresh!
             </button>

@@ -32,7 +32,7 @@ export default function Navigation(props) {
           <Link to={auth ? '/projects' : '/'} className="navbar-item" aria-label="main navigation">
             <img
               src={require('../../assets/images/logo.png')}
-              alt="cenote"
+              alt="cenote.VITAL"
               style={{ width: '12rem', maxHeight: '12rem' }}
             />
           </Link>
@@ -67,7 +67,7 @@ export default function Navigation(props) {
                 <h6 className="title is-6">Settings</h6>
               </Link>
               <Link to="/docs" target="_blank" className="navbar-item">
-                <Button label="Docs" className="title is-6" style={{ backgroundColor: '#264184', color: 'white' }} />
+                <Button label="Docs" className="title is-6" style={{ backgroundColor: '#93bccf', color: 'white' }} />
               </Link>
             </div>
 
@@ -92,7 +92,7 @@ export default function Navigation(props) {
         ) : (
           <div className="navbar-menu">
             <Link to="/docs" target="_blank" className="navbar-item">
-              <Button label="Docs" className="title is-6" style={{ backgroundColor: '#264184', color: 'white' }} />
+              <Button label="Docs" className="title is-6" style={{ backgroundColor: '#93bccf', color: 'white' }} />
             </Link>
           </div>
         )}

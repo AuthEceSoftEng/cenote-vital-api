@@ -1,6 +1,6 @@
 {
   "title": "cenote API",
-  "url": "https://cenote.sidero.services/api",
+  "url": "https://cenote-vital.sidero.services/api",
   "template": {
     "forceLanguage": "en",
     "withCompare": false,
@@ -8,13 +8,13 @@
   },
   "name": "cenote-api-server",
   "version": "0.1.0",
-  "description": "API server & web client used by cenote",
+  "description": "API server & web client used by cenote.VITAL",
   "sampleUrl": false,
   "defaultVersion": "0.0.0",
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-07-04T08:31:52.276Z",
+    "time": "2019-12-12T13:51:03.627Z",
     "url": "http://apidocjs.com",
     "version": "0.17.7"
   }

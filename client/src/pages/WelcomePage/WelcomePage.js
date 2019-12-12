@@ -20,7 +20,7 @@ class WelcomePage extends Component {
   render() {
     return (
       <div className="welcome-page section">
-        <h1 className="title is-1">{'Welcome to cenote\'s Dashboard!'}</h1>
+        <h1 className="title is-1">{'Welcome to cenote.VITAL\'s Dashboard!'}</h1>
         <img
           src={require('../../assets/images/logo_color.png')}
           alt=""

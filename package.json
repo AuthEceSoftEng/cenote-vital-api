@@ -2,7 +2,7 @@
   "name": "cenote-api-server",
   "version": "0.1.0",
   "private": true,
-  "description": "API server & web client used by cenote",
+  "description": "API server & web client used by cenote.VITAL",
   "homepage": "https://github.com/AuthEceSoftEng/cenote-api#readme",
   "bugs": {
     "url": "https://github.com/AuthEceSoftEng/cenote-api/issues"
@@ -96,7 +96,7 @@
   },
   "apidoc": {
     "title": "cenote API",
-    "url": "https://cenote.sidero.services/api",
+    "url": "https://cenote-vital.sidero.services/api",
     "template": {
       "forceLanguage": "en",
       "withCompare": false,

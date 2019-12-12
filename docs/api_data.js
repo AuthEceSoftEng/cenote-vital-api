@@ -703,7 +703,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/:ORG_NAME/projects",
+    "url": "/organization/:ORG_NAME/projects",
     "title": "Create a new project",
     "version": "0.1.0",
     "name": "CreateProject",
@@ -858,7 +858,7 @@ define({ "api": [
   },
   {
     "type": "delete",
-    "url": "/:ORG_NAME/projects/:PROJECT_ID",
+    "url": "/organization/:ORG_NAME/projects/:PROJECT_ID",
     "title": "Delete a specific project",
     "version": "0.1.0",
     "name": "DeleteProject",
@@ -987,7 +987,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/:ORG_NAME/projects/:PROJECT_ID",
+    "url": "/organization/:ORG_NAME/projects/:PROJECT_ID",
     "title": "Get info about a specific project",
     "version": "0.1.0",
     "name": "GetProjectInfo",
@@ -1109,7 +1109,7 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "/:ORG_NAME/projects/:PROJECT_ID",
+    "url": "/organization/:ORG_NAME/projects/:PROJECT_ID",
     "title": "Update a specific project",
     "version": "0.1.0",
     "name": "GetProjectInfo",
@@ -1245,7 +1245,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/:ORG_NAME/projects",
+    "url": "/organization/:ORG_NAME/projects",
     "title": "Get all projects of an organization",
     "version": "0.1.0",
     "name": "GetProjects",
