@@ -1,6 +1,6 @@
 # cenote-api
 
->API server & web client used by [cenote](https://github.com/AuthEceSoftEng/cenote)
+>API server & web client used by [cenote-vital](https://github.com/AuthEceSoftEng/cenote-vital)
 
 [![Travis](https://img.shields.io/travis/com/AuthEceSoftEng/cenote-api.svg?style=flat-square&logo=travis&label=)](https://travis-ci.com/AuthEceSoftEng/cenote) [![license](https://img.shields.io/github/license/AuthEceSoftEng/cenote-api.svg?style=flat-square)](./LICENSE)
 
